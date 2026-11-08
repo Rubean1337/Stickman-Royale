@@ -10,7 +10,7 @@
 *{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:'Patrick Hand','Comic Sans MS',cursive;font-size:18px}
 #app{max-width:1700px;margin:0 auto;padding:8px;position:relative}
-canvas{image-rendering:auto;width:auto;height:auto;max-width:100%;max-height:calc(100vh - 235px);min-height:300px;display:block;margin:0 auto;border:3px solid var(--ln);border-radius:6px;touch-action:none;background:#22b14c}
+canvas{image-rendering:auto;--ui:235px;width:min(100%,calc((100vh - var(--ui) - 6px)*2.7143 + 6px));width:min(100%,calc((100dvh - var(--ui) - 6px)*2.7143 + 6px));max-width:1520px;height:auto;display:block;margin:0 auto;border:3px solid var(--ln);border-radius:6px;touch-action:none;background:#22b14c}
 button{font:inherit;color:var(--fg);background:var(--pn);border:2px solid var(--ln);border-radius:8px;padding:6px 10px;cursor:pointer}
 button:focus-visible{outline:3px solid var(--blue)}button:disabled{opacity:.45;cursor:default}
 #hud{display:flex;justify-content:space-between;align-items:center;padding:6px 2px;gap:8px}
@@ -64,6 +64,22 @@ input#pname{font:inherit;padding:4px 8px;border:2px solid var(--ln);border-radiu
 .crn{height:1.1em;width:auto;image-rendering:pixelated;vertical-align:-.2em}
 .gem{height:1.15em;width:auto;image-rendering:pixelated;vertical-align:-.25em}
 .gem.pocket{height:32px;vertical-align:middle}
+@media (orientation:portrait) and (max-width:700px){#app::before{content:'Tip: turn your phone sideways for a bigger battlefield';display:block;text-align:center;font-size:14px;opacity:.7}}
+@media (orientation:landscape) and (max-height:560px){
+body{font-size:15px}
+#app{padding:4px max(6px,env(safe-area-inset-right)) 4px max(6px,env(safe-area-inset-left))}
+canvas{--ui:110px;border-width:2px}
+#hud{padding:2px;gap:6px}#hud button{padding:2px 8px;font-size:14px}#bar{height:14px}
+#hand{flex-wrap:nowrap;gap:4px;margin-top:4px}
+.card{flex:1 1 0;min-width:0;padding:3px 6px;font-size:13px;line-height:1.15}
+.cost{width:22px;height:22px;line-height:18px;font-size:13px;top:-6px;right:-4px}
+#emrow:not([hidden]){position:absolute;top:36px;right:8px;z-index:6;margin:0;flex-direction:column;background:var(--bg);padding:6px;border:2px solid var(--ln);border-radius:8px}
+#menu{padding:8px}#menu h1{font-size:28px}
+.chest{font-size:70px}#go{font-size:20px;padding:6px 18px}
+.btr{flex-basis:240px;min-width:200px}.crl{max-height:calc(100dvh - 150px)}
+#tut{top:40px;padding:4px 8px}#tut img,#praise img{height:48px}#tkt{font-size:15px}
+#tobj{top:40px;font-size:14px}#praise{bottom:64px;font-size:20px}
+}
 </style></head><body><div id="app">
 <div id="hud"><span id="tm">2:30</span><div id="bar"><div id="fill"></div></div><b id="el">5 / 10 coins</b><button id="emb" onclick="toggleEm()">Emote</button></div>
 <div id="emrow" class="row" hidden><button onclick="pe('mad')">😠 Mad</button><button onclick="pe('sad')">😢 Sad</button><button onclick="pe('support')">👍 Supportive</button><button onclick="pe('laugh')">😂 Laughing</button></div>
