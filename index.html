@@ -799,7 +799,7 @@ function resume(){let r;try{r=JSON.parse(localStorage.getItem(MKEY))}catch(e){}
 document.addEventListener('visibilitychange',()=>{if(document.hidden){hid=Date.now();mkSave()}else{if(hid&&G&&G.pvp&&!G.guest&&!G.done&&MP&&MP.role=='host'&&!G.hold){ffwd(Math.min((Date.now()-hid)/1000,RJ));last=performance.now()}hid=0}});
 addEventListener('pagehide',mkSave);
 /* ===== friend battles: host-authoritative, streamed over the room capability ===== */
-let MP=null,RM=null;const PJ={async join(name){if(!window.Peer)await new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js';s.onload=ok;s.onerror=()=>no({code:'peerjs_blocked'});document.head.appendChild(s)});const code=name.slice(3),host=MP.role=='host',H={},cbs=[];let conns=[];const wire=c=>{c.on('data',x=>{if(!x||typeof x.t!='string')return;for(const f of H[x.t]||[])try{f({isMe:false,peer:c.peer,data:x.d,topic:x.t})}catch(e){}});c.on('close',()=>{conns=conns.filter(q=>q!==c);for(const f of cbs)try{f({left:[{peer:c.peer}],joined:[],peers:[]})}catch(e){}})};const p=new Peer(host?'tabardclash-'+code:undefined);await new Promise((ok,no)=>{const to=setTimeout(()=>no({code:'timeout'}),20000);let tries=0;const tc=()=>{const c=p.connect('tabardclash-'+code,{reliable:true,serialization:'json'});c.on('open',()=>{clearTimeout(to);conns=[c];wire(c);ok()})};p.on('error',e=>{if(!host&&e&&e.type=='peer-unavailable'&&++tries<8)return void setTimeout(tc,1200);clearTimeout(to);no({code:(e&&e.type)||'error'})});if(host)p.on('connection',c=>c.on('open',()=>{if(conns.length)return c.close();conns=[c];wire(c)}));p.on('open',()=>{if(host){clearTimeout(to);ok()}else{tc()}})});return{name,alive(){return conns.some(c=>c.open)},on(t,f){(H[t]=H[t]||[]).push(f);return()=>{H[t]=(H[t]||[]).filter(q=>q!==f)}},emit(t,d){for(const c of conns)if(c.open)c.send({t,d});return Promise.resolve()},onPeers(f){cbs.push(f);return()=>{}},leave(){conns.forEach(c=>c.close());try{p.destroy()}catch(e){}return Promise.resolve()}}}};
+let MP=null,RM=null;const PJ={async join(name){if(!window.Peer)await new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js';s.onload=ok;s.onerror=()=>no({code:'peerjs_blocked'});document.head.appendChild(s)});const code=name.slice(3),host=MP.role=='host',H={},cbs=[];let conns=[];const wire=c=>{c.on('data',x=>{if(!x||typeof x.t!='string')return;for(const f of H[x.t]||[])try{f({isMe:false,peer:c.peer,data:x.d,topic:x.t})}catch(e){}});c.on('close',()=>{conns=conns.filter(q=>q!==c);for(const f of cbs)try{f({left:[{peer:c.peer}],joined:[],peers:[]})}catch(e){}})};const p=new Peer(host?'tabardclash-'+code:undefined,ICE);await new Promise((ok,no)=>{const to=setTimeout(()=>no({code:'timeout'}),20000);let tries=0;const tc=()=>{const c=p.connect('tabardclash-'+code,{reliable:true,serialization:'json'});c.on('open',()=>{clearTimeout(to);conns=[c];wire(c);ok()})};p.on('error',e=>{if(!host&&e&&e.type=='peer-unavailable'&&++tries<8)return void setTimeout(tc,1200);clearTimeout(to);no({code:(e&&e.type)||'error'})});if(host)p.on('connection',c=>c.on('open',()=>{if(conns.length)return c.close();conns=[c];wire(c)}));p.on('open',()=>{if(host){clearTimeout(to);ok()}else{tc()}})});return{name,alive(){return conns.some(c=>c.open)},on(t,f){(H[t]=H[t]||[]).push(f);return()=>{H[t]=(H[t]||[]).filter(q=>q!==f)}},emit(t,d){for(const c of conns)if(c.open)c.send({t,d});return Promise.resolve()},onPeers(f){cbs.push(f);return()=>{}},leave(){conns.forEach(c=>c.close());try{p.destroy()}catch(e){}return Promise.resolve()}}}};
 const RMREADY=(async()=>{try{RM=await claude.use('room')}catch(e){RM=null}if(!RM)RM=PJ;mpRender()})();
 function mpRender(){qmRender();const el=$('mpb');if(!el)return;const ok=S.deck.length==Math.min(8,S.un)&&(S.tut||0)>=3;
  let h='<div class="box" style="margin:6px 0;border-color:#00a2e8"><b>Play with friends</b> &middot; friendly battle, no rewards<br>';
@@ -810,17 +810,32 @@ function mpRender(){qmRender();const el=$('mpb');if(!el)return;const ok=S.deck.l
 const mpOK=()=>S.deck.length==Math.min(8,S.un)&&(S.tut||0)>=3;
 let QM=null;
 PJ.load=()=>window.Peer?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js';s.onload=ok;s.onerror=()=>no({code:'peerjs_blocked'});document.head.appendChild(s)});
-PJ.hub=async function(name){await PJ.load();const H={},id='tabardclash-'+name;let dead=0,conns=[],cl=null,p=null;
+const ICE={config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'},{urls:['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turn:openrelay.metered.ca:443?transport=tcp'],username:'openrelayproject',credential:'openrelayproject'}]}};
+PJ.hub=async function(name){await PJ.load();const H={},base='tabardclash-'+name,NS=8;let dead=0,conns=[],cl=null,p=null,slot=0,st='starting',err='',tm=null,gen=0;
  const fire=(t,d,peer)=>{for(const f of H[t]||[])try{f({isMe:false,peer,data:d,topic:t})}catch(e){}};
- const kill=()=>{try{p&&p.destroy()}catch(e){}};
- const retry=ms=>{kill();conns=[];cl=null;if(!dead)setTimeout(go,ms)};
- const client=()=>{p=new Peer();p.on('disconnected',()=>{if(!dead)try{p.reconnect()}catch(e){}});p.on('open',()=>{const c=p.connect(id,{reliable:true,serialization:'json'});cl=c;c.on('data',x=>{if(x&&typeof x.t=='string')fire(x.t,x.d,x.f)});c.on('close',()=>retry(500+Math.random()*1500))});p.on('error',e=>retry(e&&e.type=='peer-unavailable'?300+Math.random()*1000:2000))};
- const go=()=>{if(dead)return;kill();conns=[];cl=null;p=new Peer(id);p.on('disconnected',()=>{if(!dead)try{p.reconnect()}catch(e){}});p.on('connection',c=>{c.on('open',()=>conns.push(c));c.on('data',x=>{if(!x||typeof x.t!='string')return;fire(x.t,x.d,c.peer);for(const o of conns)if(o!==c&&o.open)o.send({t:x.t,d:x.d,f:c.peer})});c.on('close',()=>{conns=conns.filter(q=>q!==c)})});p.on('error',e=>{if(dead)return;if(e&&e.type=='unavailable-id'){kill();client()}else retry(2000)})};
+ const kill=()=>{clearTimeout(tm);try{p&&p.destroy()}catch(e){}p=null;conns=[];cl=null};
+ const next=(ms,adv)=>{gen++;kill();if(dead)return;if(adv)slot=(slot+1)%NS;st='retrying';setTimeout(()=>{if(!dead)go()},ms)};
+ const client=(id,my)=>{try{p&&p.destroy()}catch(e){}conns=[];cl=null;const q=new Peer(ICE);p=q;st='joining lobby '+slot;
+  q.on('disconnected',()=>{if(!dead&&gen==my&&!q.destroyed)try{q.reconnect()}catch(e){}});
+  q.on('open',()=>{if(gen!==my)return;const c=q.connect(id,{reliable:true,serialization:'json'});
+   tm=setTimeout(()=>{if(gen===my&&!c.open){err='lobby '+slot+' not answering';next(300,1)}},7000);
+   c.on('open',()=>{if(gen!==my)return;clearTimeout(tm);cl=c;st='connected to lobby '+slot});
+   c.on('data',x=>{if(gen===my&&x&&typeof x.t=='string')fire(x.t,x.d,x.f)});
+   c.on('close',()=>{if(gen===my){slot=0;next(500+Math.random()*1500,0)}})});
+  q.on('error',e=>{if(gen!==my)return;err=(e&&e.type)||'error';next(err=='peer-unavailable'?500:2000,0)})};
+ const go=()=>{if(dead)return;const my=++gen,id=base+'-'+slot,q=new Peer(id,ICE);p=q;st='claiming lobby '+slot;
+  q.on('disconnected',()=>{if(!dead&&gen==my&&!q.destroyed)try{q.reconnect()}catch(e){}});
+  q.on('open',()=>{if(gen!==my)return;st='hosting lobby '+slot;if(slot>0)tm=setTimeout(()=>{if(gen===my){slot=0;next(0,0)}},10000)});
+  q.on('connection',c=>{c.on('open',()=>{if(gen===my)conns.push(c)});
+   c.on('data',x=>{if(gen!==my||!x||typeof x.t!='string')return;fire(x.t,x.d,c.peer);for(const o of conns)if(o!==c&&o.open)o.send({t:x.t,d:x.d,f:c.peer})});
+   c.on('close',()=>{conns=conns.filter(z=>z!==c)})});
+  q.on('error',e=>{if(dead||gen!==my)return;err=(e&&e.type)||'error';if(err=='unavailable-id')client(id,my);else next(2000,0)})};
  go();
- return{on(t,f){(H[t]=H[t]||[]).push(f)},emit(t,d){for(const c of conns)if(c.open)c.send({t,d,f:id});if(cl&&cl.open)cl.send({t,d});return Promise.resolve()},leave(){dead=1;kill();return Promise.resolve()}}};
+ return{on(t,f){(H[t]=H[t]||[]).push(f)},emit(t,d){for(const c of conns)if(c.open)c.send({t,d,f:base});if(cl&&cl.open)cl.send({t,d});return Promise.resolve()},leave(){dead=1;gen++;kill();return Promise.resolve()},
+  status(){return st+(err?' (last issue: '+err+')':'')}}};
 function qmHeard(){return Object.values(QM.seen||{}).filter(t=>Date.now()-t<5000).length}
 function qmInfo(){let p=0;try{const r=QM.room;if(r&&r.peers)p=r.peers().filter(x=>!x.isMe&&x.kind!='agent').length}catch(e){}QM.pc=p;const h=qmHeard();
- let t='<br><small>'+Math.max(h,p)+' other player(s) searching.</small>';
+ let t='<br><small>'+Math.max(h,p)+' other player(s) searching.</small>';if(QM.room&&QM.room.status)t+='<br><small>Lobby: '+esc(QM.room.status())+'</small>';
  if(QM.err=='not_permitted')t+='<br><small style="color:#c0392b">This page is not allowing you to send game messages, so nobody can see you. The page owner must open the game topics to Contributors and share the page with you as a Contributor or higher.</small>';
  else if(p>h&&qmWait()>6)t+='<br><small style="color:#c0392b">Another player is connected but their messages are not reaching you. They probably need Contributor access to this page.</small>';
  return t}
