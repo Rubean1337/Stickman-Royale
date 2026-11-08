@@ -229,8 +229,8 @@ const TUT=[[
 function tutTarget(){const t=G&&G.tut;if(!t)return null;const s=TUT[t.n-1][t.i];if(!s||!s.hl)return null;const hl=s.hl();if(!hl)return null;
  if(hl.circle)return{x:hl.circle.x,y:hl.circle.y};
  for(const [c,r] of hl.cells){const x=c*GC+GC/2,y=r*GC+GC/2;if(canPlace(0,sel,x,y))return{x,y}}return null}
-function tutShow(){const t=G.tut,s=TUT[t.n-1][t.i],b=$('tut');$('tobj').hidden=true;if(!s||!s.t){b.hidden=true;t.hold=false;t.pz=0;return}
- b.hidden=false;$('tkt').textContent=s.t;const nx=!!(s.next||s.fin);$('tkn').style.display=nx?'':'none';$('tkn').textContent=s.fin?'Continue':'Next';t.hold=nx;t.pz=nx?0:1;t.obj=nx?'':s.t}
+var TOT,TNT;function tutShow(){const t=G.tut,s=TUT[t.n-1][t.i],b=$('tut');$('tobj').hidden=true;if(!s||!s.t){b.hidden=true;t.hold=false;t.pz=0;return}
+ b.hidden=false;$('tkt').textContent=s.t;const nx=!!(s.next||s.fin);$('tkn').style.display=nx?'':'none';$('tkn').textContent=s.fin?'Continue':'Next';t.hold=nx;t.pz=nx?0:1;t.obj=nx?'':s.t;clearTimeout(TNT);if(s.next&&!s.fin){const i0=t.i;TNT=setTimeout(()=>{if(G&&G.tut===t&&t.i==i0&&t.hold&&!G.done)tutNext()},10000)}}
 function tutNext(){const t=G&&G.tut;if(!t||G.done)return;t.hold=false;const s=TUT[t.n-1][t.i];if(s&&s.fin){endTut(1);return}t.i++;t.age=0;const ns=TUT[t.n-1][t.i];if(ns&&ns.on)ns.on();tutShow()}
 function tutTick(dt){const t=G.tut;if(!t||G.done)return;t.age+=dt;const s=TUT[t.n-1][t.i];if(s&&s.w&&t.age>.5&&s.w())tutNext()}
 function praise(m){const t=G&&G.tut;if(!t||t.pc>performance.now())return;t.pc=performance.now()+2600;$('pkt').textContent=m;$('praise').hidden=false;clearTimeout(PZ);PZ=setTimeout(()=>{$('praise').hidden=true},1900)}
@@ -447,7 +447,7 @@ function end(w){if(G.pvp)return endPvp(w);if(G.tut){endTut(w);return}let crg=0;G
  save();showResult('<div style="text-align:center;font-size:32px"><b>'+(w==1?'Victory!':w==-1?'Defeat.':'Draw.')+'</b></div>'+scoreBox(crg))}
 function update(dt){
  if(G.done)return;
- if(G.tut&&(G.tut.hold||G.tut.pz>0)){if(!G.tut.hold){G.tut.pz-=dt;if(G.tut.pz<=0){$('tut').hidden=true;if(G.tut.obj){$('tobj').textContent=G.tut.obj;$('tobj').hidden=false}}}return}
+ if(G.tut&&(G.tut.hold||G.tut.pz>0)){if(!G.tut.hold){G.tut.pz-=dt;if(G.tut.pz<=0){$('tut').hidden=true;if(G.tut.obj){$('tobj').textContent=G.tut.obj;$('tobj').hidden=false;clearTimeout(TOT);TOT=setTimeout(()=>{$('tobj').hidden=true},7000)}}}return}
  G.t-=dt;G.el[0]=Math.min(10,G.el[0]+dt*.5*(G.mode?2:1));G.el[1]=Math.min(10,G.el[1]+dt*.5*(G.mode?2:1)*(G.pvp?1:DIFF[S.d].rate));bot(dt);tutTick(dt);
  for(const s of G.sp){s.t+=dt;if(!s.done&&s.t>=(s.k=='m'?.9:.5)){s.done=1;for(const e of G.E)if(e.team!=s.team&&e.hp>0&&Math.hypot(e.x-s.x,e.y-s.y)<=s.rad+e.r)dmgTo(e,(e.kind=='p'||e.kind=='king')?s.cdmg:s.dmg)}}
  G.sp=G.sp.filter(s=>s.t<(s.k=='m'?1.5:2));
