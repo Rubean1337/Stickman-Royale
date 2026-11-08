@@ -810,7 +810,7 @@ function mpRender(){qmRender();const el=$('mpb');if(!el)return;const ok=S.deck.l
 const mpOK=()=>S.deck.length==Math.min(8,S.un)&&(S.tut||0)>=3;
 let QM=null;
 PJ.load=()=>window.Peer?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js';s.onload=ok;s.onerror=()=>no({code:'peerjs_blocked'});document.head.appendChild(s)});
-const ICE={config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'},{urls:['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turn:openrelay.metered.ca:443?transport=tcp'],username:'openrelayproject',credential:'openrelayproject'}]}};
+const ICE={config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'},{urls:'turn:eu-0.turn.peerjs.com:3478',username:'peerjs',credential:'peerjsp'},{urls:'turn:us-0.turn.peerjs.com:3478',username:'peerjs',credential:'peerjsp'}],sdpSemantics:'unified-plan'}};
 PJ.hub=async function(name){await PJ.load();const H={},base='tabardclash-'+name,NS=8;let dead=0,conns=[],cl=null,p=null,slot=0,st='starting',err='',tm=null,gen=0;
  const fire=(t,d,peer)=>{for(const f of H[t]||[])try{f({isMe:false,peer,data:d,topic:t})}catch(e){}};
  const kill=()=>{clearTimeout(tm);try{p&&p.destroy()}catch(e){}p=null;conns=[];cl=null};
@@ -818,7 +818,7 @@ PJ.hub=async function(name){await PJ.load();const H={},base='tabardclash-'+name,
  const client=(id,my)=>{try{p&&p.destroy()}catch(e){}conns=[];cl=null;const q=new Peer(ICE);p=q;st='joining lobby '+slot;
   q.on('disconnected',()=>{if(!dead&&gen==my&&!q.destroyed)try{q.reconnect()}catch(e){}});
   q.on('open',()=>{if(gen!==my)return;const c=q.connect(id,{reliable:true,serialization:'json'});
-   tm=setTimeout(()=>{if(gen===my&&!c.open){err='lobby '+slot+' not answering';next(300,1)}},7000);
+   tm=setTimeout(()=>{if(gen===my&&!c.open){err='lobby '+slot+' not answering';next(300,1)}},20000);const iv=setInterval(()=>{if(gen!==my||c.open){clearInterval(iv);return}try{const z=c.peerConnection&&c.peerConnection.iceConnectionState;if(z)st='joining lobby '+slot+' (connection: '+z+')'}catch(e){}},500);
    c.on('open',()=>{if(gen!==my)return;clearTimeout(tm);cl=c;st='connected to lobby '+slot});
    c.on('data',x=>{if(gen===my&&x&&typeof x.t=='string')fire(x.t,x.d,x.f)});
    c.on('close',()=>{if(gen===my){slot=0;next(500+Math.random()*1500,0)}})});
