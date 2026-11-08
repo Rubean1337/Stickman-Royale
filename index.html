@@ -758,20 +758,20 @@ PJ.hub=async function(name){await PJ.load();const H={},id='tabardclash-'+name;le
 function qmWait(){return QM?(Date.now()-QM.t0)/1000:0}
 function qmRender(){const q=$('qmb');if(!q)return;let t='';
  if((S.tut||0)>=3){
-  if(QM||(MP&&MP.qm))t=`<div class='box' style='margin:6px 0'><b>${MP?'Match found! Connecting...':'Searching for an opponent... '+Math.round(qmWait())+'s'}</b><br><small>Looking for a real player in your arena with similar trophies and card levels. If nobody is found in 15 seconds, you will play a bot with normal rewards.</small>${QM?`<div class='row'><button onclick='qmCancel()'>Cancel</button></div>`:''}</div>`;
+  if(QM||(MP&&MP.qm))t=`<div class='box' style='margin:6px 0'><b>${MP?'Match found! Connecting...':'Searching for an opponent... '+Math.round(qmWait())+'s'}</b><br><small>Looking for a real player in your arena with similar trophies and card levels. If nobody is found in 15 seconds, you will play a bot with normal rewards.</small>${QM?`<br><small>${Object.values(QM.seen||{}).filter(t=>Date.now()-t<5000).length} other player(s) searching in your arena.</small>`:''}${QM?`<div class='row'><button onclick='qmCancel()'>Cancel</button></div>`:''}</div>`;
   else t=`<div class='row'><button id='go' ${mpOK()?'':'disabled'} onclick='mpQuick()'>Battle</button></div><small>Fight a real player in your arena with similar trophies and card levels.</small>`}
  q.innerHTML=t}
 function qmCancel(){if(QM){clearInterval(QM.iv);clearTimeout(QM.bt);try{QM.room&&QM.room.leave()}catch(e){}QM=null}mpRender()}
-async function mpQuick(){if(MP||QM||!RM||!mpOK())return;const A=arenaOf(S.tr||0),M=QM={id:Math.random().toString(36).slice(2,8),t0:Date.now(),state:'seek',lv:avgL(),tr:S.tr||0};mpRender();const bt=()=>{if(QM!==M||M.state=='done')return;if(M.state=='offer')return void(M.bt=setTimeout(bt,4500));qmBot(M)};M.bt=setTimeout(bt,15000);
- try{const r=await(RM===PJ?PJ.hub('q'+A):RM.join('tcq-'+A));if(QM!==M){r.leave();return}M.room=r;
-  r.on('seek',m=>{const d=m.data;if(m.isMe||QM!==M||M.state!='seek'||!d||typeof d.id!='string'||d.id==M.id)return;
+async function mpQuick(){if(MP||QM||!RM||!mpOK())return;const A=arenaOf(S.tr||0),M=QM={id:Math.random().toString(36).slice(2,8),t0:Date.now(),state:'seek',lv:avgL(),tr:S.tr||0,seen:{}};mpRender();const bt=()=>{if(QM!==M||M.state=='done')return;if(M.state=='offer')return void(M.bt=setTimeout(bt,4500));qmBot(M)};M.bt=setTimeout(bt,25000);
+ try{const r=await(RM===PJ?PJ.hub('q'+A):RM.join('tcq-'+A));if(QM!==M){r.leave();return}M.room=r;M.t0=Date.now();clearTimeout(M.bt);M.bt=setTimeout(bt,15000);
+  r.on('seek',m=>{const d=m.data;if(m.sameTab||QM!==M||!d||typeof d.id!='string'||d.id==M.id)return;M.seen[d.id]=Date.now();if(M.state!='seek')return;
    const w=Math.max(qmWait(),+d.w||0);if(Math.abs((+d.tr||0)-M.tr)>100+60*Math.floor(w/8)||Math.abs((+d.lv||0)-M.lv)>1+Math.floor(w/12))return;
    if(M.id<d.id){const A2='abcdefghjkmnpqrstuvwxyz23456789';M.state='offer';M.code=Array.from({length:4},()=>A2[Math.random()*A2.length|0]).join('');r.emit('offer',{to:d.id,from:M.id,code:M.code});setTimeout(()=>{if(QM===M&&M.state=='offer')M.state='seek'},4000)}});
-  r.on('offer',m=>{const d=m.data;if(m.isMe||QM!==M||M.state!='seek'||!d||d.to!=M.id||!/^[a-z0-9]{4}$/.test(d.code))return;M.state='done';r.emit('accept',{to:d.from,code:d.code});qmGo(M,'guest',d.code)});
-  r.on('accept',m=>{const d=m.data;if(m.isMe||QM!==M||M.state!='offer'||!d||d.to!=M.id||d.code!=M.code)return;M.state='done';qmGo(M,'host',M.code)});
+  r.on('offer',m=>{const d=m.data;if(m.sameTab||QM!==M||M.state!='seek'||!d||d.to!=M.id||!/^[a-z0-9]{4}$/.test(d.code))return;M.state='done';r.emit('accept',{to:d.from,code:d.code});qmGo(M,'guest',d.code)});
+  r.on('accept',m=>{const d=m.data;if(m.sameTab||QM!==M||M.state!='offer'||!d||d.to!=M.id||d.code!=M.code)return;M.state='done';qmGo(M,'host',M.code)});
   const tick=()=>{if(QM!==M||M.state=='done')return;r.emit('seek',{id:M.id,tr:M.tr,lv:M.lv,w:Math.round(qmWait())});mpRender()};M.iv=setInterval(tick,1500);tick()
  }catch(e){if(QM===M)qmBot(M)}}
-function qmGo(M,role,code){clearInterval(M.iv);clearTimeout(M.bt);try{M.room.leave()}catch(e){}QM=null;if(role=='host')mpHost(code);else setTimeout(()=>mpJoin(code,1),1500)}
+function qmGo(M,role,code){clearInterval(M.iv);clearTimeout(M.bt);M.state='done';const rm=M.room;setTimeout(()=>{try{rm.leave()}catch(e){}},1500);QM=null;if(role=='host')mpHost(code);else setTimeout(()=>mpJoin(code,1),1500)}
 function botName(){const a=['Jake','Mia','Ethan','Luna','Noah','Ava','Liam','Zoe','Owen','Maya','Leo','Ella','Max','Nina','Finn','Ruby','Kai','Sofia','Theo','Cole','Ivy','Dex','Remy','Tess','Aiden','Chloe','Eli','Hana'],c=['Dragon','Shadow','Pixel','Turbo','Frost','Storm','Ninja','Blaze','Wolf','Viper','Comet','Rocket'],r=Math.random,p=x=>x[r()*x.length|0],n=r()*100|0;
  const f=[()=>p(a)+n,()=>p(a)+'_'+p(['K','M','R','J','S','T','B','L']),()=>p(c)+p(['King','Rider','Kid','Fox','Hawk','Bro','Boss'])+(r()<.5?n:''),()=>p(a).toLowerCase()+p(['plays','gaming','official','_yt','xd','123']),()=>p(a)+p(a)+(r()<.5?2005+(r()*8|0):''),()=>'xX'+p(c)+'Xx'];
  let s;do{s=p(f)().slice(0,14)}while(badName(s));return s}
@@ -802,7 +802,7 @@ async function mpOpen(){const M=MP;try{const r=await RM.join('tc-'+M.code);if(MP
 }catch(e){if(MP===M)MP=null;mpRender();const b=$('mpb');if(b)b.insertAdjacentHTML('beforeend','<small style="color:#c0392b">Could not open a room ('+((e&&e.code)||'error')+'). Check the code and make sure the host created the room first.</small>')}}
 const emit=(t,d)=>{try{MP&&MP.room&&MP.room.emit(t,d).catch(()=>{})}catch(e){}};
 /* host side */
-function onHello(m){const d=m.data;if(m.isMe||!MP||MP.role!='host'||!d)return;if(MP.started){if(m.peer==MP.opp)sendGo();return}
+function onHello(m){const d=m.data;if(m.sameTab||!MP||MP.role!='host'||!d)return;if(MP.started){if(m.peer==MP.opp)sendGo();return}
  const dk=Array.isArray(d.d)?[...new Set(d.d)].filter(k=>typeof k=='string'&&Object.hasOwn(CARDS,k)).slice(0,8):[];if(dk.length<4)return;
  const lv={};for(const k of dk)lv[k]=Math.max(1,Math.min(MAXL,Math.round(+(d.l&&d.l[k])||1)));
  MP.opp=m.peer;MP.started=1;const nm=String(d.n||'Friend').slice(0,14);
@@ -813,7 +813,7 @@ function startPvp(g){$('emrow').hidden=true;$('menu').style.display='none';$('tu
  const P=deal(S.deck),B=deal(g.deck);
  G={E,hand:P.h,q:P.q,bh:B.h,bq:B.q,el:[5,5],t:MAXT,arena:arenaOf(S.tr||0),mode:0,ban:0,em:[],ecd:0,pl,bl:g.avg,fx:[],sp:[],pr:[],ruins:[],bot:1e9,done:0,pvp:1,qm:MP.qm,opp:g.name,glv:g.lv};
  sel=null;hand();last=performance.now()}
-function onPlace(m){const d=m.data;if(m.isMe||!MP||MP.role!='host'||m.peer!=MP.opp||!G||!G.pvp||G.done||G.mode==2||!d)return;
+function onPlace(m){const d=m.data;if(m.sameTab||!MP||MP.role!='host'||m.peer!=MP.opp||!G||!G.pvp||G.done||G.mode==2||!d)return;
  const k=d.k,i=G.bh.indexOf(k);if(i<0||!(+d.x>=0)||!(+d.y>=0))return;const c=CARDS[k],s=canPlace(1,k,+d.x,+d.y);if(!s||G.el[1]<c.c)return;
  G.el[1]-=c.c;spawn(1,k,s.x,s.y,G.glv[k]||1);cyc(G.bh,G.bq,i)}
 function hostTick(dt){if(!MP||!MP.room)return;MP.acc+=dt;if(MP.acc>=.1){MP.acc=0;sendSnap()}}
@@ -829,12 +829,12 @@ function endPvp(w){G.done=1;sendSnap();emit('over',{w});if(G.qm)qmReward(w);else
 function pvpMsg(w){return '<div style="text-align:center;font-size:32px"><b>'+(w==1?'Victory!':w==-1?'Defeat.':'Draw.')+'</b></div>'+scoreBox(0).replace(/<div style="text-align:center;margin-top:10px">[\s\S]*$/,'')+'<p>Friendly battle: no trophies or rewards.</p>'}
 function oppLeft(){if(!G||!G.pvp||G.done)return;G.done=1;if(G.qm){qmReward(1);return}showResult('<b>Your friend left the match.</b> No result.')}
 /* guest side: sees the host sim mirrored so they always play the blue left side */
-function onGo(m){if(m.isMe||!MP||MP.role!='guest'||MP.started)return;const d=m.data||{},nm=String(d.n||'Friend').slice(0,14);
+function onGo(m){if(m.sameTab||!MP||MP.role!='guest'||MP.started)return;const d=m.data||{},nm=String(d.n||'Friend').slice(0,14);
  MP.started=1;MP.opp=m.peer;clearInterval(MP.iv);MP.ents={};MP.buf=null;MP.last=0;
  $('emrow').hidden=true;$('menu').style.display='none';$('tut').hidden=true;$('tobj').hidden=true;$('hand').innerHTML='';
  G={guest:1,pvp:1,qm:MP.qm,E:[],hand:[],q:[],el:[5,0],t:MAXT,arena:Math.max(0,Math.min(ARENAS.length-1,d.a|0)),mode:0,ban:0,em:[],ecd:0,fx:[],sp:[],pr:[],ruins:[],done:0,opp:badName(nm)?'Friend':nm};
  sel=null;last=performance.now()}
-function onSnap(m){const d=m.data;if(m.isMe||!MP||m.peer!=MP.opp||!G||!G.guest||!d||typeof d.s!='number'||d.s<=MP.last)return;
+function onSnap(m){const d=m.data;if(m.sameTab||!MP||m.peer!=MP.opp||!G||!G.guest||!d||typeof d.s!='number'||d.s<=MP.last)return;
  if(!MP.buf||MP.buf.s!=d.s){if(MP.buf&&d.s<MP.buf.s)return;MP.buf={s:d.s,n:d.n,c:{}}}
  MP.buf.c[d.i]=d;if(Object.keys(MP.buf.c).length==MP.buf.n){const B=MP.buf;MP.buf=null;try{applySnap(B)}catch(e){}}}
 function applySnap(B){const g=G,h=B.c[0],old=MP.ents;if(!h)return;MP.last=B.s;g.t=h.t;g.mode=h.m;g.ban=h.b;g.el[0]=h.e;
@@ -854,8 +854,8 @@ function gtick(dt){const g=G,k=Math.min(1,dt*14);g.ban-=dt;g.ecd-=dt;
  for(const r of g.ruins)r.t-=dt;for(const m of g.em)m.t+=dt;g.em=g.em.filter(m=>m.t<2.6)}
 function guestPlace(e){if(!G||!G.guest||G.done||G.mode==2||!sel)return;const p=pos(e),c=CARDS[sel],s=canPlace(0,sel,p.x,p.y);if(!s||G.el[0]<c.c)return;
  emit('place',{k:sel,x:W-s.x,y:s.y});G.el[0]-=c.c;sel=null;paint()}
-function onOver(m){if(m.isMe||!MP||MP.role!='guest'||m.peer!=MP.opp||!G||!G.guest||G.done)return;G.done=1;const w=-Math.sign(+(m.data&&m.data.w)||0);if(G.qm)qmReward(w);else showResult(pvpMsg(w))}
-function onEmo(m){if(m.isMe||!MP||!MP.started||m.peer!=MP.opp||!G||G.done)return;const t=m.data&&m.data.t;if(['mad','sad','support','laugh'].includes(t))emote(1,t)}
+function onOver(m){if(m.sameTab||!MP||MP.role!='guest'||m.peer!=MP.opp||!G||!G.guest||G.done)return;G.done=1;const w=-Math.sign(+(m.data&&m.data.w)||0);if(G.qm)qmReward(w);else showResult(pvpMsg(w))}
+function onEmo(m){if(m.sameTab||!MP||!MP.started||m.peer!=MP.opp||!G||G.done)return;const t=m.data&&m.data.t;if(['mad','sad','support','laugh'].includes(t))emote(1,t)}
 
 $('tki').src=KRI;$('pki').src=KLI;
 if(badName(S.name))S.name='Player';
