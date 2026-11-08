@@ -305,9 +305,9 @@ function menu(msg){if(MP&&MP.started)mpEnd();
  <div class="row"><label>Your name <input id="pname" maxlength="14" value="${esc(S.name||'Player')}" onchange="setName(this)"></label> <span id="pnote" style="color:#c0392b;font-size:15px"></span> <small>${S.named?'Changing your name costs '+NAME_COST+' gems.':'Your first name is free. After that, changing it costs '+NAME_COST+' gems.'}</small></div>
  <div class="row tabs"><button class="${page==0?'on':''}" onclick="slide(0)">Battle</button><button class="${page==1?'on':''}" onclick="slide(1)">Collection ${S.deck.length}/${need}</button></div>
  <div id="sl" class="slider"><section><div class="bt"><div class="btl">
- ${tutBox()}<div id="mpb"></div>${chestBox()}${itemBox()}<p style="margin:6px 0">Bot difficulty. The bot fights with cards close to your level.</p><div class="row">`;
+ <div id="qmb"></div>${tutBox()}<div id="mpb"></div>${chestBox()}${itemBox()}<p style="margin:6px 0">Practice matches are against a bot. Difficulty: the bot fights with cards close to your level.</p><div class="row">`;
  DIFF.forEach((d,i)=>h+=`<button class="${i==S.d?'on':''}" onclick="S.d=${i};save();menu()">${d.k}</button>`);
- h+=`</div><div class="row">${(S.tut||0)<3?'':`<button id="go" ${ok?'':'disabled'} onclick="start()">Battle</button>`}${ok?'':'<span>Fill your deck first (swipe to the Collection tab)</span>'}</div>
+ h+=`</div><div class="row">${(S.tut||0)<3?'':`<button id="go" ${ok?'':'disabled'} onclick="start()">Practice matches</button>`}${ok?'':'<span>Fill your deck first (swipe to the Collection tab)</span>'}</div>
  <p>New cards are found in mini chests (${S.un}/${ORDER.length} owned). Upgrade your cards in the Collection tab.</p>
  <p>If the 2:30 timer runs out, Ultimate Death begins: coins double, +2 minutes, and the first tower destroyed loses its team the match.</p>
  </div><div class="btr">${crownPanel()}</div></div></section><section><div class="row"><button class="${cview=='deck'?'on':''}" onclick="cview='deck';menu()">Deck</button><button class="${cview=='all'?'on':''}" onclick="cview='all';menu()">Collection</button></div>`;
@@ -344,7 +344,7 @@ function up(k,g){const l=L(k),n=upNeed(l,rmul(k),expType(k));if(g?!n.okG:!n.ok)r
 
 function tower(team,kind,x,y,l){const k=kind=='king';
  return{team,bld:1,kind,x,y,r:k?55:37,hp:(k?3000:1500)*M(l),mhp:(k?3000:1500)*M(l),dmg:(k?75:50)*M(l),rg:k?320:420,cd:0,sc:k?2.2:1.9}}
-function start(tn){
+function start(tn){qmCancel();
  if(!tn&&((S.tut||0)<3||S.deck.length<Math.min(8,S.un)))return;
  const sdv=S.d;if(tn)S.d=0;
  $('emrow').hidden=true;
@@ -701,23 +701,52 @@ function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;if(G){if(G.gu
 (function(){const ic={mad:SAI.src,sad:SSI.src,support:TUI.src,laugh:SLI.src},nm={mad:'Mad',sad:'Sad',support:'Supportive',laugh:'Laughing'};
  $('emrow').innerHTML=Object.keys(ic).map(k=>`<button onclick="pe('${k}')" title="${nm[k]}" aria-label="${nm[k]}"><img src="${ic[k]}" alt="${nm[k]}" style="width:64px;height:56px;object-fit:contain;image-rendering:pixelated;display:block"></button>`).join('')})();
 /* ===== friend battles: host-authoritative, streamed over the room capability ===== */
-let MP=null,RM=null;const PJ={async join(name){if(!window.Peer)await new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js';s.onload=ok;s.onerror=()=>no({code:'peerjs_blocked'});document.head.appendChild(s)});const code=name.slice(3),host=MP.role=='host',H={},cbs=[];let conns=[];const wire=c=>{c.on('data',x=>{if(!x||typeof x.t!='string')return;for(const f of H[x.t]||[])try{f({isMe:false,peer:c.peer,data:x.d,topic:x.t})}catch(e){}});c.on('close',()=>{conns=conns.filter(q=>q!==c);for(const f of cbs)try{f({left:[{peer:c.peer}],joined:[],peers:[]})}catch(e){}})};const p=new Peer(host?'tabardclash-'+code:undefined);await new Promise((ok,no)=>{const to=setTimeout(()=>no({code:'timeout'}),12000);p.on('error',e=>{clearTimeout(to);no({code:(e&&e.type)||'error'})});if(host)p.on('connection',c=>c.on('open',()=>{if(conns.length)return c.close();conns=[c];wire(c)}));p.on('open',()=>{if(host){clearTimeout(to);ok()}else{const c=p.connect('tabardclash-'+code,{reliable:true,serialization:'json'});c.on('open',()=>{clearTimeout(to);conns=[c];wire(c);ok()})}})});return{name,on(t,f){(H[t]=H[t]||[]).push(f);return()=>{H[t]=(H[t]||[]).filter(q=>q!==f)}},emit(t,d){for(const c of conns)if(c.open)c.send({t,d});return Promise.resolve()},onPeers(f){cbs.push(f);return()=>{}},leave(){conns.forEach(c=>c.close());try{p.destroy()}catch(e){}return Promise.resolve()}}}};
+let MP=null,RM=null;const PJ={async join(name){if(!window.Peer)await new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js';s.onload=ok;s.onerror=()=>no({code:'peerjs_blocked'});document.head.appendChild(s)});const code=name.slice(3),host=MP.role=='host',H={},cbs=[];let conns=[];const wire=c=>{c.on('data',x=>{if(!x||typeof x.t!='string')return;for(const f of H[x.t]||[])try{f({isMe:false,peer:c.peer,data:x.d,topic:x.t})}catch(e){}});c.on('close',()=>{conns=conns.filter(q=>q!==c);for(const f of cbs)try{f({left:[{peer:c.peer}],joined:[],peers:[]})}catch(e){}})};const p=new Peer(host?'tabardclash-'+code:undefined);await new Promise((ok,no)=>{const to=setTimeout(()=>no({code:'timeout'}),20000);let tries=0;const tc=()=>{const c=p.connect('tabardclash-'+code,{reliable:true,serialization:'json'});c.on('open',()=>{clearTimeout(to);conns=[c];wire(c);ok()})};p.on('error',e=>{if(!host&&e&&e.type=='peer-unavailable'&&++tries<8)return void setTimeout(tc,1200);clearTimeout(to);no({code:(e&&e.type)||'error'})});if(host)p.on('connection',c=>c.on('open',()=>{if(conns.length)return c.close();conns=[c];wire(c)}));p.on('open',()=>{if(host){clearTimeout(to);ok()}else{tc()}})});return{name,on(t,f){(H[t]=H[t]||[]).push(f);return()=>{H[t]=(H[t]||[]).filter(q=>q!==f)}},emit(t,d){for(const c of conns)if(c.open)c.send({t,d});return Promise.resolve()},onPeers(f){cbs.push(f);return()=>{}},leave(){conns.forEach(c=>c.close());try{p.destroy()}catch(e){}return Promise.resolve()}}}};
 (async()=>{try{RM=await claude.use('room')}catch(e){RM=null}if(!RM)RM=PJ;mpRender()})();
-function mpRender(){const el=$('mpb');if(!el)return;const ok=S.deck.length==Math.min(8,S.un)&&(S.tut||0)>=3;
+function mpRender(){qmRender();const el=$('mpb');if(!el)return;const ok=S.deck.length==Math.min(8,S.un)&&(S.tut||0)>=3;
  let h='<div class="box" style="margin:6px 0;border-color:#00a2e8"><b>Play with friends</b> &middot; friendly battle, no rewards<br>';
  if(!RM)h+='<small>Not available here. Open the shared page while signed in; friends must be invited with edit or contributor access.</small>';
- else if(MP)h+=`<span style="font-size:22px">${MP.role=='host'?'Room code <b>'+MP.code.toUpperCase()+'</b>. ':''}${esc(MP.st||'')}</span><div class="row"><button onclick="mpEnd();mpRender()">Cancel</button></div>`;
+ else if(MP)h+=`<span style="font-size:22px">${MP.role=='host'&&!MP.qm?'Room code <b>'+MP.code.toUpperCase()+'</b>. ':''}${esc(MP.st||'')}</span><div class="row"><button onclick="mpEnd();mpRender()">Cancel</button></div>`;
  else h+=`<small>Create a room and share the code, or enter a friend's code. Each player fights with their own deck and card levels.</small><div class="row"><button ${ok?'':'disabled'} onclick="mpHost()">Create room</button><input id="mpc" maxlength="5" placeholder="CODE" style="font:inherit;width:90px;padding:4px 8px;border:2px solid var(--ln);border-radius:8px;background:var(--pn);color:var(--fg);text-transform:uppercase"><button ${ok?'':'disabled'} onclick="mpJoin($('mpc').value)">Join</button></div>${ok?'':'<small>Finish the tutorial and fill your deck first.</small>'}`;
  el.innerHTML=h+'</div>'}
+const mpOK=()=>S.deck.length==Math.min(8,S.un)&&(S.tut||0)>=3;
+let QM=null;
+PJ.load=()=>window.Peer?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js';s.onload=ok;s.onerror=()=>no({code:'peerjs_blocked'});document.head.appendChild(s)});
+PJ.hub=async function(name){await PJ.load();const H={},id='tabardclash-'+name;let dead=0,conns=[],cl=null,p=null;
+ const fire=(t,d,peer)=>{for(const f of H[t]||[])try{f({isMe:false,peer,data:d,topic:t})}catch(e){}};
+ const kill=()=>{try{p&&p.destroy()}catch(e){}};
+ const retry=ms=>{kill();conns=[];cl=null;if(!dead)setTimeout(go,ms)};
+ const client=()=>{p=new Peer();p.on('open',()=>{const c=p.connect(id,{reliable:true,serialization:'json'});cl=c;c.on('data',x=>{if(x&&typeof x.t=='string')fire(x.t,x.d,x.f)});c.on('close',()=>retry(500+Math.random()*1500))});p.on('error',e=>retry(e&&e.type=='peer-unavailable'?300+Math.random()*1000:2000))};
+ const go=()=>{if(dead)return;kill();conns=[];cl=null;p=new Peer(id);p.on('connection',c=>{c.on('open',()=>conns.push(c));c.on('data',x=>{if(!x||typeof x.t!='string')return;fire(x.t,x.d,c.peer);for(const o of conns)if(o!==c&&o.open)o.send({t:x.t,d:x.d,f:c.peer})});c.on('close',()=>{conns=conns.filter(q=>q!==c)})});p.on('error',e=>{if(dead)return;if(e&&e.type=='unavailable-id'){kill();client()}else retry(2000)})};
+ go();
+ return{on(t,f){(H[t]=H[t]||[]).push(f)},emit(t,d){for(const c of conns)if(c.open)c.send({t,d,f:id});if(cl&&cl.open)cl.send({t,d});return Promise.resolve()},leave(){dead=1;kill();return Promise.resolve()}}};
+function qmWait(){return QM?(Date.now()-QM.t0)/1000:0}
+function qmRender(){const q=$('qmb');if(!q)return;let t='';
+ if((S.tut||0)>=3){
+  if(QM||(MP&&MP.qm))t=`<div class='box' style='margin:6px 0'><b>${MP?'Match found! Connecting...':'Searching for an opponent... '+Math.round(qmWait())+'s'}</b><br><small>${QM&&qmWait()>30?'Few players are online right now. Keep waiting, or try Practice matches.':'Looking for a real player in your arena with similar trophies and card levels.'}</small>${QM?`<div class='row'><button onclick='qmCancel()'>Cancel</button></div>`:''}</div>`;
+  else t=`<div class='row'><button id='go' ${mpOK()?'':'disabled'} onclick='mpQuick()'>Battle</button></div><small>Fight a real player in your arena with similar trophies and card levels.</small>`}
+ q.innerHTML=t}
+function qmCancel(){if(QM){clearInterval(QM.iv);try{QM.room&&QM.room.leave()}catch(e){}QM=null}mpRender()}
+async function mpQuick(){if(MP||QM||!RM||!mpOK())return;const A=arenaOf(S.tr||0),M=QM={id:Math.random().toString(36).slice(2,8),t0:Date.now(),state:'seek',lv:avgL(),tr:S.tr||0};mpRender();
+ try{const r=await(RM===PJ?PJ.hub('q'+A):RM.join('tcq-'+A));if(QM!==M){r.leave();return}M.room=r;
+  r.on('seek',m=>{const d=m.data;if(m.isMe||QM!==M||M.state!='seek'||!d||typeof d.id!='string'||d.id==M.id)return;
+   const w=Math.max(qmWait(),+d.w||0);if(Math.abs((+d.tr||0)-M.tr)>100+60*Math.floor(w/8)||Math.abs((+d.lv||0)-M.lv)>1+Math.floor(w/12))return;
+   if(M.id<d.id){const A2='abcdefghjkmnpqrstuvwxyz23456789';M.state='offer';M.code=Array.from({length:4},()=>A2[Math.random()*A2.length|0]).join('');r.emit('offer',{to:d.id,from:M.id,code:M.code});setTimeout(()=>{if(QM===M&&M.state=='offer')M.state='seek'},4000)}});
+  r.on('offer',m=>{const d=m.data;if(m.isMe||QM!==M||M.state!='seek'||!d||d.to!=M.id||!/^[a-z0-9]{4}$/.test(d.code))return;M.state='done';r.emit('accept',{to:d.from,code:d.code});qmGo(M,'guest',d.code)});
+  r.on('accept',m=>{const d=m.data;if(m.isMe||QM!==M||M.state!='offer'||!d||d.to!=M.id||d.code!=M.code)return;M.state='done';qmGo(M,'host',M.code)});
+  const tick=()=>{if(QM!==M||M.state=='done')return;r.emit('seek',{id:M.id,tr:M.tr,lv:M.lv,w:Math.round(qmWait())});mpRender()};M.iv=setInterval(tick,1500);tick()
+ }catch(e){if(QM===M){clearInterval(M.iv);QM=null}mpRender();const b=$('qmb');if(b)b.insertAdjacentHTML('beforeend','<small style="color:#c0392b">Could not start matchmaking ('+((e&&e.code)||'error')+').</small>')}}
+function qmGo(M,role,code){clearInterval(M.iv);try{M.room.leave()}catch(e){}QM=null;if(role=='host')mpHost(code);else setTimeout(()=>mpJoin(code,1),1500)}
+function qmReward(w){G.pvp=0;const d=S.d;S.d=2;end(w);S.d=d;save()}
 function mpSt(t){if(MP)MP.st=t;mpRender()}
 function mpEnd(){if(MP){clearInterval(MP.iv);try{MP.room&&MP.room.leave()}catch(e){}MP=null}}
-function mpHost(){if(MP||!RM)return;const A='abcdefghjkmnpqrstuvwxyz23456789';MP={role:'host',code:Array.from({length:4},()=>A[Math.random()*A.length|0]).join(''),st:'Opening room...',uid:0,seq:0,acc:0};mpRender();mpOpen()}
-function mpJoin(c){c=String(c||'').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,5);if(MP||!RM)return;if(!c){const b=$('mpb');if(b)b.insertAdjacentHTML('beforeend','<small style="color:#c0392b">Type the room code first.</small>');return}MP={role:'guest',code:c,st:'Connecting...',uid:0};mpRender();mpOpen()}
+function mpHost(c){if(MP||!RM)return;const A='abcdefghjkmnpqrstuvwxyz23456789';MP={role:'host',code:c||Array.from({length:4},()=>A[Math.random()*A.length|0]).join(''),st:'Opening room...',uid:0,seq:0,acc:0,qm:!!c};mpRender();mpOpen()}
+function mpJoin(c,qm){c=String(c||'').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,5);if(MP||!RM)return;if(!c){const b=$('mpb');if(b)b.insertAdjacentHTML('beforeend','<small style="color:#c0392b">Type the room code first.</small>');return}MP={role:'guest',code:c,qm:qm,st:'Connecting...',uid:0};mpRender();mpOpen()}
 async function mpOpen(){const M=MP;try{const r=await RM.join('tc-'+M.code);if(MP!==M){r.leave();return}M.room=r;
  r.on('hello',onHello);r.on('go',onGo);r.on('snap',onSnap);r.on('place',onPlace);r.on('emo',onEmo);r.on('over',onOver);
- r.onPeers(ch=>{if(M.started&&M.opp&&ch.left.some(p=>p.peer==M.opp))oppLeft()});
- if(M.role=='host')mpSt('Waiting for your friend...');
- else{mpSt('Waiting for the host...');const hi=()=>r.emit('hello',{n:S.name,d:S.deck,l:S.lv,p:S.pt||1,a:avgL()}).catch(()=>{});hi();let n=0;
+ if(M.qm)setTimeout(()=>{if(MP===M&&!M.started){mpEnd();mpRender()}},25000);r.onPeers(ch=>{if(M.started&&M.opp&&ch.left.some(p=>p.peer==M.opp))oppLeft()});
+ if(M.role=='host')mpSt(M.qm?'Match found! Connecting...':'Waiting for your friend...');
+ else{mpSt(M.qm?'Match found! Connecting...':'Waiting for the host...');const hi=()=>r.emit('hello',{n:S.name,d:S.deck,l:S.lv,p:S.pt||1,a:avgL()}).catch(()=>{});hi();let n=0;
   M.iv=setInterval(()=>{if(M.started)return clearInterval(M.iv);if(++n>30){clearInterval(M.iv);mpSt('No answer. Check the code and ask the host to create a room.')}else hi()},1500)}
 }catch(e){if(MP===M)MP=null;mpRender();const b=$('mpb');if(b)b.insertAdjacentHTML('beforeend','<small style="color:#c0392b">Could not open a room ('+((e&&e.code)||'error')+'). Check the code and make sure the host created the room first.</small>')}}
 const emit=(t,d)=>{try{MP&&MP.room&&MP.room.emit(t,d).catch(()=>{})}catch(e){}};
@@ -731,7 +760,7 @@ function sendGo(){emit('go',{n:S.name,a:G?G.arena:0})}
 function startPvp(g){$('emrow').hidden=true;$('menu').style.display='none';$('tut').hidden=true;$('tobj').hidden=true;
  const pt=S.pt||1,pl=avgL(),E=[tower(0,'p',240,BR[0],pt),tower(0,'p',240,BR[1],pt),tower(0,'king',140,260,pl),tower(1,'p',1280,BR[0],g.pt),tower(1,'p',1280,BR[1],g.pt),tower(1,'king',1380,260,g.avg)];
  const P=deal(S.deck),B=deal(g.deck);
- G={E,hand:P.h,q:P.q,bh:B.h,bq:B.q,el:[5,5],t:MAXT,arena:arenaOf(S.tr||0),mode:0,ban:0,em:[],ecd:0,pl,bl:g.avg,fx:[],sp:[],pr:[],ruins:[],bot:1e9,done:0,pvp:1,opp:g.name,glv:g.lv};
+ G={E,hand:P.h,q:P.q,bh:B.h,bq:B.q,el:[5,5],t:MAXT,arena:arenaOf(S.tr||0),mode:0,ban:0,em:[],ecd:0,pl,bl:g.avg,fx:[],sp:[],pr:[],ruins:[],bot:1e9,done:0,pvp:1,qm:MP.qm,opp:g.name,glv:g.lv};
  sel=null;hand();last=performance.now()}
 function onPlace(m){const d=m.data;if(m.isMe||!MP||MP.role!='host'||m.peer!=MP.opp||!G||!G.pvp||G.done||G.mode==2||!d)return;
  const k=d.k,i=G.bh.indexOf(k);if(i<0||!(+d.x>=0)||!(+d.y>=0))return;const c=CARDS[k],s=canPlace(1,k,+d.x,+d.y);if(!s||G.el[1]<c.c)return;
@@ -745,14 +774,14 @@ function sendSnap(){const g=G,M=MP;if(!M||!M.room||!g)return;const L=[];
    m.p=g.pr.slice(0,20).map(p=>[p.x|0,p.y|0,+p.a.toFixed(2),p.team,p.ball?1:0]);m.z=g.sp.map(p=>[p.team,p.x|0,p.y|0,p.k,p.rad,+p.t.toFixed(2)]);
    m.r=g.ruins.slice(0,10).map(r=>[r.x|0,r.y|0,r.team,r.k?1:0,r.d?1:0,+Math.min(r.t,9999).toFixed(1),r.v])}
   emit('snap',m)}}
-function endPvp(w){G.done=1;sendSnap();emit('over',{w});showResult(pvpMsg(w))}
+function endPvp(w){G.done=1;sendSnap();emit('over',{w});if(G.qm)qmReward(w);else showResult(pvpMsg(w))}
 function pvpMsg(w){return '<div style="text-align:center;font-size:32px"><b>'+(w==1?'Victory!':w==-1?'Defeat.':'Draw.')+'</b></div>'+scoreBox(0).replace(/<div style="text-align:center;margin-top:10px">[\s\S]*$/,'')+'<p>Friendly battle: no trophies or rewards.</p>'}
-function oppLeft(){if(!G||!G.pvp||G.done)return;G.done=1;showResult('<b>Your friend left the match.</b> No result.')}
+function oppLeft(){if(!G||!G.pvp||G.done)return;G.done=1;if(G.qm){qmReward(1);return}showResult('<b>Your friend left the match.</b> No result.')}
 /* guest side: sees the host sim mirrored so they always play the blue left side */
 function onGo(m){if(m.isMe||!MP||MP.role!='guest'||MP.started)return;const d=m.data||{},nm=String(d.n||'Friend').slice(0,14);
  MP.started=1;MP.opp=m.peer;clearInterval(MP.iv);MP.ents={};MP.buf=null;MP.last=0;
  $('emrow').hidden=true;$('menu').style.display='none';$('tut').hidden=true;$('tobj').hidden=true;$('hand').innerHTML='';
- G={guest:1,pvp:1,E:[],hand:[],q:[],el:[5,0],t:MAXT,arena:Math.max(0,Math.min(ARENAS.length-1,d.a|0)),mode:0,ban:0,em:[],ecd:0,fx:[],sp:[],pr:[],ruins:[],done:0,opp:badName(nm)?'Friend':nm};
+ G={guest:1,pvp:1,qm:MP.qm,E:[],hand:[],q:[],el:[5,0],t:MAXT,arena:Math.max(0,Math.min(ARENAS.length-1,d.a|0)),mode:0,ban:0,em:[],ecd:0,fx:[],sp:[],pr:[],ruins:[],done:0,opp:badName(nm)?'Friend':nm};
  sel=null;last=performance.now()}
 function onSnap(m){const d=m.data;if(m.isMe||!MP||m.peer!=MP.opp||!G||!G.guest||!d||typeof d.s!='number'||d.s<=MP.last)return;
  if(!MP.buf||MP.buf.s!=d.s){if(MP.buf&&d.s<MP.buf.s)return;MP.buf={s:d.s,n:d.n,c:{}}}
@@ -774,7 +803,7 @@ function gtick(dt){const g=G,k=Math.min(1,dt*14);g.ban-=dt;g.ecd-=dt;
  for(const r of g.ruins)r.t-=dt;for(const m of g.em)m.t+=dt;g.em=g.em.filter(m=>m.t<2.6)}
 function guestPlace(e){if(!G||!G.guest||G.done||G.mode==2||!sel)return;const p=pos(e),c=CARDS[sel],s=canPlace(0,sel,p.x,p.y);if(!s||G.el[0]<c.c)return;
  emit('place',{k:sel,x:W-s.x,y:s.y});G.el[0]-=c.c;sel=null;paint()}
-function onOver(m){if(m.isMe||!MP||MP.role!='guest'||m.peer!=MP.opp||!G||!G.guest||G.done)return;G.done=1;showResult(pvpMsg(-Math.sign(+(m.data&&m.data.w)||0)))}
+function onOver(m){if(m.isMe||!MP||MP.role!='guest'||m.peer!=MP.opp||!G||!G.guest||G.done)return;G.done=1;const w=-Math.sign(+(m.data&&m.data.w)||0);if(G.qm)qmReward(w);else showResult(pvpMsg(w))}
 function onEmo(m){if(m.isMe||!MP||!MP.started||m.peer!=MP.opp||!G||G.done)return;const t=m.data&&m.data.t;if(['mad','sad','support','laugh'].includes(t))emote(1,t)}
 
 $('tki').src=KRI;$('pki').src=KLI;
