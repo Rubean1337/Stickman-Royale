@@ -305,12 +305,11 @@ function menu(msg){if(MP&&MP.started)mpEnd();
  <div class="row"><label>Your name <input id="pname" maxlength="14" value="${esc(S.name||'Player')}" onchange="setName(this)"></label> <span id="pnote" style="color:#c0392b;font-size:15px"></span> <small>${S.named?'Changing your name costs '+NAME_COST+' gems.':'Your first name is free. After that, changing it costs '+NAME_COST+' gems.'}</small></div>
  <div class="row tabs"><button class="${page==0?'on':''}" onclick="slide(0)">Battle</button><button class="${page==1?'on':''}" onclick="slide(1)">Collection ${S.deck.length}/${need}</button></div>
  <div id="sl" class="slider"><section><div class="bt"><div class="btl">
- <div id="qmb"></div>${tutBox()}<div id="mpb"></div>${chestBox()}${itemBox()}<p style="margin:6px 0">Practice matches are against a bot. Difficulty: the bot fights with cards close to your level.</p><div class="row">`;
- DIFF.forEach((d,i)=>h+=`<button class="${i==S.d?'on':''}" onclick="S.d=${i};save();menu()">${d.k}</button>`);
- h+=`</div><div class="row">${(S.tut||0)<3?'':`<button id="go" ${ok?'':'disabled'} onclick="start()">Practice matches</button>`}${ok?'':'<span>Fill your deck first (swipe to the Collection tab)</span>'}</div>
+ <div id="qmb"></div>${tutBox()}<div id="mpb"></div>${chestBox()}${itemBox()}`;
+ h+=`<div class="row">${ok?'':'<span>Fill your deck first (swipe to the Collection tab)</span>'}</div>
  <p>New cards are found in mini chests (${S.un}/${ORDER.length} owned). Upgrade your cards in the Collection tab.</p>
  <p>If the 2:30 timer runs out, Ultimate Death begins: coins double, +2 minutes, and the first tower destroyed loses its team the match.</p>
- </div><div class="btr">${crownPanel()}</div></div></section><section><div class="row"><button class="${cview=='deck'?'on':''}" onclick="cview='deck';menu()">Deck</button><button class="${cview=='all'?'on':''}" onclick="cview='all';menu()">Collection</button></div>`;
+ </div><div class="btr">${(S.tut||0)<3?'':`<button id="pmb" ${ok?'':'disabled'} onclick="practiceMenu()" style="width:100%;margin-bottom:8px">Practice matches</button>`}${crownPanel()}</div></div></section><section><div class="row"><button class="${cview=='deck'?'on':''}" onclick="cview='deck';menu()">Deck</button><button class="${cview=='all'?'on':''}" onclick="cview='all';menu()">Collection</button></div>`;
  if(cview=='all')h+=allView();
  else{h+=`<div>Common EXP <b>${S.exp}</b> &nbsp; Rare EXP <b>${S.expR||0}</b></div><h2 style="margin:6px 0">Your deck (${S.deck.length}/8)</h2>
  <p style="margin:4px 0">Your hand holds 4 cards from this deck and cycles through the rest. Upgrade cost is supplies / EXP: Common cards use Common EXP, Rare cards use Rare EXP and cost 1.5x. Short on either? Buy some with gems in the exchange below, or use Cover gap to pay only the missing part with gems.</p>`;
@@ -738,6 +737,8 @@ async function mpQuick(){if(MP||QM||!RM||!mpOK())return;const A=arenaOf(S.tr||0)
  }catch(e){if(QM===M){clearInterval(M.iv);QM=null}mpRender();const b=$('qmb');if(b)b.insertAdjacentHTML('beforeend','<small style="color:#c0392b">Could not start matchmaking ('+((e&&e.code)||'error')+').</small>')}}
 function qmGo(M,role,code){clearInterval(M.iv);try{M.room.leave()}catch(e){}QM=null;if(role=='host')mpHost(code);else setTimeout(()=>mpJoin(code,1),1500)}
 function qmReward(w){G.pvp=0;const d=S.d;S.d=2;end(w);S.d=d;save()}
+function practiceMenu(){if(!mpOK())return;qmCancel();let o=$('pm');if(!o){o=document.createElement('div');o.id='pm';o.style.cssText='position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55);padding:16px';o.onclick=e=>{if(e.target===o)o.remove()};document.body.appendChild(o)}
+ o.innerHTML=`<div class='box' style='max-width:380px;width:100%;background:var(--bg);color:var(--fg);padding:16px'><h2 style='margin:0 0 6px'>Practice matches</h2><small>Play against a bot that fights with cards close to your level.</small><p style='margin:10px 0 4px'><b>Choose difficulty</b></p><div class='row'>${DIFF.map((d,i)=>`<button class='${i==S.d?'on':''}' onclick='S.d=${i};save();practiceMenu()'>${d.k}</button>`).join('')}</div><small>Rewards: ${DIFF[S.d].rw}x</small><div class='row' style='margin-top:12px'><button onclick='$("pm").remove();start()'>Play</button><button onclick='$("pm").remove()'>Close</button></div></div>`}
 function mpSt(t){if(MP)MP.st=t;mpRender()}
 function mpEnd(){if(MP){clearInterval(MP.iv);try{MP.room&&MP.room.leave()}catch(e){}MP=null}}
 function mpHost(c){if(MP||!RM)return;const A='abcdefghjkmnpqrstuvwxyz23456789';MP={role:'host',code:c||Array.from({length:4},()=>A[Math.random()*A.length|0]).join(''),st:'Opening room...',uid:0,seq:0,acc:0,qm:!!c};mpRender();mpOpen()}
