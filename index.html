@@ -800,7 +800,28 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){hid=Date.n
 addEventListener('pagehide',mkSave);
 /* ===== friend battles: host-authoritative, streamed over the room capability ===== */
 let MP=null,RM=null;const PJ={async join(name){if(!window.Peer)await new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js';s.onload=ok;s.onerror=()=>no({code:'peerjs_blocked'});document.head.appendChild(s)});const code=name.slice(3),host=MP.role=='host',H={},cbs=[];let conns=[];const wire=c=>{c.on('data',x=>{if(!x||typeof x.t!='string')return;for(const f of H[x.t]||[])try{f({isMe:false,peer:c.peer,data:x.d,topic:x.t})}catch(e){}});c.on('close',()=>{conns=conns.filter(q=>q!==c);for(const f of cbs)try{f({left:[{peer:c.peer}],joined:[],peers:[]})}catch(e){}})};const p=new Peer(host?'tabardclash-'+code:undefined,ICE);await new Promise((ok,no)=>{const to=setTimeout(()=>no({code:'timeout'}),20000);let tries=0;const tc=()=>{const c=p.connect('tabardclash-'+code,{reliable:true,serialization:'json'});c.on('open',()=>{clearTimeout(to);conns=[c];wire(c);ok()})};p.on('error',e=>{if(!host&&e&&e.type=='peer-unavailable'&&++tries<8)return void setTimeout(tc,1200);clearTimeout(to);no({code:(e&&e.type)||'error'})});if(host)p.on('connection',c=>c.on('open',()=>{if(conns.length)return c.close();conns=[c];wire(c)}));p.on('open',()=>{if(host){clearTimeout(to);ok()}else{tc()}})});return{name,alive(){return conns.some(c=>c.open)},on(t,f){(H[t]=H[t]||[]).push(f);return()=>{H[t]=(H[t]||[]).filter(q=>q!==f)}},emit(t,d){for(const c of conns)if(c.open)c.send({t,d});return Promise.resolve()},onPeers(f){cbs.push(f);return()=>{}},leave(){conns.forEach(c=>c.close());try{p.destroy()}catch(e){}return Promise.resolve()}}}};
-const RMREADY=(async()=>{try{RM=await claude.use('room')}catch(e){RM=null}if(!RM)RM=PJ;mpRender()})();
+/* ===== optional relay server (paste your wss:// address here; leave empty to use PeerJS) ===== */
+const RELAY='';
+function wsRoom(name){return new Promise((ok,no)=>{const H={},cbs=[];let ws,dead=0,me='',peers=new Set(),opened=0,tries=0,st='connecting to relay';
+ const api={name,on(t,f){(H[t]=H[t]||[]).push(f);return()=>{H[t]=(H[t]||[]).filter(q=>q!==f)}},
+  emit(t,d){if(ws&&ws.readyState==1)ws.send(JSON.stringify({op:'msg',t,d}));return Promise.resolve()},
+  onPeers(f){cbs.push(f);return()=>{}},peers(){return[...peers].map(x=>({peer:x,isMe:false,kind:'viewer'}))},
+  alive(){return!!ws&&ws.readyState==1},status(){return st},
+  leave(){dead=1;try{ws&&ws.close()}catch(e){}return Promise.resolve()}};
+ const tell=c=>cbs.forEach(f=>{try{f({joined:[],left:[],peers:[],...c})}catch(e){}});
+ const connect=()=>{if(dead)return;try{ws=new WebSocket(RELAY)}catch(e){return no({code:'relay_bad_url'})}
+  ws.onopen=()=>{st='connected';ws.send(JSON.stringify({op:'join',room:name}))};
+  ws.onmessage=ev=>{let m;try{m=JSON.parse(ev.data)}catch(e){return}
+   if(m.op=='hi'){me=m.id;peers=new Set(m.peers||[]);tries=0;if(!opened){opened=1;ok(api)}if(peers.size)tell({joined:[...peers].map(x=>({peer:x}))})}
+   else if(m.op=='peers'){const j=(m.joined||[]).map(x=>({peer:x})),l=(m.left||[]).map(x=>({peer:x}));j.forEach(x=>peers.add(x.peer));l.forEach(x=>peers.delete(x.peer));tell({joined:j,left:l})}
+   else if(m.op=='full'){if(!opened)no({code:'room_full'})}
+   else if(m.op=='msg'&&typeof m.t=='string'){for(const f of H[m.t]||[])try{f({isMe:false,peer:m.f,data:m.d,topic:m.t})}catch(e){}}};
+  ws.onclose=()=>{if(dead)return;if(peers.size){const l=[...peers].map(x=>({peer:x}));peers.clear();tell({left:l})}
+   if(!opened&&++tries>30)return no({code:'relay_unreachable'});st=opened?'reconnecting':'waking up relay server...';setTimeout(connect,opened?1000:2500)}};
+ connect()})}
+const WSR={join:n=>wsRoom(n)};
+try{if(RELAY)fetch(RELAY.replace(/^ws/,'http'),{mode:'no-cors'}).catch(()=>{})}catch(e){}
+const RMREADY=(async()=>{try{RM=await claude.use('room')}catch(e){RM=null}if(!RM)RM=RELAY?WSR:PJ;mpRender()})();
 function mpRender(){qmRender();const el=$('mpb');if(!el)return;const ok=S.deck.length==Math.min(8,S.un)&&(S.tut||0)>=3;
  let h='<div class="box" style="margin:6px 0;border-color:#00a2e8"><b>Play with friends</b> &middot; friendly battle, no rewards<br>';
  if(!RM)h+='<small>Not available here. Open the shared page while signed in; friends must be invited with edit or contributor access.</small>';
