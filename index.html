@@ -336,7 +336,7 @@ function menu(msg){dropSave();if(MP&&MP.started)mpEnd();{const r=trCheck();if(r)
  </div><div class="btr">${(S.tut||0)<3?'':`<button id="pmb" ${ok?'':'disabled'} onclick="practiceMenu()" style="width:100%;margin-bottom:8px">Practice matches</button>`}${trNext()}${crownPanel()}</div></div></section><section><div class="row"><button class="${cview=='deck'?'on':''}" onclick="cview='deck';menu()">Deck</button><button class="${cview=='all'?'on':''}" onclick="cview='all';menu()">Collection</button></div>`;
  if(cview=='all')h+=allView();
  else{h+=`<div>Common EXP <b>${S.exp}</b> &nbsp; Rare EXP <b>${S.expR||0}</b></div><h2 style="margin:6px 0">Your deck (${S.deck.length}/8)</h2>
- <p style="margin:4px 0">Your hand holds 4 cards from this deck and cycles through the rest. Upgrade cost is supplies / EXP: Common cards use Common EXP, Rare cards use Rare EXP and cost 1.5x. Short on either? Buy some with gems in the Shop tab, or use Cover gap to pay only the missing part with gems.</p>`;
+ <p style="margin:4px 0">Your hand holds 4 cards from this deck and cycles through the rest. Upgrade cost is supplies / EXP, starting at 5 at Lv 1 and growing 75% every level up to Lv 15: Common cards use Common EXP, Rare cards use Rare EXP and cost 1.5x. Short on either? Buy some with gems in the Shop tab, or use Cover gap to pay only the missing part with gems.</p>`;
   h+=`<h2 style="margin:8px 0 2px">Towers</h2>`+towerTile();
   const tile=(k,inDeck)=>{const c=CARDS[k],l=L(k);
    return `<div class="box tile rar-${rarOf(k)}">${ci(k)}<b>${c.n}</b> ${rbadge(k)}<br>${c.c} coins &middot; Lv ${l}<br><small>${c.t}</small><br><small>${c.hp?'HP '+Math.round(c.hp*M(l))+' &nbsp; ':''}${c.dmg?'Dmg '+Math.round(c.dmg*M(l))+(c.ctd?' &nbsp; Crown tower dmg '+Math.round(c.ctd*M(l)):''):''}</small>
@@ -352,26 +352,26 @@ function menu(msg){dropSave();if(MP&&MP.started)mpEnd();{const r=trCheck();if(r)
  m.innerHTML=h;mpRender();const sl=$('sl');sl.scrollLeft=page*sl.clientWidth;
  sl.onscroll=()=>{const p=Math.round(sl.scrollLeft/sl.clientWidth);if(p!=page){page=p;document.querySelectorAll('.tabs button').forEach((b,j)=>b.classList.toggle('on',j==p))}}
 }
-function upNeed(l,m,t){const mm=m||1,cs=Math.round(20*l*mm),ce=Math.round(15*l*mm),have=t=='rexp'?(S.expR||0):S.exp,g=Math.ceil(Math.max(0,cs-S.sup)/10)+Math.ceil(Math.max(0,ce-have)/(t=='rexp'?5:8)),mx=l>=MAXL;return{cs,ce,g,t,ok:!mx&&g==0,okG:!mx&&g>0&&S.gems>=g}}
+function upNeed(l,m,t){const mm=m||1,cs=Math.max(1,Math.round(5*Math.pow(1.75,l-1)*mm)),ce=Math.max(1,Math.round(5*Math.pow(1.75,l-1)*mm)),have=t=='rexp'?(S.expR||0):S.exp,g=Math.ceil(Math.max(0,cs-S.sup)/20)+Math.ceil(Math.max(0,ce-have)/(t=='rexp'?10:16)),mx=l>=MAXL;return{cs,ce,g,t,ok:!mx&&g==0,okG:!mx&&g>0&&S.gems>=g}}
 function pay(n,g){if(g)S.gems-=n.g;S.sup-=Math.min(S.sup,n.cs);if(n.t=='rexp')S.expR=(S.expR||0)-Math.min(S.expR||0,n.ce);else S.exp-=Math.min(S.exp,n.ce)}
 function upBtns(l,fn,k){const n=upNeed(l,rmul(k),expType(k));if(l>=MAXL)return '<button disabled>Max level</button>';
  return `<button ${n.ok?'':'disabled'} onclick="${fn}false)">Upgrade ${n.cs} / ${n.ce}${n.t=='rexp'?' Rare EXP':''}</button>`+(n.g?`<button ${S.gems>=n.g?'':'disabled'} onclick="${fn}true)">Cover gap: ${n.g} ${GEM}</button>`:'')}
 function upT(g){const l=S.pt||1,n=upNeed(l);if(g?!n.okG:!n.ok)return;pay(n,g);S.pt=l+1;save();menu()}
 const SHOP=[['sup',50,5],['exp',40,5],['rexp',20,8],['sup',200,20],['exp',160,20],['rexp',80,30]];
 function buyG(i){const [t,q,c]=SHOP[i];if(S.gems<c)return;S.gems-=c;if(t=='sup')S.sup+=q;else if(t=='rexp')S.expR=(S.expR||0)+q;else S.exp+=q;save();menu()}
-const DEALS=[['exp',10,30],['exp',30,80],['rexp',6,40]],CARD_UNLOCK={smith:[1,300],fort:[3,600]};
+const DEALS=[['exp',10,30],['exp',30,80],['rexp',6,40]],CARD_UNLOCK={smith:[1,30],fort:[3,60]};
 function shopDay(){const d=new Date().toLocaleDateString('en-CA');if(S.sd!==d||!S.sb){S.sd=d;S.sg=0;S.sb=[];save()}}
 function shopGift(){shopDay();if(S.sg)return;const ri=(a,b)=>a+(Math.random()*(b-a+1)|0),r=Math.random();let t,n;
  if(r<.4){t='sup';n=ri(10,25);S.sup+=n}else if(r<.65){t='exp';n=ri(5,12);S.exp+=n}else if(r<.85){t='gem';n=ri(1,3);S.gems+=n}else{t='rexp';n=ri(3,6);S.expR=(S.expR||0)+n}
  S.sg=1;S.sgt=t;S.sgn=n;save();menu()}
 function buyDeal(i){shopDay();const d=DEALS[i];if(!d||S.sb.includes(i)||S.sup<d[2])return;S.sup-=d[2];if(d[0]=='rexp')S.expR=(S.expR||0)+d[1];else S.exp+=d[1];S.sb.push(i);save();menu()}
-function buyCard(k){const u=CARD_UNLOCK[k]||[0,500];if(k!==ORDER[S.un]||arenaOf(S.tr||0)<u[0]||S.sup<u[1])return;S.sup-=u[1];S.un++;fillDeck();save();menu()}
+function buyCard(k){const u=CARD_UNLOCK[k]||[0,50];if(k!==ORDER[S.un]||arenaOf(S.tr||0)<u[0]||S.gems<u[1])return;S.gems-=u[1];S.un++;fillDeck();save();menu()}
 function shopDaily(){shopDay();const nm={sup:'supplies',exp:'Common EXP',rexp:'Rare EXP',gem:'gems'},ar=arenaOf(S.tr||0);
  let h=`<h2 style='margin:6px 0'>Shop</h2><div>${GEM} Gems <b>${S.gems}</b> &nbsp; Supplies <b>${S.sup}</b> &nbsp; Common EXP <b>${S.exp}</b> &nbsp; Rare EXP <b>${S.expR||0}</b></div><h2 style='margin:12px 0 2px'>Daily rewards</h2><div class='box' style='margin:6px 0'><b>Free daily gift</b><br>${S.sg?`<small>Today's gift: +${S.sgn} ${nm[S.sgt]}. Come back tomorrow!</small>`:`<small>A small surprise: supplies, EXP or gems.</small><div class='row'><button onclick='shopGift()'>Claim today's gift</button></div>`}</div><div class='grid'>`;
  DEALS.forEach((d,i)=>{const got=S.sb.includes(i);h+=`<div class='box' style='text-align:center'><b>${d[1]} ${nm[d[0]]}</b><br><small>Once a day</small><div class='row' style='justify-content:center'><button ${got||S.sup<d[2]?'disabled':''} onclick='buyDeal(${i})'>${got?'Bought today':'Buy for '+d[2]+' supplies'}</button></div></div>`});
  h+=`</div>`;const ks=ORDER.slice(S.un);
- if(ks.length){h+=`<h2 style='margin:12px 0 2px'>Card unlocks</h2><small>Cards unlock with supplies once you reach the right arena, one at a time in order.</small><div class='grid' style='margin-top:6px'>`;
-  ks.forEach((k,j)=>{const u=CARD_UNLOCK[k]||[0,500],okA=ar>=u[0];h+=`<div class='box tile'>${ci(k)}<b>${CARDS[k].n}</b><br><small>${CARDS[k].t}</small><br><small>${okA?'Arena requirement met':'Reach Arena '+(u[0]+1)+': '+ARENAS[u[0]].n}${j?' &middot; unlock the card before it first':''}</small><div class='row'><button ${!j&&okA&&S.sup>=u[1]?'':'disabled'} onclick="buyCard('${k}')">Unlock for ${u[1]} supplies</button></div></div>`});h+=`</div>`}
+ if(ks.length){h+=`<h2 style='margin:12px 0 2px'>Card unlocks</h2><small>Cards unlock with gems once you reach the right arena, one at a time in order.</small><div class='grid' style='margin-top:6px'>`;
+  ks.forEach((k,j)=>{const u=CARD_UNLOCK[k]||[0,50],okA=ar>=u[0];h+=`<div class='box tile'>${ci(k)}<b>${CARDS[k].n}</b><br><small>${CARDS[k].t}</small><br><small>${okA?'Arena requirement met':'Reach Arena '+(u[0]+1)+': '+ARENAS[u[0]].n}${j?' &middot; unlock the card before it first':''}</small><div class='row'><button ${!j&&okA&&S.gems>=u[1]?'':'disabled'} onclick="buyCard('${k}')">Unlock for ${u[1]} ${GEM}</button></div></div>`});h+=`</div>`}
  return h}
 function shopTab(){return shopDaily()+shopGems()}
 function shopGems(){const nm={sup:'Supplies',exp:'Common EXP',rexp:'Rare EXP'},ic={sup:'📦',exp:'📘',rexp:'📕'};
@@ -392,7 +392,7 @@ function start(tn){qmCancel();
  const pt=S.pt||1,bpt=Math.max(1,Math.min(MAXL,pt+DIFF[S.d].off)),pl=avgL(),bl=Math.max(1,Math.min(MAXL,pl+DIFF[S.d].off)),E=[];
  E.push(tower(0,'p',240,BR[0],pt),tower(0,'p',240,BR[1],pt),tower(0,'king',140,260,pl));
  E.push(tower(1,'p',1280,BR[0],bpt),tower(1,'p',1280,BR[1],bpt),tower(1,'king',1380,260,bl));
- const P=tn&&TDECK[tn-1]?{h:TDECK[tn-1].slice(0,4),q:TDECK[tn-1].slice(4)}:deal(S.deck),B=deal(sh(owned()).slice(0,8));
+ const P=tn&&TDECK[tn-1]?{h:TDECK[tn-1].slice(0,4),q:TDECK[tn-1].slice(4)}:deal(S.deck),B=deal(sh(tn?owned():botPool()).slice(0,8));
  G={E,hand:P.h,q:P.q,bh:B.h,bq:B.q,el:[5,5],t:MAXT,arena:arenaOf(S.tr||0),mode:0,ban:0,em:[],ecd:0,pl,bl,fx:[],sp:[],pr:[],ruins:[],bot:2,done:0};sel=null;G.opp=tn?'Training Bot':BOT_NAMES[Math.floor(Math.random()*BOT_NAMES.length)];if(tn){G.tut={n:tn,i:0,age:0,pc:0,cast:0};G.sd=sdv;if(tn<3){G.bot=1e9}const s0=TUT[tn-1][0];if(s0.on)s0.on();tutShow()}else $('tut').hidden=true;hand();last=performance.now();
 }
 function spawn(team,k,x,y,l,n){const c=CARDS[k],m=M(l);if(c.spell){G.sp.push({team,x,y,k:c.spell,dmg:c.dmg*m,cdmg:c.ctd*m,rad:c.rad,t:0});return}if(n==null&&!c.air)shove(x,y);
@@ -553,6 +553,7 @@ function dbDraw(e){const c=DBC[e.team],p=e.pt>0,f=p?DBA[Math.min(DBA.length-1,Ma
  cx.save();cx.translate(e.x,cy);if(fl)cx.scale(-1,1);cx.drawImage(c,f[0],f[1],f[2],f[3],-f[4]*s,-h/2,w,h);cx.restore();
  const q=Math.max(0,e.hp/e.mhp),by=cy-h/2-9;cx.fillStyle='#000';cx.fillRect(e.x-13,by,26,6);cx.fillStyle=e.team?'#ed1c24':'#00a2e8';cx.fillRect(e.x-12,by+1,24*q,4);lvTag(e.x-19,by+3,e)}
 const sh=a=>[...a].sort(()=>Math.random()-.5);
+function botPool(){const a=arenaOf(S.tr||0);return ORDER.filter(k=>(CARD_UNLOCK[k]||[0])[0]<=a)}
 function deal(dk){const d=sh(dk);return{h:d.slice(0,4),q:d.slice(4)}}
 function cyc(hd,q,i){const k=hd[i];if(q.length){hd[i]=q.shift();q.push(k)}}
 
