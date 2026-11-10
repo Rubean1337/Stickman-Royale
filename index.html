@@ -64,6 +64,81 @@ input#pname{font:inherit;padding:4px 8px;border:2px solid var(--ln);border-radiu
 .crn{height:1.1em;width:auto;image-rendering:pixelated;vertical-align:-.2em}
 .gem{height:1.15em;width:auto;image-rendering:pixelated;vertical-align:-.25em}
 .gem.pocket{height:32px;vertical-align:middle}
+
+/* ===== UI v2: colorful, animated, beginner friendly ===== */
+:root{--g1:#bfeaff;--g2:#e4f9cf;--acc:#ff8a1f;--sh:0 4px 0 rgba(0,0,0,.16)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--g1:#10304a;--g2:#173d2a}}
+:root[data-theme="dark"]{--g1:#10304a;--g2:#173d2a}
+@keyframes bgmove{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes hbob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-6px)}}
+@keyframes pulse{0%,100%{transform:scale(1);box-shadow:0 5px 0 #9c2b00,0 0 0 0 rgba(255,138,31,.6)}50%{transform:scale(1.05);box-shadow:0 5px 0 #9c2b00,0 0 0 12px rgba(255,138,31,0)}}
+@keyframes selpulse{0%,100%{box-shadow:0 0 0 3px #ffd54a,0 8px 16px rgba(0,0,0,.3)}50%{box-shadow:0 0 0 6px #ffe98a,0 10px 20px rgba(0,0,0,.35)}}
+@keyframes grow{from{width:0}}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(255,59,59,.7)}100%{box-shadow:0 0 0 10px rgba(255,59,59,0)}}
+@keyframes shine{from{background-position:0 0}to{background-position:40px 0}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(245,184,0,.0)}50%{box-shadow:0 0 12px 3px rgba(245,184,0,.8)}}
+body{background:linear-gradient(160deg,var(--g1),var(--g2),var(--g1));background-size:300% 300%;background-attachment:fixed;animation:bgmove 24s ease-in-out infinite}
+button{border-radius:12px;border-bottom-width:4px;font-weight:bold;transition:transform .12s,filter .12s;background:linear-gradient(180deg,var(--pn),color-mix(in srgb,var(--pn) 80%,var(--blue)))}
+button:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.07)}
+button:active:not(:disabled){transform:translateY(2px);border-bottom-width:2px}
+.box{border-radius:14px;box-shadow:var(--sh)}
+#menu{background:linear-gradient(160deg,var(--g1),var(--g2),var(--g1));background-size:300% 300%;animation:bgmove 24s ease-in-out infinite}
+#menu h1{font-size:46px;line-height:1.05;margin:0 0 6px;filter:drop-shadow(0 3px 0 rgba(0,0,0,.2))}
+.ttl{background:linear-gradient(90deg,#ff7a18,#ffb703,#ff4d8d,#8e44ff,#ff7a18);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:bgmove 6s linear infinite}
+.crown{display:inline-block;animation:bob 1.6s ease-in-out infinite}
+#menu h2{font-size:24px;padding-left:10px;border-left:7px solid var(--acc);border-radius:3px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-weight:bold;border:2px solid var(--ln);background:var(--pn);box-shadow:0 3px 0 rgba(0,0,0,.15);color:var(--fg)}
+.chip small{opacity:.7;font-weight:normal;font-size:12px}
+.chip.sup{background:#ffe9b8;color:#5a3b00}.chip.gem{background:#d6efff;color:#06405c}.chip.tr{background:#ffdede;color:#7a1010}.chip.xp{background:#e6dcff;color:#3b1d7a}
+.arena{display:block;width:100%;text-align:left;margin:6px 0;padding:10px 14px;color:#fff;background:linear-gradient(90deg,#10b981,#0ea5e9,#8b5cf6);background-size:200% 100%;animation:bgmove 10s ease infinite;text-shadow:0 2px 0 rgba(0,0,0,.3);font-size:20px}
+.arena small{display:block;font-weight:normal;opacity:.95;margin-top:2px}
+.pb{display:block;height:12px;border-radius:7px;background:rgba(0,0,0,.3);overflow:hidden;margin-top:6px}
+.pb i{display:block;height:100%;width:var(--w);background:linear-gradient(90deg,#fff,#ffe98a);border-radius:7px;animation:grow 1.1s ease-out both}
+details.prof,details.help{margin:8px 0;padding:6px 10px;border:2px dashed var(--ln);border-radius:12px;background:color-mix(in srgb,var(--pn) 70%,transparent)}
+details summary{cursor:pointer;font-weight:bold;list-style:none}details summary::-webkit-details-marker{display:none}
+details.help{border-style:solid;border-color:#f5b800;background:color-mix(in srgb,#fff6cc 55%,var(--pn))}
+.steps{margin:8px 0 4px;padding:0;list-style:none;display:grid;gap:6px}
+.steps li{display:flex;gap:10px;align-items:center;font-size:19px}
+.steps li b{flex:none;width:30px;height:30px;border-radius:50%;background:linear-gradient(#ffb703,#ff8a1f);color:#fff;display:grid;place-items:center;border:2px solid var(--ln)}
+.tabs{position:sticky;top:-6px;z-index:3;display:flex;gap:6px;padding:6px;margin:8px 0;background:color-mix(in srgb,var(--pn) 88%,transparent);backdrop-filter:blur(6px);border:2px solid var(--ln);border-radius:18px;box-shadow:var(--sh)}
+.tabs button{position:relative;flex:1;font-size:20px;padding:10px 6px;border-radius:14px}
+.tabs button.on{background:linear-gradient(180deg,#38bdf8,#6366f1);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.3)}
+.tabs button .ti{display:inline-block}.tabs button.on .ti{animation:bob 1.2s ease-in-out infinite}
+.dot{position:absolute;top:3px;right:8px;width:13px;height:13px;border-radius:50%;background:#ff3b3b;border:2px solid #fff;animation:ping 1.3s infinite}
+#go{background:linear-gradient(180deg,#ffb703,#ff6a00);color:#fff;border-color:#9c2b00;border-bottom-width:5px;font-size:30px;padding:10px 34px;border-radius:16px;text-shadow:0 2px 0 rgba(0,0,0,.35);animation:pulse 1.8s ease-in-out infinite}
+#go:disabled{animation:none;filter:grayscale(.6)}
+.b-add{background:linear-gradient(#4ade80,#16a34a);color:#fff}.b-rem{background:linear-gradient(#fdba74,#ea580c);color:#fff}
+.b-up{background:linear-gradient(#c084fc,#7c3aed);color:#fff}.b-gap{background:linear-gradient(#fde047,#f59e0b);color:#3b2a00}
+.b-warn{width:100%;background:linear-gradient(#fca5a5,#ef4444);color:#fff;font-size:18px;animation:bob 1.5s ease-in-out infinite}
+.cst{font-weight:normal;font-size:.85em;opacity:.95;margin-left:2px}
+.tile{animation:rise .45s both}
+.deckgrid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.deckgrid>*:nth-child(2),.grid>*:nth-child(2){animation-delay:.04s}.deckgrid>*:nth-child(3),.grid>*:nth-child(3){animation-delay:.08s}.deckgrid>*:nth-child(4),.grid>*:nth-child(4){animation-delay:.12s}.deckgrid>*:nth-child(5),.grid>*:nth-child(5){animation-delay:.16s}.deckgrid>*:nth-child(n+6),.grid>*:nth-child(n+6){animation-delay:.2s}
+.thead{display:flex;gap:10px;align-items:center;margin-bottom:6px}.tmeta{min-width:0}.tname{font-size:20px}
+.tile .ci{height:68px;border-radius:8px;box-shadow:0 3px 0 rgba(0,0,0,.25);margin:0;transition:transform .2s}.tile:hover .ci{transform:rotate(-4deg) scale(1.06)}
+.chips2{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.chips2 .chip{padding:0 8px;font-size:14px;box-shadow:none;border-width:1px}
+.chip.cc{background:#fff0b3;color:#5a3b00}.chip.lv{background:#e6dcff;color:#3b1d7a}.chip.hp{background:#ffd9d9;color:#7a1010}.chip.dm{background:#ffe3c4;color:#7a3a00}.chip.tw{background:#d9e8ff;color:#0b2f66}
+.tile small{display:block;opacity:.85;line-height:1.2}
+.crw.ready{animation:glow 1.4s infinite}
+#hud{background:var(--pn);border:2px solid var(--ln);border-radius:16px;padding:6px 10px;box-shadow:var(--sh);margin-bottom:6px}
+#tm{background:#1c2a1c;color:#fff;padding:2px 12px;border-radius:999px;font-weight:bold;min-width:74px;text-align:center;white-space:nowrap}
+#bar{height:20px;border-radius:12px;background:#2b1b4d}
+#fill{background:repeating-linear-gradient(115deg,rgba(255,255,255,.22) 0 10px,rgba(255,255,255,0) 10px 20px),linear-gradient(90deg,#a855f7,#ec4899);background-size:40px 100%,100% 100%;animation:shine .8s linear infinite}
+#el{background:#fff0b3;color:#5a3b00;border:2px solid #5a3b00;border-radius:999px;padding:0 10px;white-space:nowrap}
+canvas{border-radius:16px;box-shadow:0 6px 0 rgba(0,0,0,.25),0 0 24px rgba(0,0,0,.18)}
+.card{border-radius:16px;border-bottom-width:5px;transition:transform .15s,box-shadow .15s,filter .15s;background:linear-gradient(180deg,var(--pn),color-mix(in srgb,var(--pn) 78%,#ffb703))}
+.card:hover{transform:translateY(-3px)}
+.card.sel{transform:translateY(-8px) scale(1.04);background:linear-gradient(180deg,#38bdf8,#0284c7);color:#fff;animation:selpulse 1s ease-in-out infinite}
+.card.no{filter:grayscale(.75) brightness(.95);opacity:.6}
+.cost{background:radial-gradient(circle at 35% 30%,#fff3a0,#f5b800);font-weight:bold;box-shadow:0 2px 0 rgba(0,0,0,.4)}
+#hintw{height:0;position:relative;z-index:3;pointer-events:none}
+#hint{position:absolute;left:50%;bottom:10px;white-space:nowrap;max-width:94%;padding:6px 16px;border-radius:999px;background:#fff;color:#1c2a1c;border:2px solid #1c2a1c;font-weight:bold;font-size:20px;box-shadow:0 4px 0 rgba(0,0,0,.25);animation:hbob 1.3s ease-in-out infinite}
+#hint[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (orientation:portrait) and (max-width:700px){#app::before{content:'Tip: turn your phone sideways for a bigger battlefield';display:block;text-align:center;font-size:14px;opacity:.7}}
 @media (orientation:landscape) and (max-height:560px){
 body{font-size:15px}
@@ -81,10 +156,11 @@ canvas{--ui:110px;border-width:2px}
 #tobj{top:40px;font-size:14px}#praise{bottom:64px;font-size:20px}
 }
 </style></head><body><div id="app">
-<div id="hud"><span id="tm">2:30</span><div id="bar"><div id="fill"></div></div><b id="el">5 / 10 coins</b><button id="emb" onclick="toggleEm()">Emote</button></div>
+<div id="hud"><span id="tm">2:30</span><div id="bar"><div id="fill"></div></div><b id="el">5 / 10 coins</b><button id="emb" onclick="toggleEm()">😀 Emote</button></div>
 <div id="emrow" class="row" hidden><button onclick="pe('mad')">😠 Mad</button><button onclick="pe('sad')">😢 Sad</button><button onclick="pe('support')">👍 Supportive</button><button onclick="pe('laugh')">😂 Laughing</button></div>
 <canvas id="cv" width="1520" height="560"></canvas>
 <div id="hand"></div>
+<div id="hintw"><div id="hint" hidden></div></div>
 <div id="tut" hidden><img id="tki" alt="King"><div><div id="tkt"></div><button id="tkn" onclick="tutNext()">Next</button></div></div><div id="tobj" hidden></div><div id="praise" hidden><img id="pki" alt="King"><span id="pkt"></span></div>
 <div id="menu"></div>
 </div>
@@ -250,7 +326,7 @@ function tutHL(){const t=G.tut,s=TUT[t.n-1][t.i];if(!s||!s.hl)return;const hl=s.
  else{cx.beginPath();cx.arc(hl.circle.x,hl.circle.y,hl.circle.r,0,7);cx.fill();cx.stroke();px=hl.circle.x;py=hl.circle.y-hl.circle.r}
  cx.globalAlpha=1;const by=Math.sin(performance.now()/160)*5;cx.fillStyle='#ffe14d';cx.strokeStyle='#000';cx.lineWidth=2;cx.beginPath();cx.moveTo(px,py-6+by);cx.lineTo(px-11,py-26+by);cx.lineTo(px+11,py-26+by);cx.closePath();cx.fill();cx.stroke();cx.restore()}
 function tutBox(){const n=(S.tut||0)+1;if(n>3)return '<div class="row"><button onclick="S.tut=0;save();menu()">Replay tutorial</button></div>';
- return `<div class="box" style="margin:6px 0;border-color:#f5b800"><b>Tutorial</b> &middot; lesson ${n} of 3<br>${TUT_INFO[n-1]}<div class="row"><button id="go" onclick="start(${n})">Start lesson ${n}</button></div></div>`}
+ return `<div class="box" style="margin:6px 0;border-color:#f5b800"><b>🎓 Learn to play</b> &middot; lesson ${n} of 3<br>${TUT_INFO[n-1]}<div class="row"><button id="go" onclick="start(${n})">▶ Start lesson ${n}</button></div></div>`}
 
 function crType(i){const r=((Math.sin((S.seed||1)+i*12.9898)*43758.5453)%1+1)%1;return r<.28?'chest':r<.56?'pouch':r<.74?'pocket':r<.90?'exp':'rexp'}
 function crIcon(t){return t=='chest'?`<img src="${CHI}" class="chmini" alt="" style="width:26px">`:t=='pouch'?'👝':t=='pocket'?POCKET:t=='exp'?'📘':'📕'}
@@ -286,7 +362,7 @@ function rmul(k){return k&&rarOf(k)=='rare'?1.5:1}
 function rbadge(k){const r=rarOf(k);return `<span class="rar ${r}">${RARITIES[r].n}</span>`}
 let cview='deck';
 function allView(){let h=`<div class="box" style="margin:6px 0">Common EXP <b>${S.exp}</b> &nbsp; Rare EXP <b>${S.expR||0}</b> &nbsp; Cards <b>${S.un}/${ORDER.length}</b> &nbsp; Emotes <b>4/4</b></div><h2 style="margin:6px 0">All cards</h2><div class="grid">`;
- ORDER.forEach((k,i)=>{const c=CARDS[k];if(i<S.un)h+=`<div class="box tile rar-${rarOf(k)}">${ci(k)}<b>${c.n}</b> ${rbadge(k)}<br>${c.c} coins &middot; Lv ${L(k)}<br><small>${c.t}</small></div>`;
+ ORDER.forEach((k,i)=>{const c=CARDS[k];if(i<S.un)h+=`<div class="box tile rar-${rarOf(k)}"><div class="thead">${tileHead(k,L(k))}</div><small>${c.t}</small></div>`;
   else h+=`<div class="box lock rar-${rarOf(k)}"><b>???</b> ${rbadge(k)}<br>Not obtained yet. Find it in a mini chest.</div>`});
  h+=`</div><h2 style="margin:10px 0 4px">Emotes</h2><div class="row">`;
  for(const [nm,src] of [['Mad',SAI.src],['Sad',SSI.src],['Supportive',TUI.src],['Laughing',SLI.src]])h+=`<div class="box" style="text-align:center"><img src="${src}" alt="${nm}" style="width:80px;height:56px;object-fit:contain;image-rendering:pixelated;display:block;margin:0 auto"><small>${nm}</small></div>`;
@@ -321,26 +397,27 @@ const CRN='<img class="crn" alt="crown" src="data:image/png;base64,iVBORw0KGgoAA
 function showResult(msg,label){const m=$('menu');m.style.display='block';m.style.background='color-mix(in srgb,var(--bg) 80%,transparent)';
  m.innerHTML='<h1>Battle over</h1><div class="box" style="margin:8px 0">'+msg+'</div><div class="row"><button id="go" onclick="menu()">'+(label||'Back to main screen')+'</button></div>'}
 function menu(msg){dropSave();if(MP&&MP.started)mpEnd();{const r=trCheck();if(r)msg=(msg?msg+'<br>':'')+r}
- $('menu').style.background='';if(G&&G.sd!=null){S.d=G.sd;save()}G=null;$('tut').hidden=true;$('tobj').hidden=true;$('praise').hidden=true;const m=$('menu');m.style.display='block';
+ $('menu').style.background='';if(G&&G.sd!=null){S.d=G.sd;save()}G=null;$('tut').hidden=true;$('tobj').hidden=true;$('praise').hidden=true;$('hint').hidden=true;_hint='';const m=$('menu');m.style.display='block';
  const need=Math.min(8,S.un),ok=S.deck.length==need;
- let h=`<h1>Tabard Clash</h1>${msg?`<div class="box" style="margin:8px 0">${msg}</div>`:''}
- <div>Supplies <b>${S.sup}</b> &nbsp; ${GEM} Gems <b>${S.gems}</b> &nbsp; 🏆 Trophies <b>${S.tr||0}</b> (Lv ${trophyLv()}) &nbsp; Deck level avg <b>${avgL()}</b></div>
- <div class="row"><button onclick="trRoad()">🏟 <b>Arena ${arenaOf(S.tr)+1}: ${ARENAS[arenaOf(S.tr)].n}</b> ▾</button> <span> ${arenaOf(S.tr)<ARENAS.length-1?((arenaOf(S.tr)+1)*360-(S.tr||0))+' trophies to Arena '+(arenaOf(S.tr)+2):'Top arena reached'}</span></div>
- <div class="row"><label>Your name <input id="pname" maxlength="14" value="${esc(S.name||'Player')}" onchange="setName(this)"></label> <span id="pnote" style="color:#c0392b;font-size:15px"></span> <small>${S.named?'Changing your name costs '+NAME_COST+' gems.':'Your first name is free. After that, changing it costs '+NAME_COST+' gems.'}</small></div>
- <div class="row tabs"><button class="${page==0?'on':''}" onclick="slide(0)">Battle</button><button class="${page==1?'on':''}" onclick="slide(1)">Collection ${S.deck.length}/${need}</button><button class="${page==2?'on':''}" onclick="slide(2)">Shop</button></div>
+ const ar0=arenaOf(S.tr||0),pct=ar0>=ARENAS.length-1?100:Math.max(0,Math.min(100,((S.tr||0)-ar0*360)/360*100)),nk=ORDER[S.un],uu=nk&&(CARD_UNLOCK[nk]||[0,50]),
+  dotC=!ok||owned().some(k=>L(k)<MAXL&&upNeed(L(k),rmul(k),expType(k)).ok),dotS=!!(nk&&ar0>=uu[0]&&S.gems>=uu[1]);
+ let h=`<h1><span class="crown">👑</span> <span class="ttl">Tabard Clash</span></h1>${msg?`<div class="box" style="margin:8px 0">${msg}</div>`:''}
+ <div class="chips"><span class="chip sup" title="Spend on card upgrades">📦 ${S.sup} <small>Supplies</small></span><span class="chip gem" title="Spend on unlocking cards and in the Shop">${GEM} ${S.gems} <small>Gems</small></span><span class="chip tr" title="Trophy level ${trophyLv()}">🏆 ${S.tr||0} <small>Trophies</small></span></div>
+ <button class="arena" onclick="trRoad()">🏟 Arena ${ar0+1}: ${ARENAS[ar0].n} ▾<span class="pb" style="--w:${pct}%"><i></i></span><small>${ar0<ARENAS.length-1?((ar0+1)*360-(S.tr||0))+' trophies to Arena '+(ar0+2)+' · tap to see rewards':'Top arena reached!'}</small></button>
+ <details class="prof"><summary>👤 ${esc(S.name||'Player')} <small>(tap to edit profile)</small></summary><div class="row"><label>Your name <input id="pname" maxlength="14" value="${esc(S.name||'Player')}" onchange="setName(this)"></label> <span id="pnote" style="color:#c0392b;font-size:15px"></span> <small>${S.named?'Changing your name costs '+NAME_COST+' gems.':'Your first name is free. After that, changing it costs '+NAME_COST+' gems.'}</small></div><small>Trophy level ${trophyLv()} &middot; Deck level average ${avgL()}</small></details>
+ <div class="row tabs"><button class="${page==0?'on':''}" onclick="slide(0)"><span class="ti">⚔️</span> Battle</button><button class="${page==1?'on':''}" onclick="slide(1)"><span class="ti">🃏</span> Cards ${S.deck.length}/${need}${dotC?'<i class="dot"></i>':''}</button><button class="${page==2?'on':''}" onclick="slide(2)"><span class="ti">🛒</span> Shop${dotS?'<i class="dot"></i>':''}</button></div>
  <div id="sl" class="slider"><section><div class="bt"><div class="btl">
  <div id="qmb"></div>${tutBox()}<div id="mpb"></div>${chestBox()}${itemBox()}`;
- h+=`<div class="row">${ok?'':'<span>Fill your deck first (swipe to the Collection tab)</span>'}</div>
- <p>New cards are found in mini chests (${S.un}/${ORDER.length} owned). Upgrade your cards in the Collection tab.</p>
- <p>If the 2:30 timer runs out, Ultimate Death begins: coins double, +2 minutes, and the first tower destroyed loses its team the match.</p>
+ h+=`<div class="row">${ok?'':'<button class="b-warn" onclick="slide(1)">⚠️ Your deck is not full. Tap to fix it!</button>'}</div>
+ <details class="help" ${(S.wins||0)<3?'open':''}><summary>❓ How to play</summary><ol class="steps"><li><b>1</b><span>Tap a card in your hand.</span></li><li><b>2</b><span>Tap the <u>blue area</u> of the field to drop it. Coins refill over time!</span></li><li><b>3</b><span>Destroy the enemy towers before they destroy yours.</span></li></ol><small>New cards come from mini chests (${S.un}/${ORDER.length} found). Upgrade cards in the Cards tab.</small></details>
  </div><div class="btr">${(S.tut||0)<3?'':`<button id="pmb" ${ok?'':'disabled'} onclick="practiceMenu()" style="width:100%;margin-bottom:8px">Practice matches</button>`}${trNext()}${crownPanel()}</div></div></section><section><div class="row"><button class="${cview=='deck'?'on':''}" onclick="cview='deck';menu()">Deck</button><button class="${cview=='all'?'on':''}" onclick="cview='all';menu()">Collection</button></div>`;
  if(cview=='all')h+=allView();
- else{h+=`<div>Common EXP <b>${S.exp}</b> &nbsp; Rare EXP <b>${S.expR||0}</b></div><h2 style="margin:6px 0">Your deck (${S.deck.length}/8)</h2>
- <p style="margin:4px 0">Your hand holds 4 cards from this deck and cycles through the rest. Upgrade cost is supplies / EXP, starting at 5 at Lv 1 and growing 75% every level up to Lv 15: Common cards use Common EXP, Rare cards use Rare EXP and cost 1.5x. Short on either? Buy some with gems in the Shop tab, or use Cover gap to pay only the missing part with gems.</p>`;
+ else{h+=`<div class="chips"><span class="chip xp" title="Upgrade Common cards">📘 ${S.exp} <small>Common EXP</small></span><span class="chip xp" title="Upgrade Rare cards">📕 ${S.expR||0} <small>Rare EXP</small></span></div><h2 style="margin:6px 0">Your deck (${S.deck.length}/8)</h2>
+ <small>Your hand holds 4 cards from this deck and cycles through the rest.</small><details class="help" style="border-color:#7c3aed"><summary>⬆ How upgrades work</summary><small>Upgrades cost supplies 📦 and EXP (📘 Common / 📕 Rare). The first upgrade costs 5 and each level costs 75% more, up to Lv 15. Rare cards cost 1.5x. Short on something? <b>Cover gap</b> pays only the missing part with gems.</small></details>`;
   h+=`<h2 style="margin:8px 0 2px">Towers</h2>`+towerTile();
   const tile=(k,inDeck)=>{const c=CARDS[k],l=L(k);
-   return `<div class="box tile rar-${rarOf(k)}">${ci(k)}<b>${c.n}</b> ${rbadge(k)}<br>${c.c} coins &middot; Lv ${l}<br><small>${c.t}</small><br><small>${c.hp?'HP '+Math.round(c.hp*M(l))+' &nbsp; ':''}${c.dmg?'Dmg '+Math.round(c.dmg*M(l))+(c.ctd?' &nbsp; Crown tower dmg '+Math.round(c.ctd*M(l)):''):''}</small>
-   <div class="row"><button ${!inDeck&&S.deck.length>=8?'disabled':''} onclick="${inDeck?'remC':'addC'}('${k}')">${inDeck?'Remove':'Add'}</button>${upBtns(l,"up('"+k+"',",k)}</div></div>`};
+   return `<div class="box tile rar-${rarOf(k)}"><div class="thead">${tileHead(k,l)}</div><small>${c.t}</small>
+   <div class="row"><button class="${inDeck?'b-rem':'b-add'}" ${!inDeck&&S.deck.length>=8?'disabled':''} onclick="${inDeck?'remC':'addC'}('${k}')">${inDeck?'➖ Remove':'➕ Add'}</button>${upBtns(l,"up('"+k+"',",k)}</div></div>`};
   h+=`<div class="deckgrid">`;
   S.deck.forEach(k=>h+=tile(k,1));
   for(let i=S.deck.length;i<8;i++)h+=`<div class="box lock" style="min-height:100px">Empty slot</div>`;
@@ -354,8 +431,9 @@ function menu(msg){dropSave();if(MP&&MP.started)mpEnd();{const r=trCheck();if(r)
 }
 function upNeed(l,m,t){const mm=m||1,cs=Math.max(1,Math.round(5*Math.pow(1.75,l-1)*mm)),ce=Math.max(1,Math.round(5*Math.pow(1.75,l-1)*mm)),have=t=='rexp'?(S.expR||0):S.exp,g=Math.ceil(Math.max(0,cs-S.sup)/20)+Math.ceil(Math.max(0,ce-have)/(t=='rexp'?10:16)),mx=l>=MAXL;return{cs,ce,g,t,ok:!mx&&g==0,okG:!mx&&g>0&&S.gems>=g}}
 function pay(n,g){if(g)S.gems-=n.g;S.sup-=Math.min(S.sup,n.cs);if(n.t=='rexp')S.expR=(S.expR||0)-Math.min(S.expR||0,n.ce);else S.exp-=Math.min(S.exp,n.ce)}
-function upBtns(l,fn,k){const n=upNeed(l,rmul(k),expType(k));if(l>=MAXL)return '<button disabled>Max level</button>';
- return `<button ${n.ok?'':'disabled'} onclick="${fn}false)">Upgrade ${n.cs} / ${n.ce}${n.t=='rexp'?' Rare EXP':''}</button>`+(n.g?`<button ${S.gems>=n.g?'':'disabled'} onclick="${fn}true)">Cover gap: ${n.g} ${GEM}</button>`:'')}
+function tileHead(k,l){const c=CARDS[k];return `${ci(k)}<div class="tmeta"><div class="tname"><b>${c.n}</b> ${rbadge(k)}</div><div class="chips2"><span class="chip cc" title="Coin cost">🪙 ${c.c}</span><span class="chip lv">Lv ${l}</span>${c.hp?`<span class="chip hp" title="Health">❤️ ${Math.round(c.hp*M(l))}</span>`:''}${c.dmg?`<span class="chip dm" title="Damage">⚔️ ${Math.round(c.dmg*M(l))}</span>`:''}${c.ctd?`<span class="chip tw" title="Damage to crown towers">🏰 ${Math.round(c.ctd*M(l))}</span>`:''}</div></div>`}
+function upBtns(l,fn,k){const n=upNeed(l,rmul(k),expType(k));if(l>=MAXL)return '<button disabled>⭐ Max level</button>';
+ return `<button class="b-up" ${n.ok?'':'disabled'} onclick="${fn}false)">⬆ Upgrade <span class="cst">📦${n.cs} ${n.t=='rexp'?'📕':'📘'}${n.ce}</span></button>`+(n.g?`<button class="b-gap" title="Pay only the missing supplies/EXP with gems" ${S.gems>=n.g?'':'disabled'} onclick="${fn}true)">Cover gap ${GEM} ${n.g}</button>`:'')}
 function upT(g){const l=S.pt||1,n=upNeed(l);if(g?!n.okG:!n.ok)return;pay(n,g);S.pt=l+1;save();menu()}
 const SHOP=[['sup',50,5],['exp',40,5],['rexp',20,8],['sup',200,20],['exp',160,20],['rexp',80,30]];
 function buyG(i){const [t,q,c]=SHOP[i];if(S.gems<c)return;S.gems-=c;if(t=='sup')S.sup+=q;else if(t=='rexp')S.expR=(S.expR||0)+q;else S.exp+=q;save();menu()}
@@ -406,8 +484,13 @@ function hand0(){const h=$('hand');h.innerHTML='';
  G.hand.forEach((k,i)=>{const c=CARDS[k],b=document.createElement('button');b.className='card';b.dataset.k=k;
   b.innerHTML=`<span class="cost">${c.c}</span>${ci(k)}<span><b>${i+1}. ${c.n}</b>Lv ${L(k)}</span>`;
   b.onclick=()=>{sel=sel==k?null:k;paint()};h.appendChild(b)});paint()}
-function paint(){document.querySelectorAll('.card').forEach(b=>{b.classList.toggle('sel',b.dataset.k==sel);
- b.style.opacity=G&&G.el[0]<CARDS[b.dataset.k].c?.55:1})}
+let _hint='';
+function hintUI(){const h=$('hint');if(!h)return;let t='';
+ if(G&&!G.done&&!G.tut&&G.mode!=2&&(S.wins||0)<3){const c=sel&&CARDS[sel];
+  if(!c)t='👇 Pick a card from your hand';else if(G.el[0]<c.c)t='⏳ Wait for coins: '+c.n+' costs '+c.c;else if(c.spell)t='💥 Tap the field to cast '+c.n;else t='👆 Tap the blue area to place '+c.n}
+ if(t!==_hint){_hint=t;h.textContent=t;h.hidden=!t}}
+function affordUI(){if(!G)return;document.querySelectorAll('.card').forEach(b=>{const c=CARDS[b.dataset.k];if(c)b.classList.toggle('no',G.el[0]<c.c)});hintUI()}
+function paint(){document.querySelectorAll('.card').forEach(b=>{b.classList.toggle('sel',b.dataset.k==sel);b.classList.toggle('no',!!G&&G.el[0]<CARDS[b.dataset.k].c)});hintUI()}
 addEventListener('keydown',e=>{const i=+e.key-1;if(G&&!G.done&&i>=0&&i<4&&G.hand[i]){sel=G.hand[i];paint()}});
 const GC=40,GO=0;
 const snap=(x,y)=>{const c=Math.max(0,Math.min(COLS-1,Math.floor(x/GC))),r=Math.max(0,Math.min(ROWS-1,Math.floor((y-GO)/GC)));return{c,r,x:c*GC+GC/2,y:GO+r*GC+GC/2}};
@@ -750,7 +833,7 @@ function draw(){
   cx.strokeStyle=p.team?'#ed1c24':'#00a2e8';cx.beginPath();cx.moveTo(-12,0);cx.lineTo(-16,-3);cx.moveTo(-12,0);cx.lineTo(-16,3);cx.stroke();cx.restore()}}
  for(const f of G.fx){if(f.ring){const q=1-f.l/f.l0;cx.save();cx.globalAlpha=Math.max(0,f.l/f.l0);cx.strokeStyle='rgb('+f.c+')';cx.fillStyle='rgba('+f.c+',.22)';cx.lineWidth=f.w;cx.beginPath();cx.arc(f.x,f.y,f.rr*(.55+.45*q),0,7);cx.fill();cx.stroke();cx.restore();continue}cx.strokeStyle=f.c;cx.lineWidth=f.w;cx.beginPath();cx.moveTo(f.x1,f.y1);cx.lineTo(f.x2,f.y2);cx.stroke()}
  const t=Math.max(0,Math.ceil(G.t));$('tm').textContent=G.mode==2?'SUDDEN DEATH':(G.mode==1?'ULTIMATE DEATH ':'')+Math.floor(t/60)+':'+String(t%60).padStart(2,'0');
- $('fill').style.width=G.el[0]*10+'%';$('el').textContent=Math.floor(G.el[0])+' / 10 coins';
+ $('fill').style.width=G.el[0]*10+'%';$('el').textContent='🪙 '+Math.floor(G.el[0])+' / 10 coins';affordUI();
  if(G.tut)tutHL();
  for(const m of G.em)drawEm(m);
  drawNames();
@@ -891,7 +974,7 @@ function qmWait(){return QM?(Date.now()-QM.t0)/1000:0}
 function qmRender(){const q=$('qmb');if(!q)return;let t='';
  if((S.tut||0)>=3){
   if(QM||(MP&&MP.qm))t=`<div class='box' style='margin:6px 0'><b>${MP?'Match found! Connecting...':'Searching for an opponent... '+Math.round(qmWait())+'s'}</b><br><small>Looking for a real player in your arena with similar trophies and card levels. If nobody is found in ${QWAIT} seconds, you will play a bot with normal rewards.</small>${QM?qmInfo():''}${QM?`<div class='row'><button onclick='qmCancel()'>Cancel</button></div>`:''}</div>`;
-  else t=`<div class='row'><button id='go' ${mpOK()?'':'disabled'} onclick='mpQuick()'>Battle</button></div><small>Fight a real player in your arena with similar trophies and card levels.</small>`}
+  else t=`<div class='row'><button id='go' ${mpOK()?'':'disabled'} onclick='mpQuick()'>⚔️ BATTLE!</button></div><small>Fights a real player near your level, or a bot if nobody is around.</small>`}
  q.innerHTML=t}
 function qmCancel(){if(QM){clearInterval(QM.iv);clearTimeout(QM.bt);try{QM.room&&QM.room.leave()}catch(e){}QM=null}mpRender()}
 async function mpQuick(){if(MP||QM||!RM||!mpOK())return;const A=arenaOf(S.tr||0),M=QM={id:Math.random().toString(36).slice(2,8),t0:Date.now(),state:'seek',lv:avgL(),tr:S.tr||0,seen:{}};mpRender();const bt=()=>{if(QM!==M||M.state=='done')return;if(M.state=='offer')return void(M.bt=setTimeout(bt,4500));qmBot(M)};M.bt=setTimeout(bt,(QWAIT+10)*1000);
