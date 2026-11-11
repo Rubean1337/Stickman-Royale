@@ -138,6 +138,10 @@ canvas{border-radius:16px;box-shadow:0 6px 0 rgba(0,0,0,.25),0 0 24px rgba(0,0,0
 #hintw{height:0;position:relative;z-index:3;pointer-events:none}
 #hint{position:absolute;left:50%;bottom:10px;white-space:nowrap;max-width:94%;padding:6px 16px;border-radius:999px;background:#fff;color:#1c2a1c;border:2px solid #1c2a1c;font-weight:bold;font-size:20px;box-shadow:0 4px 0 rgba(0,0,0,.25);animation:hbob 1.3s ease-in-out infinite}
 #hint[hidden]{display:none}
+.acrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 6px}
+.acard{display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border:2px solid var(--ln);border-radius:12px;background:var(--pn);box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.acard .ci{height:56px;border-radius:6px;box-shadow:0 2px 0 rgba(0,0,0,.25)}.acard b{display:block;font-size:16px}.acard small{opacity:.9;display:block}
+.acard.lockc{opacity:.6;filter:grayscale(.55)}.acard.have{border-color:#16a34a;background:color-mix(in srgb,#bbf7d0 45%,var(--pn))}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (orientation:portrait) and (max-width:700px){#app::before{content:'Tip: turn your phone sideways for a bigger battlefield';display:block;text-align:center;font-size:14px;opacity:.7}}
 @media (orientation:landscape) and (max-height:560px){
@@ -399,11 +403,11 @@ function showResult(msg,label){const m=$('menu');m.style.display='block';m.style
 function menu(msg){dropSave();if(MP&&MP.started)mpEnd();{const r=trCheck();if(r)msg=(msg?msg+'<br>':'')+r}
  $('menu').style.background='';if(G&&G.sd!=null){S.d=G.sd;save()}G=null;$('tut').hidden=true;$('tobj').hidden=true;$('praise').hidden=true;$('hint').hidden=true;_hint='';const m=$('menu');m.style.display='block';
  const need=Math.min(8,S.un),ok=S.deck.length==need;
- const ar0=arenaOf(S.tr||0),pct=ar0>=ARENAS.length-1?100:Math.max(0,Math.min(100,((S.tr||0)-ar0*360)/360*100)),nk=ORDER[S.un],uu=nk&&(CARD_UNLOCK[nk]||[0,50]),
+ const ar0=arenaOf(S.tr||0),pct=ar0>=ARENAS.length-1?100:Math.max(0,Math.min(100,((S.tr||0)-ar0*360)/360*100)),nk=ORDER[S.un],uu=nk&&unlockInfo(nk),
   dotC=!ok||owned().some(k=>L(k)<MAXL&&upNeed(L(k),rmul(k),expType(k)).ok),dotS=!!(nk&&ar0>=uu[0]&&S.gems>=uu[1]);
  let h=`<h1><span class="crown">👑</span> <span class="ttl">Tabard Clash</span></h1>${msg?`<div class="box" style="margin:8px 0">${msg}</div>`:''}
  <div class="chips"><span class="chip sup" title="Spend on card upgrades">📦 ${S.sup} <small>Supplies</small></span><span class="chip gem" title="Spend on unlocking cards and in the Shop">${GEM} ${S.gems} <small>Gems</small></span><span class="chip tr" title="Trophy level ${trophyLv()}">🏆 ${S.tr||0} <small>Trophies</small></span></div>
- <button class="arena" onclick="trRoad()">🏟 Arena ${ar0+1}: ${ARENAS[ar0].n} ▾<span class="pb" style="--w:${pct}%"><i></i></span><small>${ar0<ARENAS.length-1?((ar0+1)*360-(S.tr||0))+' trophies to Arena '+(ar0+2)+' · tap to see rewards':'Top arena reached!'}</small></button>
+ <button class="arena" onclick="trRoad()">🏟 Arena ${ar0+1}: ${ARENAS[ar0].n} ▾<span class="pb" style="--w:${pct}%"><i></i></span><small>${ar0<ARENAS.length-1?((ar0+1)*360-(S.tr||0))+' trophies to Arena '+(ar0+2)+' · tap to see rewards and cards':'Top arena reached!'}</small></button>
  <details class="prof"><summary>👤 ${esc(S.name||'Player')} <small>(tap to edit profile)</small></summary><div class="row"><label>Your name <input id="pname" maxlength="14" value="${esc(S.name||'Player')}" onchange="setName(this)"></label> <span id="pnote" style="color:#c0392b;font-size:15px"></span> <small>${S.named?'Changing your name costs '+NAME_COST+' gems.':'Your first name is free. After that, changing it costs '+NAME_COST+' gems.'}</small></div><small>Trophy level ${trophyLv()} &middot; Deck level average ${avgL()}</small></details>
  <div class="row tabs"><button class="${page==0?'on':''}" onclick="slide(0)"><span class="ti">⚔️</span> Battle</button><button class="${page==1?'on':''}" onclick="slide(1)"><span class="ti">🃏</span> Cards ${S.deck.length}/${need}${dotC?'<i class="dot"></i>':''}</button><button class="${page==2?'on':''}" onclick="slide(2)"><span class="ti">🛒</span> Shop${dotS?'<i class="dot"></i>':''}</button></div>
  <div id="sl" class="slider"><section><div class="bt"><div class="btl">
@@ -413,7 +417,7 @@ function menu(msg){dropSave();if(MP&&MP.started)mpEnd();{const r=trCheck();if(r)
  </div><div class="btr">${(S.tut||0)<3?'':`<button id="pmb" ${ok?'':'disabled'} onclick="practiceMenu()" style="width:100%;margin-bottom:8px">Practice matches</button>`}${trNext()}${crownPanel()}</div></div></section><section><div class="row"><button class="${cview=='deck'?'on':''}" onclick="cview='deck';menu()">Deck</button><button class="${cview=='all'?'on':''}" onclick="cview='all';menu()">Collection</button></div>`;
  if(cview=='all')h+=allView();
  else{h+=`<div class="chips"><span class="chip xp" title="Upgrade Common cards">📘 ${S.exp} <small>Common EXP</small></span><span class="chip xp" title="Upgrade Rare cards">📕 ${S.expR||0} <small>Rare EXP</small></span></div><h2 style="margin:6px 0">Your deck (${S.deck.length}/8)</h2>
- <small>Your hand holds 4 cards from this deck and cycles through the rest.</small><details class="help" style="border-color:#7c3aed"><summary>⬆ How upgrades work</summary><small>Upgrades cost supplies 📦 and EXP (📘 Common / 📕 Rare). The first upgrade costs 5 and each level costs 75% more, up to Lv 15. Rare cards cost 1.5x. Short on something? <b>Cover gap</b> pays only the missing part with gems.</small></details>`;
+ <small>Your hand holds 4 cards from this deck and cycles through the rest.</small><details class="help" style="border-color:#7c3aed"><summary>⬆ How upgrades work</summary><small>Upgrades cost supplies 📦 and EXP (📘 Common / 📕 Rare). EXP cost per level: 5, 20, 50, 100, 250, 500, 1,000, 1,500, 3,000, 5,000, 10,000, 15,000, 30,000, 40,000 (max Lv 15). Common and Rare cards use the same amounts. Short on something? <b>Cover gap</b> pays only the missing part with gems.</small></details>`;
   h+=`<h2 style="margin:8px 0 2px">Towers</h2>`+towerTile();
   const tile=(k,inDeck)=>{const c=CARDS[k],l=L(k);
    return `<div class="box tile rar-${rarOf(k)}"><div class="thead">${tileHead(k,l)}</div><small>${c.t}</small>
@@ -429,7 +433,8 @@ function menu(msg){dropSave();if(MP&&MP.started)mpEnd();{const r=trCheck();if(r)
  m.innerHTML=h;mpRender();const sl=$('sl');sl.scrollLeft=page*sl.clientWidth;
  sl.onscroll=()=>{const p=Math.round(sl.scrollLeft/sl.clientWidth);if(p!=page){page=p;document.querySelectorAll('.tabs button').forEach((b,j)=>b.classList.toggle('on',j==p))}}
 }
-function upNeed(l,m,t){const mm=m||1,cs=Math.max(1,Math.round(5*Math.pow(1.75,l-1)*mm)),ce=Math.max(1,Math.round(5*Math.pow(1.75,l-1)*mm)),have=t=='rexp'?(S.expR||0):S.exp,g=Math.ceil(Math.max(0,cs-S.sup)/20)+Math.ceil(Math.max(0,ce-have)/(t=='rexp'?10:16)),mx=l>=MAXL;return{cs,ce,g,t,ok:!mx&&g==0,okG:!mx&&g>0&&S.gems>=g}}
+const EXP_COST=[5,20,50,100,250,500,1000,1500,3000,5000,10000,15000,30000,40000,50000];
+function upNeed(l,m,t){const mm=m||1,cs=Math.max(1,Math.round(5*Math.pow(1.75,l-1)*mm)),ce=EXP_COST[Math.max(0,Math.min(EXP_COST.length-1,l-1))],have=t=='rexp'?(S.expR||0):S.exp,g=Math.ceil(Math.max(0,cs-S.sup)/20)+Math.ceil(Math.max(0,ce-have)/(t=='rexp'?10:16)),mx=l>=MAXL;return{cs,ce,g,t,ok:!mx&&g==0,okG:!mx&&g>0&&S.gems>=g}}
 function pay(n,g){if(g)S.gems-=n.g;S.sup-=Math.min(S.sup,n.cs);if(n.t=='rexp')S.expR=(S.expR||0)-Math.min(S.expR||0,n.ce);else S.exp-=Math.min(S.exp,n.ce)}
 function tileHead(k,l){const c=CARDS[k];return `${ci(k)}<div class="tmeta"><div class="tname"><b>${c.n}</b> ${rbadge(k)}</div><div class="chips2"><span class="chip cc" title="Coin cost">🪙 ${c.c}</span><span class="chip lv">Lv ${l}</span>${c.hp?`<span class="chip hp" title="Health">❤️ ${Math.round(c.hp*M(l))}</span>`:''}${c.dmg?`<span class="chip dm" title="Damage">⚔️ ${Math.round(c.dmg*M(l))}</span>`:''}${c.ctd?`<span class="chip tw" title="Damage to crown towers">🏰 ${Math.round(c.ctd*M(l))}</span>`:''}</div></div>`}
 function upBtns(l,fn,k){const n=upNeed(l,rmul(k),expType(k));if(l>=MAXL)return '<button disabled>⭐ Max level</button>';
@@ -437,19 +442,24 @@ function upBtns(l,fn,k){const n=upNeed(l,rmul(k),expType(k));if(l>=MAXL)return '
 function upT(g){const l=S.pt||1,n=upNeed(l);if(g?!n.okG:!n.ok)return;pay(n,g);S.pt=l+1;save();menu()}
 const SHOP=[['sup',50,5],['exp',40,5],['rexp',20,8],['sup',200,20],['exp',160,20],['rexp',80,30]];
 function buyG(i){const [t,q,c]=SHOP[i];if(S.gems<c)return;S.gems-=c;if(t=='sup')S.sup+=q;else if(t=='rexp')S.expR=(S.expR||0)+q;else S.exp+=q;save();menu()}
-const DEALS=[['exp',10,30],['exp',30,80],['rexp',6,40]],CARD_UNLOCK={smith:[1,30],fort:[3,60]};
+const DEALS=[['exp',10,30],['exp',30,80],['rexp',6,40]],CARD_UNLOCK={smith:[0],fort:[0],macero:[1],dartboy:[1],nomad:[2]};
+const unlockGems=k=>rarOf(k)=='rare'?275:250,unlockInfo=k=>[(CARD_UNLOCK[k]||[0])[0],unlockGems(k)];
 function shopDay(){const d=new Date().toLocaleDateString('en-CA');if(S.sd!==d||!S.sb){S.sd=d;S.sg=0;S.sb=[];save()}}
 function shopGift(){shopDay();if(S.sg)return;const ri=(a,b)=>a+(Math.random()*(b-a+1)|0),r=Math.random();let t,n;
  if(r<.4){t='sup';n=ri(10,25);S.sup+=n}else if(r<.65){t='exp';n=ri(5,12);S.exp+=n}else if(r<.85){t='gem';n=ri(1,3);S.gems+=n}else{t='rexp';n=ri(3,6);S.expR=(S.expR||0)+n}
  S.sg=1;S.sgt=t;S.sgn=n;save();menu()}
 function buyDeal(i){shopDay();const d=DEALS[i];if(!d||S.sb.includes(i)||S.sup<d[2])return;S.sup-=d[2];if(d[0]=='rexp')S.expR=(S.expR||0)+d[1];else S.exp+=d[1];S.sb.push(i);save();menu()}
-function buyCard(k){const u=CARD_UNLOCK[k]||[0,50];if(k!==ORDER[S.un]||arenaOf(S.tr||0)<u[0]||S.gems<u[1])return;S.gems-=u[1];S.un++;fillDeck();save();menu()}
+function arenaCards(a){return ORDER.filter(k=>!STARTERS.includes(k)&&(CARD_UNLOCK[k]||[0])[0]==a)}
+function arenaCardsRow(a){const ks=arenaCards(a),own=owned(),reach=arenaOf(S.tr||0)>=a;
+ if(!ks.length)return `<div class='acrow'><small style='opacity:.7'>No new cards in this arena yet</small></div>`;
+ return `<div class='acrow'><small>Cards to unlock here:</small>`+ks.map(k=>{const have=own.includes(k);return `<span class='acard ${have?'have':reach?'':'lockc'}'>${ci(k)}<span><b>${CARDS[k].n}</b><small>${have?'✔ Unlocked':(reach?'':'🔒 ')+unlockGems(k)+' '+GEM}</small></span></span>`}).join('')+`</div>`}
+function buyCard(k){const u=unlockInfo(k);if(k!==ORDER[S.un]||arenaOf(S.tr||0)<u[0]||S.gems<u[1])return;S.gems-=u[1];S.un++;fillDeck();save();menu()}
 function shopDaily(){shopDay();const nm={sup:'supplies',exp:'Common EXP',rexp:'Rare EXP',gem:'gems'},ar=arenaOf(S.tr||0);
  let h=`<h2 style='margin:6px 0'>Shop</h2><div>${GEM} Gems <b>${S.gems}</b> &nbsp; Supplies <b>${S.sup}</b> &nbsp; Common EXP <b>${S.exp}</b> &nbsp; Rare EXP <b>${S.expR||0}</b></div><h2 style='margin:12px 0 2px'>Daily rewards</h2><div class='box' style='margin:6px 0'><b>Free daily gift</b><br>${S.sg?`<small>Today's gift: +${S.sgn} ${nm[S.sgt]}. Come back tomorrow!</small>`:`<small>A small surprise: supplies, EXP or gems.</small><div class='row'><button onclick='shopGift()'>Claim today's gift</button></div>`}</div><div class='grid'>`;
  DEALS.forEach((d,i)=>{const got=S.sb.includes(i);h+=`<div class='box' style='text-align:center'><b>${d[1]} ${nm[d[0]]}</b><br><small>Once a day</small><div class='row' style='justify-content:center'><button ${got||S.sup<d[2]?'disabled':''} onclick='buyDeal(${i})'>${got?'Bought today':'Buy for '+d[2]+' supplies'}</button></div></div>`});
  h+=`</div>`;const ks=ORDER.slice(S.un);
  if(ks.length){h+=`<h2 style='margin:12px 0 2px'>Card unlocks</h2><small>Cards unlock with gems once you reach the right arena, one at a time in order.</small><div class='grid' style='margin-top:6px'>`;
-  ks.forEach((k,j)=>{const u=CARD_UNLOCK[k]||[0,50],okA=ar>=u[0];h+=`<div class='box tile'>${ci(k)}<b>${CARDS[k].n}</b><br><small>${CARDS[k].t}</small><br><small>${okA?'Arena requirement met':'Reach Arena '+(u[0]+1)+': '+ARENAS[u[0]].n}${j?' &middot; unlock the card before it first':''}</small><div class='row'><button ${!j&&okA&&S.gems>=u[1]?'':'disabled'} onclick="buyCard('${k}')">Unlock for ${u[1]} ${GEM}</button></div></div>`});h+=`</div>`}
+  ks.forEach((k,j)=>{const u=unlockInfo(k),okA=ar>=u[0];h+=`<div class='box tile rar-${rarOf(k)}'>${ci(k)}<b>${CARDS[k].n}</b> ${rbadge(k)}<br><small>${CARDS[k].t}</small><br><small>${okA?'Arena '+(u[0]+1)+' card (unlocked for you)':'Reach Arena '+(u[0]+1)+': '+ARENAS[u[0]].n}${j?' &middot; unlock the card before it first':''}</small><div class='row'><button ${!j&&okA&&S.gems>=u[1]?'':'disabled'} onclick="buyCard('${k}')">Unlock for ${u[1]} ${GEM}</button></div></div>`});h+=`</div>`}
  return h}
 function shopTab(){return shopDaily()+shopGems()}
 function shopGems(){const nm={sup:'Supplies',exp:'Common EXP',rexp:'Rare EXP'},ic={sup:'📦',exp:'📘',rexp:'📕'};
@@ -533,23 +543,54 @@ function meleeHit(a,t){dmgTo(t,a.dmg);
  if(a.k=='macero'){for(const e of G.E)if(e!==t&&e.team!=a.team&&e.hp>0&&!e.air&&Math.hypot(e.x-a.x,e.y-a.y)-e.r<=MRING)dmgTo(e,a.dmg);G.fx.push({ring:1,x:a.x,y:a.y,rr:MRING,l:.3,l0:.3,c:a.team?'237,28,36':'0,162,232',w:4})}
  if(a.k=='mauler'){for(const e of G.E)if(e!==t&&e.team!=a.team&&e.hp>0&&!e.bld&&Math.hypot(e.x-t.x,e.y-t.y)<50)dmgTo(e,a.dmg*.5);
   G.fx.push({x1:a.x,y1:a.y-10,x2:t.x,y2:t.y-10,l:.12,c:a.team?'#ed1c24':'#00a2e8',w:5})}}
-function bot(dt){if(G.mode==2)return;const D=DIFF[S.d];G.bot-=dt;if(G.bot>0)return;G.bot=Math.max(1.2,D.gap*(.7+Math.random()*.6));
- const ks=G.bh.filter(k=>CARDS[k].c<=G.el[1]);if(!ks.length)return;
- const enemies=G.E.filter(e=>e.team==0&&!e.bld&&e.x>480);
- let lane=Math.random()<.5?0:1,def=false;
- if(D.smart>Math.random()&&enemies.length){const q=enemies.reduce((a,e)=>a+(e.y<H/2?1:-1),0);lane=q>=0?0:1;def=true}
- else if(D.smart>0){const tw=G.E.filter(e=>e.team==0&&e.kind=='p').sort((a,b)=>a.hp-b.hp)[0];if(tw)lane=tw.y<H/2?0:1}
- let k=ks[Math.floor(Math.random()*ks.length)];
- if(def){const cheap=ks.filter(c=>!CARDS[c].bo);if(cheap.length)k=cheap[Math.floor(Math.random()*cheap.length)]}
- else if(D.smart>=1&&ks.includes('mauler')&&Math.random()<.4)k='mauler';
- const c=CARDS[k];
- if(c.spell){const tg=G.E.filter(e=>e.team==0&&(c.spell=='b'?!e.bld:(!e.bld||e.kind=='d')));if(!tg.length){G.bot=1.5;return}
-  G.el[1]-=c.c;const t=tg[Math.floor(Math.random()*tg.length)];spawn(1,k,t.x,t.y,G.bl);cyc(G.bh,G.bq,G.bh.indexOf(k));return}
- let s=null;const cp=G.ruins.filter(r=>r.team==0&&!r.k&&!r.d);
- for(let i=0;i<40&&!s;i++){const u=cp.length&&!def&&Math.random()<.5?cp[Math.floor(Math.random()*cp.length)]:null;
-  s=canPlace(1,k,u?360+Math.random()*340:def?RV[1]+(W-RV[1])*.55+Math.random()*(W-RV[1])*.35:RV[1]+40+Math.random()*(W-RV[1])*.45,u?(u.y<H/2?20+Math.random()*(H/2-60):H/2+30+Math.random()*(H/2-60)):BR[lane]+(Math.random()-.5)*(i<20?96:288))}
- if(!s){G.bot=1;return}
- G.el[1]-=c.c;spawn(1,k,s.x,s.y,G.bl);cyc(G.bh,G.bq,G.bh.indexOf(k))}
+const rnd=(a,b)=>a+Math.random()*(b-a);
+function botEmote(B){const a=G.E.filter(e=>e.kind=='p'&&e.hp>0),mine=a.filter(e=>e.team==1).length,theirs=a.filter(e=>e.team==0).length;
+ if(B.tw&&B.ec<=0){if(theirs<B.tw[1]&&Math.random()<.6){emote(1,'laugh');B.ec=25}else if(mine<B.tw[0]&&Math.random()<.5){emote(1,Math.random()<.5?'mad':'sad');B.ec=25}}
+ B.tw=[mine,theirs]}
+function botSpot(B,k,inc,front,ownTank){const c=CARDS[k];let x,y;
+ if(front){const back=(c.rg||0)>=100?125:(c.hp>=600?35:80);x=Math.min(W-150,Math.max(RV[1]+60,front.x+back));y=front.y+rnd(-26,26)}
+ else{const tankish=c.hp>=600||c.bo;
+  if(ownTank&&!tankish){x=Math.min(W-150,ownTank.x+rnd(60,100));y=ownTank.y+rnd(-26,26)}
+  else{const lane=ownTank?(ownTank.y<H/2?0:1):B.pl;x=RV[1]+rnd(45,100);y=BR[lane]+rnd(-34,34)}}
+ return{x,y}}
+function botThink(B,D){
+ const co=G.el[1],hand=G.bh,sk=D.smart;
+ const foes=G.E.filter(e=>e.team==0&&!e.bld&&e.hp>0),mine=G.E.filter(e=>e.team==1&&!e.bld&&e.hp>0);
+ const inc=foes.filter(e=>e.x>RV[1]-110),air=inc.filter(e=>e.air),front=inc.slice().sort((a,b)=>b.x-a.x)[0]||null;
+ const ownTank=mine.filter(e=>e.x<W-170&&e.hp>=450).sort((a,b)=>a.x-b.x)[0]||null;
+ const dead=G.ruins.filter(r=>r.team==0&&!r.k&&!r.d);
+ if(dead.length)B.pl=dead[0].y<H/2?0:1;
+ const opts=[];
+ for(const k of hand){const c=CARDS[k];if(c.c>co+(co>=9?0:2.4))continue;let sc=Math.random()*.8;
+  const tank=c.hp>=600||c.bo,rng=(c.rg||0)>=100,sw=(c.cnt||1)>1;
+  if(c.spell){const tg=G.E.filter(e=>e.team==0&&(c.spell=='b'?!e.bld:(!e.bld||e.kind=='d')));let best=null,bn=0;
+   for(const t of tg){const n=tg.filter(u=>Math.hypot(u.x-t.x,u.y-t.y)<=(c.rad||70)).length;if(n>bn){bn=n;best=t}}
+   if(bn>=2)opts.push({k,sc:sc+1.5+bn*1.2,spell:best});continue}
+  if(inc.length){sc+=1.5;if(!tank)sc+=1;if(rng||sw)sc+=1;if(c.bo)sc-=4;
+   if(air.length>=inc.length*.5)sc+=c.ha?4:-2.5;else if(c.ha&&!rng)sc+=.3;
+   if(k=='distraction')sc+=1.5}
+  else{sc+=tank?2:.5;if(c.bo)sc+=1;if(rng&&ownTank)sc+=2.5;if(sw&&ownTank)sc+=1.5;if(c.air)sc+=1.2;if(k=='distraction'||k=='fort')sc-=1;if(!tank&&!ownTank)sc-=.8}
+  sc+=Math.random()*(1-sk)*4;opts.push({k,sc})}
+ if(!opts.length){B.t=rnd(.5,1.1);return}
+ opts.sort((a,b)=>b.sc-a.sc);let o=opts[0];
+ if(CARDS[o.k].c>co){const alt=opts.find(x=>CARDS[x.k].c<=co&&x.sc>=o.sc-1.2);if(alt&&(co>=8||inc.length))o=alt;else{B.t=rnd(.35,.85);return}}
+ if(!inc.length&&!o.spell&&co<6.5&&Math.random()<.5){B.t=rnd(.8,1.8);return}
+ let x,y;
+ if(o.spell){x=o.spell.x;y=o.spell.y}
+ else{if(!inc.length&&!ownTank&&Math.random()<.25)B.pl=1-B.pl;const p=botSpot(B,o.k,inc,front,ownTank);x=p.x;y=p.y}
+ const urgent=front&&front.x>W-300;
+ B.pend={k:o.k,x,y,u:o.spell,d:(urgent?rnd(.2,.5):rnd(.4,1))*(1.2-sk*.3)}}
+function botCommit(B,D){const p=B.pend;B.pend=null;const c=CARDS[p.k],i=G.bh.indexOf(p.k);
+ if(i<0||G.el[1]<c.c){B.t=rnd(.4,.8);return}
+ let s=null;
+ if(c.spell){if(p.u&&p.u.hp>0)s={x:p.u.x+rnd(-10,10),y:p.u.y+rnd(-10,10)};else{B.t=rnd(.4,.8);return}}
+ else for(let t=0;t<40&&!s;t++)s=canPlace(1,p.k,p.x+rnd(-1,1)*(14+t*9),p.y+rnd(-1,1)*(14+t*9));
+ if(!s){B.t=rnd(.4,.8);return}
+ G.el[1]-=c.c;spawn(1,p.k,s.x,s.y,G.bl);cyc(G.bh,G.bq,i);B.plays=(B.plays||0)+1;B.t=Math.max(.8,D.gap*rnd(.55,1.25))}
+function bot(dt){if(G.mode==2||G.bot>1e8)return;const D=DIFF[S.d],B=G.bm||(G.bm={t:rnd(2.5,5.5),pend:null,ec:20,tw:null,pl:Math.random()<.5?0:1});
+ B.ec-=dt;botEmote(B);
+ if(B.pend){B.pend.d-=dt;if(B.pend.d<=0)botCommit(B,D);return}
+ B.t-=dt;if(B.t>0)return;botThink(B,D)}
 function end(w){if(G.pvp)return endPvp(w);if(G.tut){endTut(w);return}let crg=0;G.done=1;emote(1,w==1?'sad':w==-1?'laugh':'support');const D=G.rwd?{...DIFF[S.d],rw:G.rwd}:DIFF[S.d];let msg;
  if(w==1){S.wins++;const sp=Math.round(25*D.rw),ex=Math.round(20*D.rw);S.sup+=sp;S.exp+=ex;
   const a0=arenaOf(S.tr||0),rx=Math.max(3,Math.round(ex*.4));S.expR=(S.expR||0)+rx;S.tr=(S.tr||0)+30;S.cr=(S.cr||0)+10;crg=10;msg=`<b>Victory!</b> You beat ${G.opp}. +${sp} supplies, +${ex} Common EXP, +${rx} Rare EXP, +30 🏆 trophies, +10 ${CRN} crowns.`;if(arenaOf(S.tr)>a0)msg+=`<br><b>New arena reached: ${ARENAS[arenaOf(S.tr)].n}!</b>`;
@@ -994,16 +1035,16 @@ function qmBot(M){clearInterval(M.iv);clearTimeout(M.bt);try{M.room&&M.room.leav
 function qmReward(w){G.pvp=0;const d=S.d;S.d=2;end(w);S.d=d;save()}
 function practiceMenu(){if(!mpOK())return;qmCancel();let o=$('pm');if(!o){o=document.createElement('div');o.id='pm';o.style.cssText='position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55);padding:16px';o.onclick=e=>{if(e.target===o)o.remove()};document.body.appendChild(o)}
  o.innerHTML=`<div class='box' style='max-width:380px;width:100%;background:var(--bg);color:var(--fg);padding:16px'><h2 style='margin:0 0 6px'>Practice matches</h2><small>Play against a bot that fights with cards close to your level.</small><p style='margin:10px 0 4px'><b>Choose difficulty</b></p><div class='row'>${DIFF.map((d,i)=>`<button class='${i==S.d?'on':''}' onclick='S.d=${i};save();practiceMenu()'>${d.k}</button>`).join('')}</div><small>Rewards: ${DIFF[S.d].rw}x</small><div class='row' style='margin-top:12px'><button onclick='$("pm").remove();start()'>Play</button><button onclick='$("pm").remove()'>Close</button></div></div>`}
-const TRW=(()=>{const L=[];for(let a=0;a<ARENAS.length;a++)for(let j=0;j<5;j++){const th=a*360+60*(j+1);let r;if(j==0)r={t:'gem',n:5+3*a};else if(j==1)r={t:'exp',n:40+20*a};else if(j==2)r={t:'rexp',n:20+10*a};else if(j==3)r={t:'gem',n:8+4*a};else r=(a==1||a==4)?{t:'card'}:{t:'gem',n:15+6*a};L.push({a,th,...r})}return L})();
+const TRW=(()=>{const L=[];for(let a=0;a<ARENAS.length;a++)for(let j=0;j<7;j++){const th=a*360+50*(j+1);let r;if(j==0)r={t:'gem',n:5+3*a};else if(j==1)r={t:'exp',n:40+20*a};else if(j==2)r={t:'rexp',n:20+10*a};else if(j==3)r={t:'gem',n:8+4*a};else if(j==4)r={t:'exp',n:30+15*a};else if(j==5)r={t:'rexp',n:15+8*a};else r=(a==1||a==4)?{t:'card'}:{t:'gem',n:15+6*a};L.push({a,th,...r})}return L})();
 function trTxt(r){return r.t=='card'?'New card':r.t=='gem'?r.n+' gems':r.t=='exp'?r.n+' Common EXP':r.n+' Rare EXP'}
-function trCheck(){S.rcl=S.rcl||0;const out=[];while(S.rcl<TRW.length&&(S.tr||0)>=TRW[S.rcl].th){const r=TRW[S.rcl++];let t=r.t,n=r.n;
- if(t=='card'){if(S.un<ORDER.length){S.un++;fillDeck();out.push('new card unlocked: <b>'+CARDS[ORDER[S.un-1]].n+'</b>')}else{t='gem';n=15+6*r.a}}
+function trCheck(){S.rcl=S.rcl||0;if(S.rv!==2){S.rcl=TRW.filter(r=>r.th<=(S.tr||0)).length;S.rv=2}const out=[];while(S.rcl<TRW.length&&(S.tr||0)>=TRW[S.rcl].th){const r=TRW[S.rcl++];let t=r.t,n=r.n;
+ if(t=='card'){const nk=ORDER[S.un];if(nk&&unlockInfo(nk)[0]<=r.a){S.un++;fillDeck();out.push('new card unlocked: <b>'+CARDS[ORDER[S.un-1]].n+'</b>')}else{t='gem';n=15+6*r.a}}
  if(t=='gem'){S.gems+=n;out.push('+'+n+' gems')}else if(t=='exp'){S.exp+=n;out.push('+'+n+' Common EXP')}else if(t=='rexp'){S.expR=(S.expR||0)+n;out.push('+'+n+' Rare EXP')}}
  if(out.length){save();return '<b>Trophy rewards!</b> '+out.join(', ')+'.'}return ''}
 function trNext(){const n=S.rcl||0;if(n>=TRW.length)return `<div class='box' style='margin:6px 0;cursor:pointer' onclick='trRoad()'>🏆 Trophy rewards: all claimed!</div>`;const r=TRW[n];return `<div class='box' style='margin:6px 0;cursor:pointer' onclick='trRoad()'>🏆 <b>Next reward at ${r.th}</b> (${r.th-(S.tr||0)} to go)<br><small>${trTxt(r)} &middot; tap to see all</small></div>`}
 function trRoad(){let o=$('pm');if(!o){o=document.createElement('div');o.id='pm';o.style.cssText='position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55);padding:16px';o.onclick=e=>{if(e.target===o)o.remove()};document.body.appendChild(o)}
- const n=S.rcl||0,cur=arenaOf(S.tr||0);let h='';for(let a=0;a<ARENAS.length;a++){h+=`<div id='ar${a}' style='margin:10px 0 2px;padding:6px;border-radius:8px;border:2px solid ${a==cur?"var(--blue)":"transparent"};background:linear-gradient(90deg,${ARENAS[a].g1},${ARENAS[a].g2});color:#fff;text-shadow:0 1px 2px #000'><b>Arena ${a+1}: ${ARENAS[a].n}</b>${a==cur?' (you are here)':''}<br><small>${a*360}${a<ARENAS.length-1?' - '+(a*360+359):'+'} trophies</small></div>`;TRW.forEach((r,i)=>{if(r.a==a)h+=`<div style='opacity:${i<n?.5:1}'>${i<n?'✔':'🏆'} ${r.th} &middot; ${trTxt(r)}</div>`})}
- o.innerHTML=`<div class='box' style='max-width:380px;width:100%;max-height:85vh;max-height:85dvh;overflow:auto;background:var(--bg);color:var(--fg);padding:16px'><h2 style='margin:0'>Arenas &amp; rewards</h2><small>Earned automatically when you reach the trophy count.</small>${h}<div class='row' style='margin-top:12px'><button onclick='$("pm").remove()'>Close</button></div></div>`;const ce=$('ar'+cur);if(ce)ce.scrollIntoView({block:'center'})}
+ const n=S.rcl||0,cur=arenaOf(S.tr||0);let h='';for(let a=0;a<ARENAS.length;a++){h+=`<div id='ar${a}' style='margin:10px 0 2px;padding:6px;border-radius:8px;border:2px solid ${a==cur?"var(--blue)":"transparent"};background:linear-gradient(90deg,${ARENAS[a].g1},${ARENAS[a].g2});color:#fff;text-shadow:0 1px 2px #000'><b>Arena ${a+1}: ${ARENAS[a].n}</b>${a==cur?' (you are here)':''}<br><small>${a*360}${a<ARENAS.length-1?' - '+(a*360+359):'+'} trophies</small></div>${arenaCardsRow(a)}`;TRW.forEach((r,i)=>{if(r.a==a)h+=`<div style='opacity:${i<n?.5:1}'>${i<n?'✔':'🏆'} ${r.th} &middot; ${trTxt(r)}</div>`})}
+ o.innerHTML=`<div class='box' style='max-width:380px;width:100%;max-height:85vh;max-height:85dvh;overflow:auto;background:var(--bg);color:var(--fg);padding:16px'><h2 style='margin:0'>Arenas, rewards &amp; cards</h2><small>Earned automatically when you reach the trophy count.</small>${h}<div class='row' style='margin-top:12px'><button onclick='$("pm").remove()'>Close</button></div></div>`;const ce=$('ar'+cur);if(ce)ce.scrollIntoView({block:'center'})}
 function mpSt(t){if(MP)MP.st=t;mpRender()}
 function mpEnd(){if(MP){clearInterval(MP.iv);try{MP.room&&MP.room.leave()}catch(e){}MP=null}}
 function mpHost(c){if(MP||!RM)return;const A='abcdefghjkmnpqrstuvwxyz23456789';MP={role:'host',code:c||Array.from({length:4},()=>A[Math.random()*A.length|0]).join(''),st:'Opening room...',uid:0,seq:0,acc:0,qm:!!c};mpRender();mpOpen()}
