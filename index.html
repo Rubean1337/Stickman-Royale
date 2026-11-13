@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Tabard Clash</title>
+<title>Stickman Royale</title>
 <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f3f6ee;--fg:#1c2a1c;--pn:#fff;--ln:#1c2a1c;--blue:#00a2e8;--red:#ed1c24}
@@ -432,7 +432,7 @@ function menu(msg){dropSave();if(MP&&MP.started)mpEnd();{const r=trCheck();if(r)
  const need=Math.min(8,S.un),ok=S.deck.length==need;
  const ar0=arenaOf(S.tr||0),pct=ar0>=ARENAS.length-1?100:Math.max(0,Math.min(100,((S.tr||0)-ar0*360)/360*100)),nk=ORDER[S.un],uu=nk&&unlockInfo(nk),
   dotC=!ok||owned().some(k=>L(k)<MAXL&&upNeed(L(k),rmul(k),expType(k)).ok),dotS=!!(nk&&ar0>=uu[0]&&S.gems>=uu[1]);
- let h=`<h1><span class="crown">👑</span> <span class="ttl">Tabard Clash</span></h1>${msg?`<div class="box" style="margin:8px 0">${msg}</div>`:''}
+ let h=`<h1><span class="crown">👑</span> <span class="ttl">Stickman Royale</span></h1>${msg?`<div class="box" style="margin:8px 0">${msg}</div>`:''}
  <div class="chips"><span class="chip sup" title="Spend on card upgrades">${SUP} ${S.sup} <small>Supplies</small></span><span class="chip gem" title="Spend on unlocking cards and in the Shop">${GEM} ${S.gems} <small>Gems</small></span><span class="chip tr" title="Trophy level ${trophyLv()}">${TRO} ${S.tr||0} <small>Trophies</small></span></div>
  <button class="arena" onclick="trRoad()">🏟 Arena ${ar0+1}: ${ARENAS[ar0].n} ▾<span class="pb" style="--w:${pct}%"><i></i></span><small>${ar0<ARENAS.length-1?((ar0+1)*360-(S.tr||0))+' trophies to Arena '+(ar0+2)+' · tap to see rewards and cards':'Top arena reached!'}</small></button>
  <details class="prof"><summary>👤 ${esc(S.name||'Player')} <small>(tap to edit profile)</small></summary><div class="row"><label>Your name <input id="pname" maxlength="14" value="${esc(S.name||'Player')}" onchange="setName(this)"></label> <span id="pnote" style="color:#c0392b;font-size:15px"></span> <small>${S.named?'Changing your name costs '+NAME_COST+' gems.':'Your first name is free. After that, changing it costs '+NAME_COST+' gems.'}</small></div><small>Trophy level ${trophyLv()} &middot; Deck level average ${avgL()}</small></details>
