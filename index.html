@@ -519,10 +519,11 @@ const KD_B={
  statue:{n:'Hero Statue',e:'🗿',k:'deco',be:5,c:200,cl:2,d:'A very brave stickman.'}
 };
 const KU={sup:SUP,gem:GEM,exp:EXPI},KN={sup:'supplies',gem:'gems',exp:'EXP'},KBC={sup:'#ffe9b8',gem:'#d6efff',exp:'#e6dcff'};
-let KDSEL=-1,KDDEL=-1,KDFL=[],KC={yaw:.7,pit:.9,zm:1},K3T=0;
+let KDSEL=-1,KDDEL=-1,KDFL=[],KC={px:0,py:0,zm:1},K3T=0;
 function kdInit(){let k=S.kd;if(!k||!Array.isArray(k.p)){const t=Date.now();k=S.kd={c:1,p:Array(KD_N).fill(null)};k.p[0]={t:'farm',l:1,s:t};k.p[1]={t:'tree',l:1}}
  while(k.p.length<KD_N)k.p.push(null);k.c=Math.max(1,Math.min(KD_PL.length,k.c|0));
- if(!Array.isArray(k.inv)){k.inv=[{t:'gold',l:1},{t:'barracks',l:1}];for(let i=0;i<6;i++)k.inv.push({t:'wall',l:1});save()}return k}
+ if(!Array.isArray(k.inv)){k.inv=[];for(let i=0;i<6;i++)k.inv.push({t:'wall',l:1});save()}
+ if(!k.pl){k.pl=1;const un=KD_PL[k.c-1];['gold','barracks'].forEach((t,n)=>{if(k.p.some(b=>b&&b.t==t))return;const j=k.inv.findIndex(b=>b.t==t),b=j>=0?k.inv.splice(j,1)[0]:{t,l:1};b.s=Date.now();let i=KD_XY.findIndex(q=>q[0]==(n?-2:2)&&q[1]==0);if(i<0||i>=un||k.p[i])i=k.p.findIndex((x,ii)=>!x&&ii<un);if(i>=0)k.p[i]=b;else k.inv.push(b)});save()}return k}
 const kdIsProd=b=>!!b&&KD_B[b.t]&&KD_B[b.t].k!='deco';
 const kdBeauty=()=>Math.min(KD_BCAP,kdInit().p.reduce((t,b)=>t+(b&&KD_B[b.t]&&KD_B[b.t].be||0),0));
 const kdCapH=()=>4+2*kdInit().c;
@@ -551,10 +552,10 @@ function kdHTML(){const k=kdInit(),un=KD_PL[k.c-1],capH=kdCapH(),bt=kdBeauty();l
  +'<div class="row" style="margin-top:6px"><button id="kdall" onclick="kdAll()" '+(T.sup+T.gem+T.exp?'':'disabled')+'>💰 Collect all <span id="kdtot">'+kdTotTxt(T)+'</span></button>'
  +(k.c<KD_PL.length?'<button onclick="kdCastle()" '+(S.sup>=KD_CC[k.c-1]?'':'disabled')+'>⬆ Castle Lv '+(k.c+1)+' ('+KD_CC[k.c-1]+' '+SUP+')</button>':'<span class="chip">👑 Max castle</span>')+'</div>'
  +(k.c<KD_PL.length?'<small>Next castle level: +'+(KD_PL[k.c]-un)+' plots, +2 hours of storage'+(k.c==1?', Market and Fair Tent':k.c==2?', Crystal Cave':'')+'.</small>':'')+'</div>'
- +'<canvas id="kd3" class="kd3"></canvas><small>Drag to turn the board, scroll to zoom, tap a plot.</small><div class="box kdpanel" id="kdpanel">'+kdPanel()+'</div></div>'}
+ +'<canvas id="kd3" class="kd3"></canvas><small>Drag to look around, scroll to zoom, tap a plot.</small><div class="box kdpanel" id="kdpanel">'+kdPanel()+'</div></div>'}
 function kdTotTxt(T){const a=[];if(T.sup)a.push('+'+T.sup+' '+SUP);if(T.gem)a.push('+'+T.gem+' '+GEM);if(T.exp)a.push('+'+T.exp+' '+EXPI);return a.join(' ')||'(nothing yet)'}
 function kdPanel(){const k=kdInit(),i=KDSEL,un=KD_PL[k.c-1];
- if(i<0||i>=un)return '<b>Welcome, your majesty!</b><br><small>Your castle sits in the middle of the board. Tap an empty ➕ plot to build. Your Gold Mine, Barracks and Walls are waiting in your inventory, free to place. Decorations give beauty, which boosts everything. Upgrade your castle to unlock more room and better buildings.</small>';
+ if(i<0||i>=un)return '<b>Welcome, your majesty!</b><br><small>Your castle sits in the middle of the board. Tap an empty ➕ plot to build. Your Gold Mine and Barracks are already built, and your Walls are waiting in your inventory, free to place. Decorations give beauty, which boosts everything. Upgrade your castle to unlock more room and better buildings.</small>';
  const b=k.p[i];
  if(!b){let h='';const iv={};k.inv.forEach(x=>iv[x.t]=(iv[x.t]||0)+1);
   if(k.inv.length){h+='<b>📦 Your inventory (free)</b><div class="kdbuild">';for(const t in iv){const d=KD_B[t];h+='<button onclick="kdPlace('+i+',\''+t+'\')"><span class="kde2">'+d.e+'</span><b>'+d.n+' x'+iv[t]+'</b><small>Place for free</small></button>'}h+='</div>'}
@@ -586,7 +587,6 @@ function k3box(F,x,y,z,w,h,d,col){const X=w/2,Z=d/2,p=[[x-X,y,z-Z],[x+X,y,z-Z],[
  [[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7],[4,5,6,7]].forEach(q=>k3f(F,q.map(i=>p[i]),col,o))}
 function k3pri(F,x,y,z,r,h,col,n,r2){n=n||8;r2=r2==null?r:r2;const o=[x,y+h/2,z],A=[],B=[];for(let i=0;i<n;i++){const a=i/n*6.2832;A.push([x+Math.cos(a)*r,y,z+Math.sin(a)*r]);B.push([x+Math.cos(a)*r2,y+h,z+Math.sin(a)*r2])}
  for(let i=0;i<n;i++){const j=(i+1)%n;k3f(F,r2>0?[A[i],A[j],B[j],B[i]]:[A[i],A[j],B[i]],col,o)}if(r2>0)k3f(F,B,col,o)}
-function k3P(p,cw,ch){const cy=Math.cos(KC.yaw),sy=Math.sin(KC.yaw),cp=Math.cos(KC.pit),sp=Math.sin(KC.pit),rx=p[0]*cy-p[2]*sy,rz=p[0]*sy+p[2]*cy,d=12+rz*cp-p[1]*sp,s=cw*1.1*KC.zm/d;return[cw/2+rx*s,ch*.6-(p[1]*cp+rz*sp)*s,d,s]}
 function k3castle(F,L){const h=1.2+.1*L;
  k3box(F,0,0,0,1.7,h,1.7,'#dcd6c8');k3pri(F,0,h,0,1.25,.9,'#3b6fd0',4,0);k3pri(F,0,h+.9,0,.03,.5,'#6b4a2b',4);k3box(F,.2,h+1.15,0,.4,.25,.03,'#ffd23f');
  for(const sx of[-1,1])for(const sz of[-1,1]){k3pri(F,sx*1.05,0,sz*1.05,.4,h+.3,'#cfc9bb',10);k3pri(F,sx*1.05,h+.3,sz*1.05,.5,.6,'#d94a3d',10,0)}
@@ -611,32 +611,49 @@ function k3b(F,t,x,z,at){const nb=(a,b)=>{const q=at(x+a,z+b);return q&&q.t=='wa
  case'fountain':k3pri(F,x,0,z,.44,.16,'#b8c2cc',10);k3pri(F,x,.16,z,.34,.05,'#4fc3f7',10);k3pri(F,x,.2,z,.07,.4,'#9ad7ff',6,.03);break;
  case'tent':k3pri(F,x,0,z,.46,.3,'#fafafa',8);k3pri(F,x,.3,z,.5,.5,'#e53935',8,0);break;
  case'statue':k3box(F,x,0,z,.4,.28,.4,'#9aa0a6');k3pri(F,x,.28,z,.12,.4,'#c9ced4',6);k3pri(F,x,.68,z,.1,.14,'#c9ced4',6,.04);break}}
-function k3fill(cx,L,cw,ch,sort){L.forEach(f=>{f.q=f.P.map(p=>k3P(p,cw,ch));f.d=f.q.reduce((s,p)=>s+p[2],0)/f.q.length});if(sort)L.sort((a,b)=>b.d-a.d);
- cx.lineJoin='round';L.forEach(f=>{cx.beginPath();f.q.forEach((p,i)=>i?cx.lineTo(p[0],p[1]):cx.moveTo(p[0],p[1]));cx.closePath();cx.fillStyle=f.c;cx.fill();cx.strokeStyle='rgba(0,0,0,.22)';cx.lineWidth=1;cx.stroke()})}
-function k3Draw(cv,t){const k=kdInit(),un=KD_PL[k.c-1],cx=cv.getContext('2d'),cw=cv.width,ch=cv.height,F=[],G0=[],pl={};
+const K3S={},IX=p=>[(p[0]-p[2])*32,(p[0]+p[2])*16-p[1]*36];let K3BG=null;const K3R=11;
+function k3spr(key,w,h,build){let s=K3S[key];if(s)return s;const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d'),F=[];build(F);
+ F.forEach(f=>{f.q=f.P.map(IX);f.d=f.P.reduce((a,p)=>a+p[0]+p[2]+p[1]*.5,0)/f.P.length});F.sort((a,b)=>a.d-b.d);
+ x.translate(w/2,h-60);x.lineJoin='round';F.forEach(f=>{x.beginPath();f.q.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.closePath();x.fillStyle=f.c;x.fill();x.strokeStyle='rgba(0,0,0,.25)';x.stroke()});
+ return K3S[key]={c,w,h,ay:h-60}}
+const k3rnd=(x,z,s)=>Math.abs(Math.sin(x*12.9898+z*78.233+s*37.7)*43758.5453)%1;
+function k3ftree(F,v){if(v==0){k3pri(F,0,0,0,.08,.3,'#6b4423',6);k3pri(F,0,.2,0,.45,.6,'#1f7a3a',7,0);k3pri(F,0,.55,0,.35,.55,'#2a9145',7,0);k3pri(F,0,.95,0,.22,.5,'#35a653',7,0)}
+ else if(v==1){k3pri(F,0,0,0,.09,.4,'#7a4a21',6);k3pri(F,0,.35,0,.42,.6,'#3aa14b',8,.18)}
+ else{k3pri(F,0,0,0,.08,.3,'#5a3a1c',6);k3pri(F,0,.2,0,.4,.8,'#17602f',6,0);k3pri(F,0,.7,0,.28,.7,'#1d7438',6,0)}}
+function k3bg(){const c=document.createElement('canvas');c.width=1500;c.height=760;const x=c.getContext('2d');x.translate(750,380);x.fillStyle='#2c6a38';x.fillRect(-750,-380,1500,760);
+ for(let a=-K3R;a<=K3R;a++)for(let b=-K3R;b<=K3R;b++){const m=Math.max(Math.abs(a),Math.abs(b)),cs=Math.abs(a)<2&&Math.abs(b)<2,path=a==0&&b>=2;
+  x.fillStyle=cs?'#c8c2b4':path?((a+b)&1?'#c9a66b':'#bf9c60'):m<=4?((a+b)&1?'#62b966':'#6cc36f'):((a+b)&1?'#3f8f48':'#459a4e');
+  const ix=(a-b)*32,iy=(a+b)*16;x.beginPath();x.moveTo(ix,iy-16);x.lineTo(ix+32,iy);x.lineTo(ix,iy+16);x.lineTo(ix-32,iy);x.closePath();x.fill()}
+ return c}
+const K3FT=[];for(let a=-K3R;a<=K3R;a++)for(let b=-K3R;b<=K3R;b++){const m=Math.max(Math.abs(a),Math.abs(b));if(m<5||(a==0&&b>=2))continue;
+ const n=m==5?(k3rnd(a,b,1)<.6?1:0):(k3rnd(a,b,2)<.5?2:1);for(let i=0;i<n;i++)K3FT.push({x:a+(k3rnd(a,b,3+i)-.5)*.8,z:b+(k3rnd(a,b,5+i)-.5)*.8,v:Math.floor(k3rnd(a,b,7+i)*3)})}
+function k3Draw(cv,t){const k=kdInit(),un=KD_PL[k.c-1],cx=cv.getContext('2d'),cw=cv.width,ch=cv.height,sc=cw/620*KC.zm,ox=cw/2-KC.px*sc,oy=ch*.52-KC.py*sc,pl={};
+ const T=(x,y,z)=>[ox+(x-z)*32*sc,oy+((x+z)*16-y*36)*sc];
  KD_XY.forEach((q,i)=>{pl[q[0]+','+q[1]]=i});const at=(x,z)=>{const i=pl[x+','+z];return i!=null&&i<un?k.p[i]:null};
- const g=cx.createLinearGradient(0,0,0,ch);g.addColorStop(0,'#aee0ff');g.addColorStop(1,'#e8f6e0');cx.fillStyle=g;cx.fillRect(0,0,cw,ch);
- k3box(G0,0,-.4,0,7.5,.4,7.5,'#8a6238');
- for(let x=-3;x<=3;x++)for(let z=-3;z<=3;z++){const i=pl[x+','+z],cs=Math.abs(x)<2&&Math.abs(z)<2;
-  const c=cs?'#c8c2b4':i>=un?'#8f9a8f':KDSEL==i?'#ffd54a':((x+z)&1?'#62b966':'#6cc36f');k3f(G0,[[x-.5,0,z-.5],[x+.5,0,z-.5],[x+.5,0,z+.5],[x-.5,0,z+.5]],c,[x,-1,z])}
- k3castle(F,k.c);KD_XY.forEach((q,i)=>{const b=k.p[i];if(i<un&&b)k3b(F,b.t,q[0],q[1],at)});
- k3fill(cx,G0,cw,ch,0);
+ cx.fillStyle='#2c6a38';cx.fillRect(0,0,cw,ch);if(!K3BG)K3BG=k3bg();cx.drawImage(K3BG,ox-750*sc,oy-380*sc,1500*sc,760*sc);
  cx.textAlign='center';cx.textBaseline='middle';
- KD_XY.forEach((q,i)=>{const b=k.p[i],p=k3P([q[0],.02,q[1]],cw,ch);if(i>=un){cx.font=p[3]*.3+'px sans-serif';cx.fillText('🔒',p[0],p[1])}else if(!b){cx.font='bold '+p[3]*.45+'px sans-serif';cx.fillStyle='rgba(255,255,255,.8)';cx.fillText('+',p[0],p[1])}});
- k3fill(cx,F,cw,ch,1);
- KD_XY.forEach((q,i)=>{const b=k.p[i];if(i>=un||!b)return;const p0=k3P([q[0],.02,q[1]+.5],cw,ch),s=p0[3];
-  if(kdIsProd(b)){cx.font='bold '+s*.2+'px sans-serif';cx.fillStyle='rgba(0,0,0,.6)';cx.fillText('Lv'+b.l,p0[0],p0[1]+s*.1);
-   const n=Math.floor(kdPend(b));if(n>=1){const p=k3P([q[0],1.1,q[1]],cw,ch),y=p[1]+Math.sin(t/260+i)*s*.05,tx='+'+n,w=cx.measureText(tx).width+s*.35;cx.font='bold '+s*.24+'px sans-serif';
-    const w2=cx.measureText(tx).width+s*.3;cx.fillStyle=KBC[KD_B[b.t].k];cx.beginPath();cx.roundRect(p[0]-w2/2,y-s*.18,w2,s*.36,s*.18);cx.fill();cx.strokeStyle='#333';cx.lineWidth=2;cx.stroke();cx.fillStyle='#222';cx.fillText(tx,p[0],y)}}});
- const now=Date.now();KDFL=KDFL.filter(f=>now-f.s<1000);KDFL.forEach(f=>{const q=KD_XY[f.i],a=(now-f.s)/1000,p=k3P([q[0],1+a*.8,q[1]],cw,ch);cx.globalAlpha=1-a;cx.font='bold '+p[3]*.3+'px sans-serif';cx.lineWidth=4;cx.strokeStyle='#000';cx.strokeText(f.t,p[0],p[1]);cx.fillStyle='#fff';cx.fillText(f.t,p[0],p[1]);cx.globalAlpha=1})}
-function k3Hit(px,py,cv){const k=kdInit(),un=KD_PL[k.c-1];let best=-1,bd=1e9;for(let i=0;i<un;i++){const q=KD_XY[i],p=k3P([q[0],.3,q[1]],cv.width,cv.height),d=Math.hypot(p[0]-px,p[1]-py);if(d<p[3]*.55&&d<bd){bd=d;best=i}}return best}
+ KD_XY.forEach((q,i)=>{const p=T(q[0],0,q[1]),b=k.p[i];cx.beginPath();cx.moveTo(p[0],p[1]-16*sc);cx.lineTo(p[0]+32*sc,p[1]);cx.lineTo(p[0],p[1]+16*sc);cx.lineTo(p[0]-32*sc,p[1]);cx.closePath();
+  cx.fillStyle=i>=un?'rgba(110,110,110,.6)':KDSEL==i?'rgba(255,213,74,.8)':'rgba(255,255,255,.14)';cx.fill();if(i<un){cx.strokeStyle='rgba(255,255,255,.35)';cx.stroke()}
+  if(i>=un){cx.font=sc*16+'px sans-serif';cx.fillText('🔒',p[0],p[1])}else if(!b){cx.font='bold '+sc*20+'px sans-serif';cx.fillStyle='rgba(255,255,255,.85)';cx.fillText('+',p[0],p[1])}});
+ const L=[];K3FT.forEach(f=>{const p=T(f.x,0,f.z);if(p[0]>-60*sc&&p[0]<cw+60*sc&&p[1]>-40*sc&&p[1]<ch+120*sc)L.push({d:f.x+f.z,p,s:k3spr('ft'+f.v,110,190,F=>k3ftree(F,f.v))})});
+ L.push({d:0,p:T(0,0,0),s:k3spr('castle'+k.c,300,330,F=>k3castle(F,k.c))});
+ KD_XY.forEach((q,i)=>{const b=k.p[i];if(i>=un||!b)return;const x=q[0],z=q[1],nb=(a,c)=>{const o=at(x+a,z+c);return o&&o.t=='wall'},zz=b.t=='wall'&&(nb(0,1)||nb(0,-1))&&!(nb(1,0)||nb(-1,0));
+  L.push({d:x+z,p:T(x,0,z),s:k3spr(b.t+(zz?'z':''),150,210,F=>k3b(F,b.t,0,0,(a,c)=>zz&&b.t=='wall'?(a==0&&c!=0?{t:'wall'}:null):null))})});
+ L.sort((a,b)=>a.d-b.d);L.forEach(o=>cx.drawImage(o.s.c,o.p[0]-o.s.w/2*sc,o.p[1]-o.s.ay*sc,o.s.w*sc,o.s.h*sc));
+ KD_XY.forEach((q,i)=>{const b=k.p[i];if(i>=un||!b||!kdIsProd(b))return;const p0=T(q[0],0,q[1]+.5);cx.font='bold '+sc*13+'px sans-serif';cx.fillStyle='rgba(0,0,0,.65)';cx.fillText('Lv'+b.l,p0[0],p0[1]+sc*8);
+  const n=Math.floor(kdPend(b));if(n>=1){const p=T(q[0],1.2,q[1]),y=p[1]+Math.sin(t/260+i)*sc*3,tx='+'+n;cx.font='bold '+sc*15+'px sans-serif';const w2=cx.measureText(tx).width+sc*16;
+   cx.fillStyle=KBC[KD_B[b.t].k];cx.beginPath();cx.roundRect(p[0]-w2/2,y-sc*11,w2,sc*22,sc*11);cx.fill();cx.strokeStyle='#333';cx.lineWidth=2;cx.stroke();cx.fillStyle='#222';cx.fillText(tx,p[0],y)}});
+ const now=Date.now();KDFL=KDFL.filter(f=>now-f.s<1000);KDFL.forEach(f=>{const q=KD_XY[f.i],a=(now-f.s)/1000,p=T(q[0],1+a*.8,q[1]);cx.globalAlpha=1-a;cx.font='bold '+sc*18+'px sans-serif';cx.lineWidth=4;cx.strokeStyle='#000';cx.strokeText(f.t,p[0],p[1]);cx.fillStyle='#fff';cx.fillText(f.t,p[0],p[1]);cx.globalAlpha=1})}
+function k3Hit(px,py,cv){const k=kdInit(),un=KD_PL[k.c-1],sc=cv.width/620*KC.zm,ox=cv.width/2-KC.px*sc,oy=cv.height*.52-KC.py*sc,pl={};KD_XY.forEach((q,i)=>{pl[q[0]+','+q[1]]=i});
+ const cell=y=>{const ix=(px-ox)/sc/32,iy=(y-oy)/sc/16,a=Math.round((ix+iy)/2),b=Math.round((iy-ix)/2);const i=pl[a+','+b];return i!=null&&i<un?i:-1};
+ const c1=cell(py+22*sc);if(c1>=0&&k.p[c1])return c1;return cell(py)}
 function k3Bind(cv){if(cv._b)return;cv._b=1;let d=null;
- cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);d={x:e.clientX,y:e.clientY,m:0,yaw:KC.yaw,pit:KC.pit}};
- cv.onpointermove=e=>{if(!d)return;const dx=e.clientX-d.x,dy=e.clientY-d.y;d.m=Math.max(d.m,Math.hypot(dx,dy));if(d.m>6){KC.yaw=d.yaw+dx*.01;KC.pit=Math.max(.45,Math.min(1.35,d.pit+dy*.005))}};
+ cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);d={x:e.clientX,y:e.clientY,m:0,px:KC.px,py:KC.py}};
+ cv.onpointermove=e=>{if(!d)return;const dx=e.clientX-d.x,dy=e.clientY-d.y;d.m=Math.max(d.m,Math.hypot(dx,dy));if(d.m>6){const r=cv.getBoundingClientRect(),sc=cv.width/620*KC.zm,f=cv.width/r.width/sc;KC.px=Math.max(-380,Math.min(380,d.px-dx*f));KC.py=Math.max(-260,Math.min(260,d.py-dy*f))}};
  cv.onpointercancel=()=>{d=null};
  cv.onpointerup=e=>{const was=d;d=null;if(was&&was.m<=6){const r=cv.getBoundingClientRect(),sx=cv.width/r.width,i=k3Hit((e.clientX-r.left)*sx,(e.clientY-r.top)*sx,cv);if(i>=0)kdTap(i);else{KDSEL=-1;kdRender()}}};
- cv.onwheel=e=>{e.preventDefault();KC.zm=Math.max(.6,Math.min(1.8,KC.zm*(e.deltaY<0?1.1:.9)))}}
-function k3Loop(t){requestAnimationFrame(k3Loop);const cv=$('kd3');if(!cv||page!=3||document.hidden||t-K3T<45)return;const w=cv.clientWidth;if(!w)return;K3T=t;k3Bind(cv);
+ cv.onwheel=e=>{e.preventDefault();KC.zm=Math.max(.5,Math.min(1.8,KC.zm*(e.deltaY<0?1.1:.9)))}}
+function k3Loop(t){requestAnimationFrame(k3Loop);const cv=$('kd3');if(!cv||page!=3||document.hidden||t-K3T<40)return;const w=cv.clientWidth;if(!w)return;K3T=t;k3Bind(cv);
  const dpr=Math.min(2,window.devicePixelRatio||1),W2=Math.round(w*dpr);if(cv.width!=W2){cv.width=W2;cv.height=Math.round(W2*.8)}k3Draw(cv,t)}
 requestAnimationFrame(k3Loop);
 const EXP_COST=[5,20,50,100,250,500,1000,1500,3000,5000,10000,15000,30000,40000,50000];
@@ -668,15 +685,15 @@ function shopDaily(){shopDay();const nm={sup:'supplies',exp:'Common EXP',rexp:'R
   ks.forEach((k,j)=>{const u=unlockInfo(k),okA=(S.tr||0)>=u[2];h+=`<div class='box tile rar-${rarOf(k)}'>${ci(k)}<b>${CARDS[k].n}</b> ${rbadge(k)}<br><small>${CARDS[k].t}</small><br><small>${okA?'Reached '+u[2]+' '+TRO+' (Arena '+(u[0]+1)+')':'Reach '+u[2]+' '+TRO+' (Arena '+(u[0]+1)+': '+ARENAS[u[0]].n+')'}${j?' &middot; unlock the card before it first':''}</small><div class='row'><button ${!j&&okA&&S.gems>=u[1]?'':'disabled'} onclick="buyCard('${k}')">Unlock for ${u[1]} ${GEM}</button></div></div>`});h+=`</div>`}
  return h}
 var sview='main';
-const KSUP=[[100,8],[500,35],[2000,120]],KSHOP=[['gold',40],['barracks',70],['mill',30],['farm',15],['market',60],['mine',100],['cave',200],['wall',8],['watch',30],['cannon',50],['spikes',15]];
+const KSUP=[[100,8],[500,35],[2000,120]],KSP=['gold','barracks','mill','farm','market','mine','cave'],KSD=['wall','watch','cannon','spikes'];
 function buySup(i){const p=KSUP[i];if(!p||S.gems<p[1])return;S.gems-=p[1];S.sup+=p[0];save();menu()}
-function kdBuy(t){const p=KSHOP.find(x=>x[0]==t),k=kdInit();if(!p||S.gems<p[1]||k.c<KD_B[t].cl)return;S.gems-=p[1];k.inv.push({t,l:1});save();menu()}
-function kshopHTML(){const k=kdInit(),card=([t,g])=>{const d=KD_B[t],lk=k.c<d.cl,ef=d.k=='deco'?'+'+d.be+' beauty':d.b+' '+KN[d.k]+'/hr';
- return `<div class='box' style='text-align:center'><div style='font-size:38px'>${d.e}</div><b>${d.n}</b><br><small>${lk?'🔒 Castle Lv '+d.cl:ef}</small><br><small>${d.d}</small><div class='row' style='justify-content:center'><button ${!lk&&S.gems>=g?'':'disabled'} onclick="kdBuy('${t}')">Buy for ${g} ${GEM}</button></div></div>`};
+function kdBuyOk(t){const d=KD_B[t],k=kdInit();return k.c>=d.cl&&S.sup>=d.c&&(d.def||kdCount(t)<kdLim(t))}
+function kdBuy(t){if(!kdBuyOk(t))return;S.sup-=KD_B[t].c;kdInit().inv.push({t,l:1});save();menu()}
+function kshopHTML(){const k=kdInit(),card=t=>{const d=KD_B[t],lk=k.c<d.cl,mx=!lk&&!d.def&&kdCount(t)>=kdLim(t),ef=d.k=='deco'?'+'+d.be+' beauty':d.b+' '+KN[d.k]+'/hr';
+ return `<div class='box' style='text-align:center'><div style='font-size:38px'>${d.e}</div><b>${d.n}</b><br><small>${lk?'🔒 Castle Lv '+d.cl:mx?'Max '+kdLim(t)+' (upgrade castle)':ef}</small><br><small>${d.d}</small><div class='row' style='justify-content:center'><button ${kdBuyOk(t)?'':'disabled'} onclick="kdBuy('${t}')">Buy for ${d.c} ${SUP}</button></div></div>`};
  return `<h2 style='margin:6px 0'>Kingdom Shop</h2><div>${GEM} Gems <b>${S.gems}</b> &nbsp; ${SUP} Gold scraps <b>${S.sup}</b></div><small>Bought buildings go to your kingdom inventory. Place them for free from any empty plot.</small>
  <h2 style='margin:12px 0 2px'>Gold scraps</h2><div class='grid'>`+KSUP.map((p,i)=>`<div class='box' style='text-align:center'><div style='font-size:38px'>${SUP}</div><b>${p[0]} Gold scraps</b><div class='row' style='justify-content:center'><button ${S.gems>=p[1]?'':'disabled'} onclick='buySup(${i})'>Buy for ${p[1]} ${GEM}</button></div></div>`).join('')+`</div>
- <h2 style='margin:12px 0 2px'>Producers</h2><div class='grid'>`+KSHOP.filter(p=>KD_B[p[0]].k!='deco').map(card).join('')+`</div>
- <h2 style='margin:12px 0 2px'>Defenses</h2><div class='grid'>`+KSHOP.filter(p=>KD_B[p[0]].def).map(card).join('')+`</div>`}
+ <h2 style='margin:12px 0 2px'>Producers</h2><div class='grid'>`+KSP.map(card).join('')+`</div><h2 style='margin:12px 0 2px'>Defenses</h2><div class='grid'>`+KSD.map(card).join('')+`</div>`}
 function shopTab(){return `<div class="row"><button class="${sview=='main'?'on':''}" onclick="sview='main';menu()">Shop</button><button class="${sview=='k'?'on':''}" onclick="sview='k';menu()">🏰 Kingdom Shop</button></div>`+(sview=='k'?kshopHTML():shopDaily()+shopGems())}
 function shopGems(){const nm={sup:'Supplies',exp:'Common EXP',rexp:'Rare EXP'},ic={sup:SUP,exp:EXPI,rexp:RAREI};
  return `<h2 style='margin:12px 0 2px'>Buy with gems</h2><small>Spend gems on supplies and EXP for upgrading your cards.</small><div class='grid' style='margin-top:8px'>`+SHOP.map((s,i)=>`<div class='box' style='text-align:center'><div style='font-size:38px'>${ic[s[0]]}</div><b>${s[1]} ${nm[s[0]]}</b><div class='row' style='justify-content:center'><button ${S.gems>=s[2]?'':'disabled'} onclick='buyG(${i})'>Buy for ${s[2]} ${GEM}</button></div></div>`).join('')+`</div>`}
