@@ -495,87 +495,91 @@ function menu(msg){dropSave();if(MP&&MP.started)mpEnd();{const r=trCheck();if(r)
  m.innerHTML=h;mpRender();const sl=$('sl');sl.scrollLeft=page*sl.clientWidth;
  sl.onscroll=()=>{const p=Math.round(sl.scrollLeft/sl.clientWidth);if(p!=page){page=p;document.querySelectorAll('.tabs button').forEach((b,j)=>b.classList.toggle('on',j==p))}}
 }
-/* ================= Kingdom tab: a little 3D kingdom with your castle in the middle ================= */
-const KD_N=40,KD_PL=[12,16,20,28,36,40],KD_CC=[150,500,1500,4000,10000],KD_MAXL=10,KD_BCAP=50;
+/* ================= Kingdom tab: a huge 100x100 kingdom, build anywhere ================= */
 const KD_XY=(()=>{const a=[];for(let x=-3;x<=3;x++)for(let z=-3;z<=3;z++)if(Math.abs(x)>1||Math.abs(z)>1)a.push([x,z]);
  const an=p=>Math.round((Math.atan2(p[1],p[0])+7)*1e3);return a.sort((p,q)=>(p[0]*p[0]+p[1]*p[1])-(q[0]*q[0]+q[1]*q[1])||an(p)-an(q))})();
+const KD_CC=[150,500,1500,4000,10000],KD_MAXC=6,KD_MAXL=10,KD_BCAP=50,KD_LIM={gold:10,barracks:5,mine:5,cave:3};
 const KD_B={
  farm:{n:'Farm',e:'🌾',k:'sup',b:45,c:30,u:25,cl:1,d:'Grows supplies.'},
  mill:{n:'Lumber Mill',e:'🪵',k:'sup',b:75,c:100,u:60,cl:1,d:'Chops lots of supplies.'},
- market:{n:'Market',e:'🏪',k:'sup',b:140,c:350,u:160,cl:2,d:'Trades for tons of supplies.'},
- gold:{n:'Gold Mine',e:'⛏️',k:'sup',b:90,c:300,u:150,cl:1,lim:c=>c+1,d:'Digs up gold scraps (supplies).'},
- barracks:{n:'Barracks',e:'🛡️',k:'exp',b:15,c:400,u:260,cl:1,lim:c=>1+(c>2?1:0),d:'Trains your troops: makes Common EXP for card upgrades.'},
- mine:{n:'Gem Mine',e:'💎',k:'gem',b:6,c:250,u:250,cl:1,lim:c=>c,d:'Digs up gems.'},
- cave:{n:'Crystal Cave',e:'🔮',k:'gem',b:14,c:1200,u:700,cl:3,lim:c=>c-2,d:'Glowing crystals full of gems.'},
+ market:{n:'Market',e:'🏪',k:'sup',b:140,c:350,u:160,cl:1,d:'Trades for tons of supplies.'},
+ gold:{n:'Gold Mine',e:'⛏️',k:'sup',b:90,c:300,u:150,cl:1,d:'Digs up gold scraps (supplies).'},
+ barracks:{n:'Barracks',e:'🛡️',k:'exp',b:15,c:400,u:260,cl:1,d:'Trains your troops: makes Common EXP for card upgrades.'},
+ mine:{n:'Gem Mine',e:'💎',k:'gem',b:6,c:250,u:250,cl:1,d:'Digs up gems.'},
+ cave:{n:'Crystal Cave',e:'🔮',k:'gem',b:14,c:1200,u:700,cl:1,d:'Glowing crystals full of gems.'},
  wall:{n:'Wall',e:'🧱',k:'deco',be:1,c:20,cl:1,def:1,d:'Sturdy stone wall. Neighbouring walls link up.'},
  watch:{n:'Watchtower',e:'🗼',k:'deco',be:2,c:60,cl:1,def:1,g:1,d:'A tall lookout that guards your kingdom.'},
- cannon:{n:'Cannon Tower',e:'💣',k:'deco',be:3,c:100,cl:2,def:1,g:1,d:'A stout tower with a big cannon.'},
+ cannon:{n:'Cannon Tower',e:'💣',k:'deco',be:3,c:100,cl:1,def:1,g:1,d:'A stout tower with a big cannon.'},
  spikes:{n:'Spike Trap',e:'🪤',k:'deco',be:1,c:30,cl:1,def:1,g:1,d:'Pointy surprise for invaders.'},
  tree:{n:'Tree',e:'🌳',k:'deco',be:1,c:15,cl:1,d:'Just a nice tree.'},
  flower:{n:'Flower Bed',e:'🌷',k:'deco',be:1,c:15,cl:1,d:'Smells lovely.'},
  lantern:{n:'Lantern',e:'🏮',k:'deco',be:2,c:40,cl:1,d:'Cozy glow.'},
  fountain:{n:'Fountain',e:'⛲',k:'deco',be:3,c:80,cl:1,d:'Splashy and fancy.'},
- tent:{n:'Fair Tent',e:'🎪',k:'deco',be:4,c:150,cl:2,d:'Party time!'},
- statue:{n:'Hero Statue',e:'🗿',k:'deco',be:5,c:200,cl:2,d:'A very brave stickman.'}
+ tent:{n:'Fair Tent',e:'🎪',k:'deco',be:4,c:150,cl:1,d:'Party time!'},
+ statue:{n:'Hero Statue',e:'🗿',k:'deco',be:5,c:200,cl:1,d:'A very brave stickman.'}
 };
 const KU={sup:SUP,gem:GEM,exp:EXPI},KN={sup:'supplies',gem:'gems',exp:'EXP'},KBC={sup:'#ffe9b8',gem:'#d6efff',exp:'#e6dcff'};
-let KDSEL=-1,KDDEL=-1,KDFL=[],KC={px:0,py:0,zm:1},K3T=0;
-function kdInit(){let k=S.kd;if(!k||!Array.isArray(k.p)){const t=Date.now();k=S.kd={c:1,p:Array(KD_N).fill(null)};k.p[0]={t:'farm',l:1,s:t};k.p[1]={t:'tree',l:1}}
- while(k.p.length<KD_N)k.p.push(null);k.c=Math.max(1,Math.min(KD_PL.length,k.c|0));
+let KDSEL=null,KDDEL=null,KDFL=[],KC={px:0,py:0,zm:1},K3T=0;
+const kdXZ=id=>id.split(',').map(Number),kdBs=()=>Object.values(kdInit().p);
+function kdInit(){let k=S.kd;if(!k||typeof k.p!='object'||!k.p){k=S.kd={c:1,p:{}}}
+ if(Array.isArray(k.p)){const o={};k.p.forEach((b,i)=>{if(b&&KD_XY[i])o[KD_XY[i][0]+','+KD_XY[i][1]]=b});k.p=o;save()}
+ k.c=Math.max(1,Math.min(KD_MAXC,k.c|0));
  if(!Array.isArray(k.inv)){k.inv=[];for(let i=0;i<6;i++)k.inv.push({t:'wall',l:1});save()}
- if(!k.pl){k.pl=1;const un=KD_PL[k.c-1];['gold','barracks'].forEach((t,n)=>{if(k.p.some(b=>b&&b.t==t))return;const j=k.inv.findIndex(b=>b.t==t),b=j>=0?k.inv.splice(j,1)[0]:{t,l:1};b.s=Date.now();let i=KD_XY.findIndex(q=>q[0]==(n?-2:2)&&q[1]==0);if(i<0||i>=un||k.p[i])i=k.p.findIndex((x,ii)=>!x&&ii<un);if(i>=0)k.p[i]=b;else k.inv.push(b)});save()}return k}
+ if(!k.pl2){k.pl2=1;const sp=[[2,0],[-2,0],[0,2],[0,-2],[2,2],[-2,-2],[2,-2],[-2,2]];['gold','barracks'].forEach((t,n)=>{if(Object.values(k.p).some(b=>b&&b.t==t))return;const j=k.inv.findIndex(b=>b.t==t),b=j>=0?k.inv.splice(j,1)[0]:{t,l:1};b.s=Date.now();const c=sp.slice(n).find(q=>!k.p[q]);k.p[c[0]+','+c[1]]=b});save()}
+ return k}
 const kdIsProd=b=>!!b&&KD_B[b.t]&&KD_B[b.t].k!='deco';
-const kdBeauty=()=>Math.min(KD_BCAP,kdInit().p.reduce((t,b)=>t+(b&&KD_B[b.t]&&KD_B[b.t].be||0),0));
+const kdBeauty=()=>Math.min(KD_BCAP,kdBs().reduce((t,b)=>t+(b&&KD_B[b.t]&&KD_B[b.t].be||0),0));
 const kdCapH=()=>4+2*kdInit().c;
 const kdRate=b=>KD_B[b.t].b*(1+.8*(b.l-1))*(1+kdBeauty()/100);
 const kdPend=b=>kdIsProd(b)?Math.max(0,kdRate(b)*Math.min(kdCapH()*3600e3,Date.now()-b.s)/3600e3):0;
 const kdCapAmt=b=>kdRate(b)*kdCapH();
 const kdUpCost=b=>Math.round(KD_B[b.t].u*Math.pow(b.l,1.7));
-const kdCount=t=>{const k=kdInit();return k.p.filter(b=>b&&b.t==t).length+k.inv.filter(b=>b.t==t).length};
-const kdLim=t=>KD_B[t].lim?Math.max(0,KD_B[t].lim(kdInit().c)):99;
-function kdReady(){const k=kdInit();return k.p.some(b=>kdIsProd(b)&&kdPend(b)>=kdCapAmt(b)*.75)}
+const kdCount=t=>{const k=kdInit();return kdBs().filter(b=>b&&b.t==t).length+k.inv.filter(b=>b.t==t).length};
+const kdLim=t=>KD_LIM[t]||999;
+function kdReady(){return kdBs().some(b=>kdIsProd(b)&&kdPend(b)>=kdCapAmt(b)*.75)}
 function kdChips(){const a=document.querySelector('.chip.sup'),g=document.querySelector('.chip.gem');if(a)a.innerHTML=SUP+' '+S.sup+' <small>Supplies</small>';if(g)g.innerHTML=GEM+' '+S.gems+' <small>Gems</small>'}
 function kdCollect(i,quiet){const k=kdInit(),b=k.p[i];if(!kdIsProd(b))return 0;const p=kdPend(b),n=Math.floor(p);if(n<1)return 0;
  const full=Date.now()-b.s>=kdCapH()*3600e3;b.s=full?Date.now():Date.now()-(p-n)/kdRate(b)*3600e3;
  const kk=KD_B[b.t].k;if(kk=='sup')S.sup+=n;else if(kk=='exp')S.exp+=n;else S.gems+=n;save();if(!quiet){kdChips();kdRender([[i,'+'+n]])}return n}
-function kdAll(){const k=kdInit(),fl=[];k.p.forEach((b,i)=>{if(!kdIsProd(b))return;const n=kdCollect(i,1);if(n)fl.push([i,'+'+n])});if(fl.length)kdChips();kdRender(fl)}
-function kdTap(i){const k=kdInit(),b=k.p[i];KDDEL=-1;if(i>=KD_PL[k.c-1])return;if(kdIsProd(b)&&kdPend(b)>=1){KDSEL=i;kdCollect(i);return}KDSEL=i;kdRender()}
-function kdBuild(i,t){const k=kdInit(),d=KD_B[t];KDDEL=-1;if(!d||k.p[i]||i>=KD_PL[k.c-1]||k.c<d.cl||kdCount(t)>=kdLim(t)||S.sup<d.c)return;S.sup-=d.c;k.p[i]={t,l:1,s:Date.now()};save();kdChips();kdRender()}
-function kdPlace(i,t){const k=kdInit(),j=k.inv.findIndex(b=>b.t==t);KDDEL=-1;if(j<0||k.p[i]||i>=KD_PL[k.c-1])return;const b=k.inv.splice(j,1)[0];b.s=Date.now();k.p[i]=b;save();kdRender()}
-function kdStore(i){const k=kdInit(),b=k.p[i];if(!b)return;KDDEL=-1;kdCollect(i,1);k.inv.push({t:b.t,l:b.l});k.p[i]=null;save();kdChips();kdRender()}
-function kdUp(i){const k=kdInit(),b=k.p[i];KDDEL=-1;if(!kdIsProd(b)||b.l>=KD_MAXL)return;const c=kdUpCost(b);if(S.sup<c)return;kdCollect(i,1);S.sup-=c;b.l++;b.s=Math.max(b.s,Date.now()-1);save();kdChips();kdRender([[i,'Lv '+b.l]])}
-function kdDemo(i){const k=kdInit(),b=k.p[i];if(!b)return;if(KDDEL!=i){KDDEL=i;kdRender();return}KDDEL=-1;if(kdIsProd(b))kdCollect(i,1);S.sup+=Math.floor(KD_B[b.t].c/2);k.p[i]=null;save();kdChips();kdRender()}
-function kdCastle(){const k=kdInit(),c=KD_CC[k.c-1];KDDEL=-1;if(k.c>=KD_PL.length||S.sup<c)return;kdAll();S.sup-=c;k.c++;save();kdChips();kdRender()}
-function kdHTML(){const k=kdInit(),un=KD_PL[k.c-1],capH=kdCapH(),bt=kdBeauty();let T={sup:0,gem:0,exp:0};
- k.p.forEach(b=>{if(kdIsProd(b))T[KD_B[b.t].k]+=Math.floor(kdPend(b))});
+function kdAll(){const k=kdInit(),fl=[];Object.keys(k.p).forEach(i=>{const n=kdCollect(i,1);if(n)fl.push([i,'+'+n])});if(fl.length)kdChips();kdRender(fl)}
+function kdFree(i){return i!='0,0'&&!kdInit().p[i]}
+function kdTap(i){const k=kdInit(),b=k.p[i];KDDEL=null;if(i=='0,0')return;if(kdIsProd(b)&&kdPend(b)>=1){KDSEL=i;kdCollect(i);return}KDSEL=i;kdRender()}
+function kdBuild(i,t){const k=kdInit(),d=KD_B[t];KDDEL=null;if(!d||!kdFree(i)||kdCount(t)>=kdLim(t)||S.sup<d.c)return;S.sup-=d.c;k.p[i]={t,l:1,s:Date.now()};save();kdChips();kdRender()}
+function kdPlace(i,t){const k=kdInit(),j=k.inv.findIndex(b=>b.t==t);KDDEL=null;if(j<0||!kdFree(i))return;const b=k.inv.splice(j,1)[0];b.s=Date.now();k.p[i]=b;save();kdRender()}
+function kdStore(i){const k=kdInit(),b=k.p[i];if(!b)return;KDDEL=null;kdCollect(i,1);k.inv.push({t:b.t,l:b.l});delete k.p[i];save();kdChips();kdRender()}
+function kdUp(i){const k=kdInit(),b=k.p[i];KDDEL=null;if(!kdIsProd(b)||b.l>=KD_MAXL)return;const c=kdUpCost(b);if(S.sup<c)return;kdCollect(i,1);S.sup-=c;b.l++;b.s=Math.max(b.s,Date.now()-1);save();kdChips();kdRender([[i,'Lv '+b.l]])}
+function kdDemo(i){const k=kdInit(),b=k.p[i];if(!b)return;if(KDDEL!=i){KDDEL=i;kdRender();return}KDDEL=null;if(kdIsProd(b))kdCollect(i,1);S.sup+=Math.floor(KD_B[b.t].c/2);delete k.p[i];save();kdChips();kdRender()}
+function kdCastle(){const k=kdInit(),c=KD_CC[k.c-1];KDDEL=null;if(k.c>=KD_MAXC||S.sup<c)return;kdAll();S.sup-=c;k.c++;save();kdChips();kdRender()}
+function kdHTML(){const k=kdInit(),capH=kdCapH(),bt=kdBeauty();let T={sup:0,gem:0,exp:0};
+ kdBs().forEach(b=>{if(kdIsProd(b))T[KD_B[b.t].k]+=Math.floor(kdPend(b))});
  return '<div class="kd"><div class="box kdhead"><b>🏰 Your Kingdom</b> <span class="chip cc">Castle Lv '+k.c+'</span> <span class="chip lv" title="Each beauty point adds +1% to everything your buildings make (up to +'+KD_BCAP+'%)">⭐ Beauty '+bt+' (+'+bt+'%)</span><br><small>Buildings keep working while you are away and store up to '+capH+' hours of goods. Tap a building to collect from it!</small>'
  +'<div class="row" style="margin-top:6px"><button id="kdall" onclick="kdAll()" '+(T.sup+T.gem+T.exp?'':'disabled')+'>💰 Collect all <span id="kdtot">'+kdTotTxt(T)+'</span></button>'
- +(k.c<KD_PL.length?'<button onclick="kdCastle()" '+(S.sup>=KD_CC[k.c-1]?'':'disabled')+'>⬆ Castle Lv '+(k.c+1)+' ('+KD_CC[k.c-1]+' '+SUP+')</button>':'<span class="chip">👑 Max castle</span>')+'</div>'
- +(k.c<KD_PL.length?'<small>Next castle level: +'+(KD_PL[k.c]-un)+' plots, +2 hours of storage'+(k.c==1?', Market and Fair Tent':k.c==2?', Crystal Cave':'')+'.</small>':'')+'</div>'
- +'<canvas id="kd3" class="kd3"></canvas><small>Drag to look around, scroll to zoom, tap a plot.</small><div class="box kdpanel" id="kdpanel">'+kdPanel()+'</div></div>'}
+ +(k.c<KD_MAXC?'<button onclick="kdCastle()" '+(S.sup>=KD_CC[k.c-1]?'':'disabled')+'>⬆ Castle Lv '+(k.c+1)+' ('+KD_CC[k.c-1]+' '+SUP+')</button>':'<span class="chip">👑 Max castle</span>')+'<button onclick="KC.px=0;KC.py=0">🏰 Center</button></div>'
+ +(k.c<KD_MAXC?'<small>Next castle level: +2 hours of storage.</small>':'')+'</div>'
+ +'<canvas id="kd3" class="kd3"></canvas><small>Drag to look around, scroll to zoom, tap any tile to build.</small><div class="box kdpanel" id="kdpanel">'+kdPanel()+'</div></div>'}
 function kdTotTxt(T){const a=[];if(T.sup)a.push('+'+T.sup+' '+SUP);if(T.gem)a.push('+'+T.gem+' '+GEM);if(T.exp)a.push('+'+T.exp+' '+EXPI);return a.join(' ')||'(nothing yet)'}
-function kdPanel(){const k=kdInit(),i=KDSEL,un=KD_PL[k.c-1];
- if(i<0||i>=un)return '<b>Welcome, your majesty!</b><br><small>Your castle sits in the middle of the board. Tap an empty ➕ plot to build. Your Gold Mine and Barracks are already built, and your Walls are waiting in your inventory, free to place. Decorations give beauty, which boosts everything. Upgrade your castle to unlock more room and better buildings.</small>';
- const b=k.p[i];
- if(!b){let h='';const iv={};k.inv.forEach(x=>iv[x.t]=(iv[x.t]||0)+1);
-  if(k.inv.length){h+='<b>📦 Your inventory (free)</b><div class="kdbuild">';for(const t in iv){const d=KD_B[t];h+='<button onclick="kdPlace('+i+',\''+t+'\')"><span class="kde2">'+d.e+'</span><b>'+d.n+' x'+iv[t]+'</b><small>Place for free</small></button>'}h+='</div>'}
+function kdPanel(){const k=kdInit(),i=KDSEL;
+ if(!i)return '<b>Welcome, your majesty!</b><br><small>Your whole kingdom is open: tap any tile to build, nothing to unlock. Your Gold Mine and Barracks are already built, and your Walls are waiting in your inventory, free to place. Decorations give beauty, which boosts everything.</small>';
+ const b=k.p[i],Q="'"+i+"'";
+ if(!b){let h='<small>Tile '+i+'</small><br>';const iv={};k.inv.forEach(x=>iv[x.t]=(iv[x.t]||0)+1);
+  if(k.inv.length){h+='<b>📦 Your inventory (free)</b><div class="kdbuild">';for(const t in iv){const d=KD_B[t];h+='<button onclick="kdPlace('+Q+',\''+t+'\')"><span class="kde2">'+d.e+'</span><b>'+d.n+' x'+iv[t]+'</b><small>Place for free</small></button>'}h+='</div>'}
   h+='<b>Build here</b><div class="kdbuild">';
-  for(const t in KD_B){const d=KD_B[t];if(d.g)continue;const lk=k.c<d.cl,mx=!lk&&kdCount(t)>=kdLim(t),ok=!lk&&!mx&&S.sup>=d.c;
+  for(const t in KD_B){const d=KD_B[t];if(d.g)continue;const mx=kdCount(t)>=kdLim(t),ok=!mx&&S.sup>=d.c;
    const eff=d.k=='deco'?'+'+d.be+' beauty':d.b+' '+KN[d.k]+'/hr';
-   h+='<button '+(ok?'':'disabled')+' onclick="kdBuild('+i+',\''+t+'\')"><span class="kde2">'+d.e+'</span><b>'+d.n+'</b><small>'+(lk?'🔒 Castle Lv '+d.cl:mx?'Max '+kdLim(t)+' (upgrade castle)':d.c+' '+SUP+' &middot; '+eff)+'</small></button>'}
+   h+='<button '+(ok?'':'disabled')+' onclick="kdBuild('+Q+',\''+t+'\')"><span class="kde2">'+d.e+'</span><b>'+d.n+'</b><small>'+(mx?'Max '+kdLim(t):d.c+' '+SUP+' &middot; '+eff)+'</small></button>'}
   return h+'</div>'}
  const d=KD_B[b.t];let h='<b>'+d.e+' '+d.n+(kdIsProd(b)?' &middot; Level '+b.l+'/'+KD_MAXL:'')+'</b><br><small>'+d.d+'</small><br>';
  if(kdIsProd(b)){const r=kdRate(b);
   h+='<div style="margin:4px 0">Makes <b>'+(r<10?r.toFixed(1):Math.round(r))+'</b> '+KU[d.k]+' per hour &middot; stored <b id="kdst"></b> of '+Math.floor(kdCapAmt(b))+'</div><div class="row">'
-   +'<button onclick="kdCollect('+i+')" '+(kdPend(b)>=1?'':'disabled')+'>💰 Collect</button>'
-   +(b.l<KD_MAXL?'<button onclick="kdUp('+i+')" '+(S.sup>=kdUpCost(b)?'':'disabled')+'>⬆ Upgrade to Lv '+(b.l+1)+' ('+kdUpCost(b)+' '+SUP+')</button>':'<span class="chip">⭐ Max level</span>')}
+   +'<button onclick="kdCollect('+Q+')" '+(kdPend(b)>=1?'':'disabled')+'>💰 Collect</button>'
+   +(b.l<KD_MAXL?'<button onclick="kdUp('+Q+')" '+(S.sup>=kdUpCost(b)?'':'disabled')+'>⬆ Upgrade to Lv '+(b.l+1)+' ('+kdUpCost(b)+' '+SUP+')</button>':'<span class="chip">⭐ Max level</span>')}
  else h+='<div style="margin:4px 0">Gives <b>+'+d.be+' beauty</b> (+'+d.be+'% production everywhere).</div><div class="row">';
- return h+'<button onclick="kdStore('+i+')">📦 Store</button><button class="b-rem" onclick="kdDemo('+i+')">'+(KDDEL==i?'Tap again to demolish (+'+Math.floor(d.c/2)+' '+SUP+')':'🗑 Demolish')+'</button></div>'}
+ return h+'<button onclick="kdStore('+Q+')">📦 Store</button><button class="b-rem" onclick="kdDemo('+Q+')">'+(KDDEL==i?'Tap again to demolish (+'+Math.floor(d.c/2)+' '+SUP+')':'🗑 Demolish')+'</button></div>'}
 function kdRender(fl){const el=$('kd');if(!el)return;el.innerHTML=kdHTML();kdTick();(fl||[]).forEach(([i,t])=>KDFL.push({i,t,s:Date.now()}))}
 function kdTick(){if(!$('kd3'))return;const k=kdInit();let T={sup:0,gem:0,exp:0};
- k.p.forEach(b=>{if(kdIsProd(b))T[KD_B[b.t].k]+=Math.floor(kdPend(b))});
+ kdBs().forEach(b=>{if(kdIsProd(b))T[KD_B[b.t].k]+=Math.floor(kdPend(b))});
  const tt=$('kdtot');if(tt)tt.innerHTML=kdTotTxt(T);const ab=$('kdall');if(ab)ab.disabled=!(T.sup+T.gem+T.exp);
- if(KDSEL>=0&&k.p[KDSEL]&&kdIsProd(k.p[KDSEL])){const st=$('kdst');if(st)st.textContent=Math.floor(kdPend(k.p[KDSEL]))}}
+ if(KDSEL&&k.p[KDSEL]&&kdIsProd(k.p[KDSEL])){const st=$('kdst');if(st)st.textContent=Math.floor(kdPend(k.p[KDSEL]))}}
 setInterval(kdTick,1000);
 function kingdomTab(){return '<div id="kd">'+kdHTML()+'</div>'}
 /* ---- tiny built-in 3D engine: flat-shaded polygons, perspective camera, painter's sort ---- */
@@ -620,39 +624,35 @@ const k3rnd=(x,z,s)=>Math.abs(Math.sin(x*12.9898+z*78.233+s*37.7)*43758.5453)%1;
 function k3ftree(F,v){if(v==0){k3pri(F,0,0,0,.08,.3,'#6b4423',6);k3pri(F,0,.2,0,.45,.6,'#1f7a3a',7,0);k3pri(F,0,.55,0,.35,.55,'#2a9145',7,0);k3pri(F,0,.95,0,.22,.5,'#35a653',7,0)}
  else if(v==1){k3pri(F,0,0,0,.09,.4,'#7a4a21',6);k3pri(F,0,.35,0,.42,.6,'#3aa14b',8,.18)}
  else{k3pri(F,0,0,0,.08,.3,'#5a3a1c',6);k3pri(F,0,.2,0,.4,.8,'#17602f',6,0);k3pri(F,0,.7,0,.28,.7,'#1d7438',6,0)}}
-function k3bg(){const c=document.createElement('canvas');c.width=1500;c.height=760;const x=c.getContext('2d');x.translate(750,380);x.fillStyle='#2c6a38';x.fillRect(-750,-380,1500,760);
- for(let a=-K3R;a<=K3R;a++)for(let b=-K3R;b<=K3R;b++){const m=Math.max(Math.abs(a),Math.abs(b)),cs=Math.abs(a)<2&&Math.abs(b)<2,path=a==0&&b>=2;
-  x.fillStyle=cs?'#c8c2b4':path?((a+b)&1?'#c9a66b':'#bf9c60'):m<=4?((a+b)&1?'#62b966':'#6cc36f'):((a+b)&1?'#3f8f48':'#459a4e');
-  const ix=(a-b)*32,iy=(a+b)*16;x.beginPath();x.moveTo(ix,iy-16);x.lineTo(ix+32,iy);x.lineTo(ix,iy+16);x.lineTo(ix-32,iy);x.closePath();x.fill()}
- return c}
-const K3FT=[];for(let a=-K3R;a<=K3R;a++)for(let b=-K3R;b<=K3R;b++){const m=Math.max(Math.abs(a),Math.abs(b));if(m<5||(a==0&&b>=2))continue;
- const n=m==5?(k3rnd(a,b,1)<.6?1:0):(k3rnd(a,b,2)<.5?2:1);for(let i=0;i<n;i++)K3FT.push({x:a+(k3rnd(a,b,3+i)-.5)*.8,z:b+(k3rnd(a,b,5+i)-.5)*.8,v:Math.floor(k3rnd(a,b,7+i)*3)})}
-function k3Draw(cv,t){const k=kdInit(),un=KD_PL[k.c-1],cx=cv.getContext('2d'),cw=cv.width,ch=cv.height,sc=cw/620*KC.zm,ox=cw/2-KC.px*sc,oy=ch*.52-KC.py*sc,pl={};
- const T=(x,y,z)=>[ox+(x-z)*32*sc,oy+((x+z)*16-y*36)*sc];
- KD_XY.forEach((q,i)=>{pl[q[0]+','+q[1]]=i});const at=(x,z)=>{const i=pl[x+','+z];return i!=null&&i<un?k.p[i]:null};
- cx.fillStyle='#2c6a38';cx.fillRect(0,0,cw,ch);if(!K3BG)K3BG=k3bg();cx.drawImage(K3BG,ox-750*sc,oy-380*sc,1500*sc,760*sc);
- cx.textAlign='center';cx.textBaseline='middle';
- KD_XY.forEach((q,i)=>{const p=T(q[0],0,q[1]),b=k.p[i];cx.beginPath();cx.moveTo(p[0],p[1]-16*sc);cx.lineTo(p[0]+32*sc,p[1]);cx.lineTo(p[0],p[1]+16*sc);cx.lineTo(p[0]-32*sc,p[1]);cx.closePath();
-  cx.fillStyle=i>=un?'rgba(110,110,110,.6)':KDSEL==i?'rgba(255,213,74,.8)':'rgba(255,255,255,.14)';cx.fill();if(i<un){cx.strokeStyle='rgba(255,255,255,.35)';cx.stroke()}
-  if(i>=un){cx.font=sc*16+'px sans-serif';cx.fillText('🔒',p[0],p[1])}else if(!b){cx.font='bold '+sc*20+'px sans-serif';cx.fillStyle='rgba(255,255,255,.85)';cx.fillText('+',p[0],p[1])}});
- const L=[];K3FT.forEach(f=>{const p=T(f.x,0,f.z);if(p[0]>-60*sc&&p[0]<cw+60*sc&&p[1]>-40*sc&&p[1]<ch+120*sc)L.push({d:f.x+f.z,p,s:k3spr('ft'+f.v,110,190,F=>k3ftree(F,f.v))})});
- L.push({d:0,p:T(0,0,0),s:k3spr('castle'+k.c,300,330,F=>k3castle(F,k.c))});
- KD_XY.forEach((q,i)=>{const b=k.p[i];if(i>=un||!b)return;const x=q[0],z=q[1],nb=(a,c)=>{const o=at(x+a,z+c);return o&&o.t=='wall'},zz=b.t=='wall'&&(nb(0,1)||nb(0,-1))&&!(nb(1,0)||nb(-1,0));
-  L.push({d:x+z,p:T(x,0,z),s:k3spr(b.t+(zz?'z':''),150,210,F=>k3b(F,b.t,0,0,(a,c)=>zz&&b.t=='wall'?(a==0&&c!=0?{t:'wall'}:null):null))})});
- L.sort((a,b)=>a.d-b.d);L.forEach(o=>cx.drawImage(o.s.c,o.p[0]-o.s.w/2*sc,o.p[1]-o.s.ay*sc,o.s.w*sc,o.s.h*sc));
- KD_XY.forEach((q,i)=>{const b=k.p[i];if(i>=un||!b||!kdIsProd(b))return;const p0=T(q[0],0,q[1]+.5);cx.font='bold '+sc*13+'px sans-serif';cx.fillStyle='rgba(0,0,0,.65)';cx.fillText('Lv'+b.l,p0[0],p0[1]+sc*8);
-  const n=Math.floor(kdPend(b));if(n>=1){const p=T(q[0],1.2,q[1]),y=p[1]+Math.sin(t/260+i)*sc*3,tx='+'+n;cx.font='bold '+sc*15+'px sans-serif';const w2=cx.measureText(tx).width+sc*16;
+const KWH=50,CSC=.5;
+function k3Draw(cv,t){const k=kdInit(),cx=cv.getContext('2d'),cw=cv.width,ch=cv.height,sc=cw/620*KC.zm,ox=cw/2-KC.px*sc,oy=ch*.52-KC.py*sc;
+ const T=(x,y,z)=>[ox+(x-z)*32*sc,oy+((x+z)*16-y*36)*sc],inv=(px,py)=>{const ix=(px-ox)/sc/32,iy=(py-oy)/sc/16;return[(ix+iy)/2,(iy-ix)/2]};
+ cx.fillStyle='#2c6a38';cx.fillRect(0,0,cw,ch);cx.textAlign='center';cx.textBaseline='middle';
+ const cs=[inv(0,0),inv(cw,0),inv(0,ch+150*sc),inv(cw,ch+150*sc)],a0=Math.max(-KWH,Math.floor(Math.min(...cs.map(c=>c[0]))-1)),a1=Math.min(KWH-1,Math.ceil(Math.max(...cs.map(c=>c[0]))+1)),b0=Math.max(-KWH,Math.floor(Math.min(...cs.map(c=>c[1]))-1)),b1=Math.min(KWH-1,Math.ceil(Math.max(...cs.map(c=>c[1]))+1));
+ const L=[],wl=(x,z)=>{const o=k.p[x+','+z];return o&&o.t=='wall'};
+ for(let a=a0;a<=a1;a++)for(let b=b0;b<=b1;b++){const m=Math.max(Math.abs(a),Math.abs(b)),id=a+','+b,p=T(a,0,b),path=a==0&&b>=1;
+  cx.fillStyle=path?((a+b)&1?'#c9a66b':'#bf9c60'):m<=6?((a+b)&1?'#62b966':'#6cc36f'):((a+b)&1?'#3f8f48':'#459a4e');
+  cx.beginPath();cx.moveTo(p[0],p[1]-16*sc);cx.lineTo(p[0]+32*sc,p[1]);cx.lineTo(p[0],p[1]+16*sc);cx.lineTo(p[0]-32*sc,p[1]);cx.fill();
+  if(KDSEL==id){cx.fillStyle='rgba(255,213,74,.85)';cx.fill()}
+  if(m>=7&&!path&&!k.p[id]&&k3rnd(a,b,9)>.1){const n=1+(k3rnd(a,b,2)<.4?1:0);for(let i=0;i<n;i++){const x=a+(k3rnd(a,b,3+i)-.5)*.8,z=b+(k3rnd(a,b,5+i)-.5)*.8,v=Math.floor(k3rnd(a,b,7+i)*3),q=T(x,0,z);L.push({d:x+z,p:q,s:k3spr('ft'+v,110,190,F=>k3ftree(F,v)),f:1})}}
+  else if(m<7&&!path&&!k.p[id]&&k3rnd(a,b,4)<.05){const q=T(a,0,b);L.push({d:a+b,p:q,s:k3spr('ft1',110,190,F=>k3ftree(F,1)),f:.7})}}
+ L.push({d:0,p:T(0,0,0),s:k3spr('castle'+k.c,300,330,F=>k3castle(F,k.c)),f:CSC});
+ Object.keys(k.p).forEach(id=>{const b=k.p[id],q=kdXZ(id),x=q[0],z=q[1];if(Math.abs(x-(a0+a1)/2)>(a1-a0)/2+3||Math.abs(z-(b0+b1)/2)>(b1-b0)/2+3)return;const zz=b.t=='wall'&&(wl(x,z+1)||wl(x,z-1))&&!(wl(x+1,z)||wl(x-1,z));
+  L.push({d:x+z,p:T(x,0,z),s:k3spr(b.t+(zz?'z':''),150,210,F=>k3b(F,b.t,0,0,(a,c)=>zz&&b.t=='wall'?(a==0&&c!=0?{t:'wall'}:null):null)),f:1})});
+ L.sort((a,b)=>a.d-b.d);L.forEach(o=>{const f=o.f*sc;cx.drawImage(o.s.c,o.p[0]-o.s.w/2*f,o.p[1]-o.s.ay*f,o.s.w*f,o.s.h*f)});
+ Object.keys(k.p).forEach((id,n)=>{const b=k.p[id];if(!kdIsProd(b))return;const q=kdXZ(id),p0=T(q[0],0,q[1]+.5);if(p0[0]<-60||p0[0]>cw+60||p0[1]<-80||p0[1]>ch+80)return;cx.font='bold '+sc*13+'px sans-serif';cx.fillStyle='rgba(0,0,0,.65)';cx.fillText('Lv'+b.l,p0[0],p0[1]+sc*8);
+  const m=Math.floor(kdPend(b));if(m>=1){const p=T(q[0],1.2,q[1]),y=p[1]+Math.sin(t/260+n)*sc*3,tx='+'+m;cx.font='bold '+sc*15+'px sans-serif';const w2=cx.measureText(tx).width+sc*16;
    cx.fillStyle=KBC[KD_B[b.t].k];cx.beginPath();cx.roundRect(p[0]-w2/2,y-sc*11,w2,sc*22,sc*11);cx.fill();cx.strokeStyle='#333';cx.lineWidth=2;cx.stroke();cx.fillStyle='#222';cx.fillText(tx,p[0],y)}});
- const now=Date.now();KDFL=KDFL.filter(f=>now-f.s<1000);KDFL.forEach(f=>{const q=KD_XY[f.i],a=(now-f.s)/1000,p=T(q[0],1+a*.8,q[1]);cx.globalAlpha=1-a;cx.font='bold '+sc*18+'px sans-serif';cx.lineWidth=4;cx.strokeStyle='#000';cx.strokeText(f.t,p[0],p[1]);cx.fillStyle='#fff';cx.fillText(f.t,p[0],p[1]);cx.globalAlpha=1})}
-function k3Hit(px,py,cv){const k=kdInit(),un=KD_PL[k.c-1],sc=cv.width/620*KC.zm,ox=cv.width/2-KC.px*sc,oy=cv.height*.52-KC.py*sc,pl={};KD_XY.forEach((q,i)=>{pl[q[0]+','+q[1]]=i});
- const cell=y=>{const ix=(px-ox)/sc/32,iy=(y-oy)/sc/16,a=Math.round((ix+iy)/2),b=Math.round((iy-ix)/2);const i=pl[a+','+b];return i!=null&&i<un?i:-1};
- const c1=cell(py+22*sc);if(c1>=0&&k.p[c1])return c1;return cell(py)}
+ const now=Date.now();KDFL=KDFL.filter(f=>now-f.s<1000);KDFL.forEach(f=>{const q=kdXZ(f.i),a=(now-f.s)/1000,p=T(q[0],1+a*.8,q[1]);cx.globalAlpha=1-a;cx.font='bold '+sc*18+'px sans-serif';cx.lineWidth=4;cx.strokeStyle='#000';cx.strokeText(f.t,p[0],p[1]);cx.fillStyle='#fff';cx.fillText(f.t,p[0],p[1]);cx.globalAlpha=1})}
+function k3Hit(px,py,cv){const k=kdInit(),sc=cv.width/620*KC.zm,ox=cv.width/2-KC.px*sc,oy=cv.height*.52-KC.py*sc;
+ const cell=y=>{const ix=(px-ox)/sc/32,iy=(y-oy)/sc/16,a=Math.round((ix+iy)/2),b=Math.round((iy-ix)/2);return a<-KWH||a>=KWH||b<-KWH||b>=KWH?null:a+','+b};
+ const c1=cell(py+22*sc);if(c1&&k.p[c1])return c1;return cell(py)}
 function k3Bind(cv){if(cv._b)return;cv._b=1;let d=null;
  cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);d={x:e.clientX,y:e.clientY,m:0,px:KC.px,py:KC.py}};
- cv.onpointermove=e=>{if(!d)return;const dx=e.clientX-d.x,dy=e.clientY-d.y;d.m=Math.max(d.m,Math.hypot(dx,dy));if(d.m>6){const r=cv.getBoundingClientRect(),sc=cv.width/620*KC.zm,f=cv.width/r.width/sc;KC.px=Math.max(-380,Math.min(380,d.px-dx*f));KC.py=Math.max(-260,Math.min(260,d.py-dy*f))}};
+ cv.onpointermove=e=>{if(!d)return;const dx=e.clientX-d.x,dy=e.clientY-d.y;d.m=Math.max(d.m,Math.hypot(dx,dy));if(d.m>6){const r=cv.getBoundingClientRect(),sc=cv.width/620*KC.zm,f=cv.width/r.width/sc;KC.px=Math.max(-3200,Math.min(3200,d.px-dx*f));KC.py=Math.max(-1600,Math.min(1600,d.py-dy*f))}};
  cv.onpointercancel=()=>{d=null};
- cv.onpointerup=e=>{const was=d;d=null;if(was&&was.m<=6){const r=cv.getBoundingClientRect(),sx=cv.width/r.width,i=k3Hit((e.clientX-r.left)*sx,(e.clientY-r.top)*sx,cv);if(i>=0)kdTap(i);else{KDSEL=-1;kdRender()}}};
- cv.onwheel=e=>{e.preventDefault();KC.zm=Math.max(.5,Math.min(1.8,KC.zm*(e.deltaY<0?1.1:.9)))}}
+ cv.onpointerup=e=>{const was=d;d=null;if(was&&was.m<=6){const r=cv.getBoundingClientRect(),sx=cv.width/r.width,i=k3Hit((e.clientX-r.left)*sx,(e.clientY-r.top)*sx,cv);if(i&&i!='0,0')kdTap(i);else{KDSEL=null;kdRender()}}};
+ cv.onwheel=e=>{e.preventDefault();KC.zm=Math.max(.6,Math.min(1.8,KC.zm*(e.deltaY<0?1.1:.9)))}}
 function k3Loop(t){requestAnimationFrame(k3Loop);const cv=$('kd3');if(!cv||page!=3||document.hidden||t-K3T<40)return;const w=cv.clientWidth;if(!w)return;K3T=t;k3Bind(cv);
  const dpr=Math.min(2,window.devicePixelRatio||1),W2=Math.round(w*dpr);if(cv.width!=W2){cv.width=W2;cv.height=Math.round(W2*.8)}k3Draw(cv,t)}
 requestAnimationFrame(k3Loop);
@@ -690,7 +690,7 @@ function buySup(i){const p=KSUP[i];if(!p||S.gems<p[1])return;S.gems-=p[1];S.sup+
 function kdBuyOk(t){const d=KD_B[t],k=kdInit();return k.c>=d.cl&&S.sup>=d.c&&(d.def||kdCount(t)<kdLim(t))}
 function kdBuy(t){if(!kdBuyOk(t))return;S.sup-=KD_B[t].c;kdInit().inv.push({t,l:1});save();menu()}
 function kshopHTML(){const k=kdInit(),card=t=>{const d=KD_B[t],lk=k.c<d.cl,mx=!lk&&!d.def&&kdCount(t)>=kdLim(t),ef=d.k=='deco'?'+'+d.be+' beauty':d.b+' '+KN[d.k]+'/hr';
- return `<div class='box' style='text-align:center'><div style='font-size:38px'>${d.e}</div><b>${d.n}</b><br><small>${lk?'🔒 Castle Lv '+d.cl:mx?'Max '+kdLim(t)+' (upgrade castle)':ef}</small><br><small>${d.d}</small><div class='row' style='justify-content:center'><button ${kdBuyOk(t)?'':'disabled'} onclick="kdBuy('${t}')">Buy for ${d.c} ${SUP}</button></div></div>`};
+ return `<div class='box' style='text-align:center'><div style='font-size:38px'>${d.e}</div><b>${d.n}</b><br><small>${mx?'Max '+kdLim(t):ef}</small><br><small>${d.d}</small><div class='row' style='justify-content:center'><button ${kdBuyOk(t)?'':'disabled'} onclick="kdBuy('${t}')">Buy for ${d.c} ${SUP}</button></div></div>`};
  return `<h2 style='margin:6px 0'>Kingdom Shop</h2><div>${GEM} Gems <b>${S.gems}</b> &nbsp; ${SUP} Gold scraps <b>${S.sup}</b></div><small>Bought buildings go to your kingdom inventory. Place them for free from any empty plot.</small>
  <h2 style='margin:12px 0 2px'>Gold scraps</h2><div class='grid'>`+KSUP.map((p,i)=>`<div class='box' style='text-align:center'><div style='font-size:38px'>${SUP}</div><b>${p[0]} Gold scraps</b><div class='row' style='justify-content:center'><button ${S.gems>=p[1]?'':'disabled'} onclick='buySup(${i})'>Buy for ${p[1]} ${GEM}</button></div></div>`).join('')+`</div>
  <h2 style='margin:12px 0 2px'>Producers</h2><div class='grid'>`+KSP.map(card).join('')+`</div><h2 style='margin:12px 0 2px'>Defenses</h2><div class='grid'>`+KSD.map(card).join('')+`</div>`}
