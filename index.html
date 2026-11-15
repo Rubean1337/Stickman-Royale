@@ -529,7 +529,7 @@ const KD_B={
  statue:{n:'Hero Statue',e:'🗿',k:'deco',be:5,c:200,cl:1,d:'A very brave stickman.'}
 };
 const KU={sup:SUP,gem:GEM,exp:EXPI},KN={sup:'supplies',gem:'gems',exp:'EXP'},KBC={sup:'#ffe9b8',gem:'#d6efff',exp:'#e6dcff'};
-const KWB=50,KWW=60,CSC=.5;let KDG=null,KDSEL=null,KDDEL=null,KDFL=[],KC={px:0,py:0,zm:1},K3T=0;
+const KWB=30,KWW=60,CSC=.5;let KDG=null,KDSEL=null,KDDEL=null,KDFL=[],KC={px:0,py:0,zm:1},K3T=0;
 const kdCs=()=>(S.kd&&S.kd.cs)||[0,0],kdCsId=()=>kdCs().join(','),kdXZ=id=>id=='castle'?kdCs():id.split(',').map(Number),kdBs=()=>Object.values(kdInit().p);
 function kdInit(){let k=S.kd;if(!k||typeof k.p!='object'||!k.p){k=S.kd={c:1,p:{}}}
  if(Array.isArray(k.p)){const o={};k.p.forEach((b,i)=>{if(b&&KD_XY[i])o[KD_XY[i][0]+','+KD_XY[i][1]]=b});k.p=o;save()}
@@ -537,6 +537,7 @@ function kdInit(){let k=S.kd;if(!k||typeof k.p!='object'||!k.p){k=S.kd={c:1,p:{}
  if(!Array.isArray(k.inv)){k.inv=[];for(let i=0;i<6;i++)k.inv.push({t:'wall',l:1});save()}
  if(!k.cl){k.cl={};Object.keys(k.p).forEach(i=>{k.cl[i]=1})}
  if(!k.cs)k.cs=[0,0];if(!k.uid)k.uid=1000;
+ if(!k.b30){k.b30=1;const cl=v=>Math.max(-30,Math.min(29,v)),cs=k.cs.join(',');k.cs=[cl(k.cs[0]),cl(k.cs[1])];Object.keys(k.p).forEach(id=>{const q=id.split(',').map(Number);if(q[0]<-30||q[0]>29||q[1]<-30||q[1]>29){const b=k.p[id];delete k.p[id];let n=0,x=cl(q[0]),z=cl(q[1]);while((k.p[x+','+z]||x+','+z==k.cs.join(','))&&n++<200){x=x>=29?-30:x+1;if(n%60==0)z=z>=29?-30:z+1}if(n<200){k.p[x+','+z]=b;k.cl[x+','+z]=1}else k.inv.push({t:b.t,l:b.l})}});save()}
  if(!k.pl2){k.pl2=1;const sp=[[2,0],[-2,0],[0,2],[0,-2],[2,2],[-2,-2],[2,-2],[-2,2]];['gold','barracks'].forEach((t,n)=>{if(Object.values(k.p).some(b=>b&&b.t==t))return;const j=k.inv.findIndex(b=>b.t==t),b=j>=0?k.inv.splice(j,1)[0]:{t,l:1};b.s=Date.now();const c=sp.slice(n).find(q=>!k.p[q]);k.p[c[0]+','+c[1]]=b});save()}
  if(!k.pl3){k.pl3=1;if(!kdHutsOf(k)&&!k.inv.some(b=>b.t=='hut')){const c=[[0,-2],[0,2],[2,2],[-2,-2],[2,-2],[-2,2]].find(q=>!k.p[q]);k.p[c[0]+','+c[1]]={t:'hut',l:1}}save()}
  Object.keys(k.p).forEach(i=>{const b=k.p[i];if(b&&!b.u)b.u=++k.uid});return k}
@@ -559,7 +560,7 @@ function kdCollect(i,quiet){const k=kdInit(),b=k.p[i];if(!kdIsProd(b))return 0;c
  const kk=KD_B[b.t].k;if(kk=='sup')S.sup+=n;else if(kk=='exp')S.exp+=n;else S.gems+=n;save();if(!quiet){kdChips();kdRender([[i,'+'+n]])}return n}
 function kdAll(){const k=kdInit(),fl=[];Object.keys(k.p).forEach(i=>{const n=kdCollect(i,1);if(n)fl.push([i,'+'+n])});if(fl.length)kdChips();kdRender(fl)}
 function kdFree(i){return i!=kdCsId()&&!kdInit().p[i]&&!kdTree(i)}
-function kdTree(id){const k=kdInit();if(k.cl[id]||k.p[id]||id==kdCsId())return 0;const q=kdXZ(id),a=q[0],b=q[1],C=kdCs(),m=Math.max(Math.abs(a),Math.abs(b));if(a==C[0]&&b>C[1])return 0;return m>=7?k3rnd(a,b,9)>.1:k3rnd(a,b,4)<.05}
+function kdTree(id){const k=kdInit();if(k.cl[id]||k.p[id]||id==kdCsId())return 0;const q=kdXZ(id),a=q[0],b=q[1],C=kdCs(),m=Math.max(Math.abs(a),Math.abs(b));if(a==C[0]&&b>C[1])return 0;if(a<-30||a>29||b<-30||b>29)return 0;return k3rnd(a,b,4)<(m<4?.04:.2)}
 function kdClear(i){const k=kdInit();if(!kdTree(i)||S.sup<10)return;S.sup-=10;k.cl[i]=1;save();kdChips();kdRender([[i,'Cleared']])}
 function kdZmin(){const cv=$('kd3');return cv&&cv.width?Math.min(620/7700,cv.height/cv.width*620/3900):.08}
 function kdZoom(f){KC.zm=Math.max(kdZmin(),Math.min(2,KC.zm*f))}
@@ -587,7 +588,7 @@ function kdTotTxt(T){const a=[];if(T.sup)a.push('+'+T.sup+' '+SUP);if(T.gem)a.pu
 function kdPanel(){const k=kdInit(),i=KDSEL;
  if(!i)return '';if(0)return '<b>Welcome, your majesty!</b><br><small>Your whole kingdom is open: tap any tile to build, and drag any building (or the castle) to move it. Upgrades take time and need a free stonemason, so keep your Stonemason Huts staffed (max 3). Decorations give beauty, which boosts everything.</small>';
  const b=k.p[i],Q="'"+i+"'";
- if(!b&&kdTree(i))return '<b>🌲 Forest</b><br><small>Trees are in the way. Demolish them to build here.</small><div class="row"><button '+(S.sup>=10?'':'disabled')+' onclick="kdClear('+Q+')">🪓 Demolish trees (10 '+SUP+')</button></div>';
+ if(!b&&kdTree(i))return '<b>🌳 Trees</b><br><small>Trees are in the way. Demolish them to build here.</small><div class="row"><button '+(S.sup>=10?'':'disabled')+' onclick="kdClear('+Q+')">🪓 Demolish trees (10 '+SUP+')</button></div>';
  if(!b){let h='<small>Tile '+i+'</small><br>';const iv={};k.inv.forEach(x=>iv[x.t]=(iv[x.t]||0)+1);
   if(k.inv.length){h+='<b>📦 Your inventory (free)</b><div class="kdbuild">';for(const t in iv){const d=KD_B[t];h+='<button onclick="kdPlace('+Q+',\''+t+'\')"><span class="kde2">'+d.e+'</span><b>'+d.n+' x'+iv[t]+'</b><small>Place for free</small></button>'}h+='</div>'}
   h+='<b>Build here</b><div class="kdbuild">';
@@ -669,8 +670,8 @@ function k3sp(b,x,z,k){let m=0;if(b.t=='wall'){const w=(a,c)=>{const o=k.p[(x+a)
 let K3OV=null;
 function k3ov(){if(K3OV)return K3OV;const c=document.createElement('canvas');c.width=2400;c.height=1200;const x=c.getContext('2d');x.translate(1200,600);x.scale(.3125,.3125);x.fillStyle='#2c6a38';x.fillRect(-3900,-1950,7800,3900);
  for(let a=-KWW;a<KWW;a++)for(let b=-KWW;b<KWW;b++){const inB=a>=-KWB&&a<KWB&&b>=-KWB&&b<KWB,m=Math.max(Math.abs(a),Math.abs(b)),ix=(a-b)*32,iy=(a+b)*16;
-  x.fillStyle=!inB?'#2f7a3b':m<7?'#6cc36f':'#3f8f48';x.beginPath();x.moveTo(ix,iy-16);x.lineTo(ix+32,iy);x.lineTo(ix,iy+16);x.lineTo(ix-32,iy);x.fill();
-  if(!inB||(m>=7&&k3rnd(a,b,9)>.1)){x.fillStyle=k3rnd(a,b,2)<.4?'#1d6e33':'#27853e';x.beginPath();x.arc(ix,iy-20,26,0,6.3);x.fill()}}
+  x.fillStyle=!inB?'#2f7a3b':'#6cc36f';x.beginPath();x.moveTo(ix,iy-16);x.lineTo(ix+32,iy);x.lineTo(ix,iy+16);x.lineTo(ix-32,iy);x.fill();
+  if(!inB||k3rnd(a,b,4)<(m<4?.04:.2)){x.fillStyle=!inB?(k3rnd(a,b,2)<.4?'#1d6e33':'#27853e'):'#3aa14b';x.beginPath();x.arc(ix,iy-20,26,0,6.3);x.fill()}}
  return K3OV=c}
 function k3Draw(cv,t){const k=kdInit(),cx=cv.getContext('2d'),cw=cv.width,ch=cv.height,sc=cw/620*KC.zm,ox=cw/2-KC.px*sc,oy=ch*.52-KC.py*sc,C=kdCs(),cid=kdCsId(),lod=sc<.4;
  const T=(x,y,z)=>[ox+(x-z)*32*sc,oy+((x+z)*16-y*36)*sc],inv=(px,py)=>{const ix=(px-ox)/sc/32,iy=(py-oy)/sc/16;return[(ix+iy)/2,(iy-ix)/2]};
@@ -679,9 +680,9 @@ function k3Draw(cv,t){const k=kdInit(),cx=cv.getContext('2d'),cw=cv.width,ch=cv.
  const L=[],dg=id=>KDG&&KDG.id==id,dm=(p)=>{cx.beginPath();cx.moveTo(p[0],p[1]-16*sc);cx.lineTo(p[0]+32*sc,p[1]);cx.lineTo(p[0],p[1]+16*sc);cx.lineTo(p[0]-32*sc,p[1]);cx.fill()};
  if(lod){cx.drawImage(k3ov(),ox-3900*sc,oy-1950*sc,7800*sc,3900*sc)}
  else for(let a=a0;a<=a1;a++)for(let b=b0;b<=b1;b++){const inB=a>=-KWB&&a<KWB&&b>=-KWB&&b<KWB,m=Math.max(Math.abs(a),Math.abs(b)),id=a+','+b,p=T(a,0,b),path=inB&&a==C[0]&&b>C[1];
-  cx.fillStyle=path?((a+b)&1?'#c9a66b':'#bf9c60'):!inB?((a+b)&1?'#2f7a3b':'#34853f'):m<=6?((a+b)&1?'#62b966':'#6cc36f'):((a+b)&1?'#3f8f48':'#459a4e');dm(p);
+  cx.fillStyle=path?((a+b)&1?'#c9a66b':'#bf9c60'):!inB?((a+b)&1?'#2f7a3b':'#34853f'):((a+b)&1?'#62b966':'#6cc36f');dm(p);
   if(KDSEL==id){cx.fillStyle='rgba(255,213,74,.85)';dm(p)}
-  let n=0,f=1;if(!inB)n=2;else if(!k.cl[id]&&!k.p[id]&&id!=cid&&!path){if(m>=7){if(k3rnd(a,b,9)>.1)n=1+(k3rnd(a,b,2)<.4?1:0)}else if(k3rnd(a,b,4)<.05){n=1;f=.7}}
+  let n=0,f=1;if(!inB)n=k3rnd(a,b,9)>.05?2:1;else if(!k.cl[id]&&!k.p[id]&&id!=cid&&!path&&k3rnd(a,b,4)<(m<4?.04:.2)){n=1;f=.85}
   for(let i=0;i<n;i++){const x=a+(k3rnd(a,b,3+i)-.5)*.8,z=b+(k3rnd(a,b,5+i)-.5)*.8,v=f<1?1:Math.floor(k3rnd(a,b,7+i)*3);L.push({d:x+z,p:T(x,0,z),s:k3spr('ft'+v,110,190,F=>k3ftree(F,v)),f})}}
  if(!dg('castle'))L.push({d:C[0]+C[1],p:T(C[0],0,C[1]),s:k3spr('castle'+k.c,300,330,F=>k3castle(F,k.c)),f:CSC});
  Object.keys(k.p).forEach(id=>{if(dg(id))return;const b=k.p[id],q=kdXZ(id),x=q[0],z=q[1];if(!lod&&(x<a0-3||x>a1+3||z<b0-3||z>b1+3))return;L.push({d:x+z,p:T(x,0,z),s:k3sp(b,x,z,k),f:1})});
