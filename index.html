@@ -646,7 +646,7 @@ function kdRivals(){const k=kdInit(),sd=Math.floor(Date.now()/3600e3),A=['Duke',
  for(let i=0;i<3;i++){const rl=Math.max(1,Math.min(6,k.c+i-1)),r=k3rnd(sd,i,50);R.push({sd,i,sil:Math.round(60*Math.pow(rl,1.4)*(.8+k3rnd(sd,i,54)*.4)),id:sd+'-'+i,n:A[Math.floor(k3rnd(sd,i,52)*A.length)]+' '+B[Math.floor(k3rnd(sd,i,53)*B.length)]+"'s Keep",rl,def:Math.round(20*Math.pow(rl,1.7)*(.85+r*.3)),loot:Math.round(100*Math.pow(rl,1.5)*(.8+k3rnd(sd,i,51)*.4))})}return R}
 function kdRaidHTML(msg){const k=kdInit(),pw=Math.round(kdArmyPow()),done=k.raided||{};
  return '<div class="box" style="max-width:520px;margin:0 auto"><div class="row" style="justify-content:space-between"><b>⚔️ Raid other kingdoms</b><button onclick="$(\'kraid\').style.display=\'none\'">✖ Close</button></div>'+(msg?'<div class="box" style="margin:6px 0">'+msg+'</div>':'')
- +'<div>Your army power: <b>'+pw+'</b>'+(pw?'':' <small>(train troops in a Barracks first)</small>')+'</div><small>New kingdoms to raid appear every hour. Raiding sends your whole army. Winners loot gold scraps and silver, and some troops are lost either way.</small>'
+ +'<div>Your army power: <b>'+pw+'</b>'+(pw?'':' <small>(train troops in a Barracks first)</small>')+'</div><small>New kingdoms to raid appear every hour. You choose which troops to send and where to place them. Troops that fall in battle are lost, and some troops are lost either way.</small>'
  +kdRivals().map((r,i)=>'<div class="box" style="margin-top:6px"><b>🏰 '+r.n+'</b> <small>Castle Lv '+r.rl+'</small><br>Defense power: <b>'+r.def+'</b> &middot; Loot: <b>'+r.loot+'</b> '+GSI+' &middot; <b>'+r.sil+'</b> '+SILV+'<div class="row"><button onclick="kdRaidView('+i+')">'+(done[r.id]?'Already raided':'🔍 Scout &amp; attack')+'</button></div></div>').join('')+'</div>'}
 function kdRivalMap(r){const m={},rl=r.rl,rd=(a,b,c)=>k3rnd(r.sd*7+r.i,a*13+b,c);
  for(let x=-2;x<=2;x++)for(let z=-2;z<=2;z++)if(Math.max(Math.abs(x),Math.abs(z))==2&&!(x==0&&z==2)&&rd(x,z,1)<.55+.1*rl)m[x+','+z]={t:'wall',l:Math.min(KD_MAXL,1+Math.floor(rl*1.2))};
@@ -661,23 +661,61 @@ function kdRaidDraw(cv,r,st){const m=kdRivalMap(r),cx=cv.getContext('2d'),cw=cv.
  L.sort((a,b)=>a.d-b.d);L.forEach(o=>{const f=o.f*sc;cx.drawImage(o.r?k3red(o.s):o.s.c,o.p[0]-o.s.w/2*f,o.p[1]-o.s.ay*f,o.s.w*f,o.s.h*f)});
  cx.font='bold '+sc*15+'px sans-serif';pills.forEach(q=>{const tx=(st=='win'||st=='done'?'✔ ':'')+q[1],w2=cx.measureText(tx).width+sc*16;cx.fillStyle=q[2];cx.beginPath();cx.roundRect(q[0][0]-w2/2,q[0][1]-sc*11,w2,sc*22,sc*11);cx.fill();cx.strokeStyle='#333';cx.lineWidth=2;cx.stroke();cx.fillStyle='#222';cx.fillText(tx,q[0][0],q[0][1])});
  const pn=T(0,3.3,0);cx.font='bold '+sc*15+'px sans-serif';const w3=cx.measureText(r.n).width+sc*18;cx.fillStyle='rgba(255,255,255,.92)';cx.beginPath();cx.roundRect(pn[0]-w3/2,pn[1]-sc*13,w3,sc*26,sc*10);cx.fill();cx.strokeStyle='#4a2c12';cx.stroke();cx.fillStyle='#000';cx.fillText(r.n,pn[0],pn[1])}
-function kdRaidView(i,st,msg){const k=kdInit(),r=kdRivals()[i],done=(k.raided||{})[r.id],m=kdRivalMap(r),v=Object.values(m),walls=v.filter(b=>b.t=='wall').length,tw=v.filter(b=>KD_B[b.t].def&&b.t!='wall').length,pw=Math.round(kdArmyPow());
- $('kraid').innerHTML='<div class="box" style="max-width:520px;margin:0 auto"><div class="row" style="justify-content:space-between"><b>🏰 '+r.n+'</b><button onclick="kdRaidOpen()">⬅ Back</button></div>'+(msg?'<div class="box" style="margin:6px 0">'+msg+'</div>':'')
- +'<canvas id="krc" style="width:100%;display:block;border-radius:10px;margin:6px 0"></canvas><div>Castle Lv '+r.rl+' &middot; 🧱 '+walls+' walls &middot; 🗼 '+tw+' towers &middot; Defense power <b>'+r.def+'</b></div><div>Loot: <b>'+r.loot+'</b> '+GSI+' &middot; <b>'+r.sil+'</b> '+SILV+'</div><div>Your army power: <b>'+pw+'</b></div>'
- +'<div class="row"><button '+(pw>0&&!done?'':'disabled')+' onclick="kdRaid('+i+')">'+(done?'Already raided':'⚔️ Attack!')+'</button></div></div>';
- const cv=$('krc'),d=Math.min(2,window.devicePixelRatio||1);cv.width=Math.round(cv.clientWidth*d)||520;cv.height=Math.round(cv.width*.72);kdRaidDraw(cv,r,st||(done?'done':'scout'))}
+let RBT=null;
+function kdRBStructs(r,m){const rl=r.rl,S=[{id:'castle',x:0,z:0,t:'castle',hp:1500+900*rl,mhp:1500+900*rl,dps:10+6*rl,rng:3.5}];
+ Object.keys(m).forEach(id=>{const q=id.split(',').map(Number),b=m[id],d=KD_B[b.t],tw=d.def&&b.t!='wall',hp=b.t=='wall'?200+120*b.l:tw?600+300*rl:400+200*rl;
+  S.push({id,x:q[0],z:q[1],t:b.t,hp,mhp:hp,dps:tw?(b.t=='cannon'?30+14*rl:b.t=='spikes'?25+10*rl:15+8*rl):0,rng:b.t=='spikes'?1.3:3.3,loot:['gold','farm','mill','market'].includes(b.t)})});return S}
+function kdRaidView(i,st,msg){const k=kdInit(),r=kdRivals()[i];if(!r)return;RBT={r,i,phase:(k.raided||{})[r.id]?'done':'place',sel:null,U:[],sh:[],msg:msg||'',t:0,last:0};RBT.m=kdRivalMap(r);RBT.S=kdRBStructs(r,RBT.m);
+ if(RBT.phase=='done')RBT.S.forEach(s=>{if(s.t!='castle'&&KD_B[s.t].def)s.hp=0});kdRBUI()}
+const kdRBAvail=t=>(kdInit().army[t]||0)-RBT.U.filter(u=>u.k==t).length;
+function kdRBUI(){const k=kdInit();k.army=k.army||{};const r=RBT.r,ts=Object.keys(k.army).filter(t=>CARDS[t]&&k.army[t]>0),pl=RBT.phase=='place',walls=RBT.S.filter(s=>s.t=='wall').length,tw=RBT.S.filter(s=>s.dps&&s.t!='castle'&&s.t!='wall'||(s.t!='wall'&&KD_B[s.t]&&KD_B[s.t].def)).length;
+ $('kraid').innerHTML='<div class="box" style="max-width:520px;margin:0 auto"><div class="row" style="justify-content:space-between"><b>🏰 '+r.n+'</b><button id="krb" '+(RBT.phase=='fight'?'disabled':'')+' onclick="kdRaidOpen()">⬅ Back</button></div>'+(RBT.msg?'<div class="box" style="margin:6px 0">'+RBT.msg+'</div>':'')
+ +'<canvas id="krc" style="width:100%;display:block;border-radius:10px;margin:6px 0;touch-action:none"></canvas><div>Castle Lv '+r.rl+' &middot; 🧱 '+walls+' walls &middot; 🗼 '+tw+' towers</div><div>Loot: <b>'+r.loot+'</b> '+GSI+' &middot; <b>'+r.sil+'</b> '+SILV+' <small>(destroy buildings to loot them, or the castle to take it all)</small></div>'
+ +(pl?'<small>Pick a troop, then tap empty tiles in their kingdom to place it. Tap a placed troop to take it back.</small><div class="row">'+(ts.length?ts.map(t=>'<button style="'+(RBT.sel==t?'outline:3px solid #ffd54a':'')+'" '+(kdRBAvail(t)>0?'':'disabled')+' onclick="RBT.sel=\''+t+'\';kdRBUI()">'+CARDS[t].n+' &times;'+kdRBAvail(t)+'</button>').join(''):'<small>You have no troops. Train some in a Barracks first.</small>')+'<button '+(RBT.U.length?'':'disabled')+' onclick="kdRBStart()">⚔️ Start battle</button></div>':RBT.phase=='fight'?'<div id="krs"><b>Battle!</b></div>':'')+'</div>';
+ const cv=$('krc'),d=Math.min(2,window.devicePixelRatio||1);cv.width=Math.round(cv.clientWidth*d)||520;cv.height=Math.round(cv.width*.72);
+ cv.onpointerup=e=>{if(RBT.phase!='place')return;const q=cv.getBoundingClientRect(),f=cv.width/q.width,sc=cv.width/440,ix=((e.clientX-q.left)*f-cv.width/2)/sc/32,iy=((e.clientY-q.top)*f-cv.height*.5)/sc/16;kdRBPlace(Math.round((ix+iy)/2),Math.round((iy-ix)/2))};
+ if(!RBT.lid){RBT.lid=++KBLN;const id=RBT.lid;requestAnimationFrame(t=>kdRBLoop(t,id))}}
+function kdRBPlace(a,b){const ex=RBT.U.findIndex(u=>u.x==a&&u.z==b);if(ex>=0){RBT.U.splice(ex,1);kdRBUI();return}
+ if(!RBT.sel||kdRBAvail(RBT.sel)<1||Math.abs(a)>5||Math.abs(b)>5||RBT.S.some(s=>s.hp>0&&s.x==a&&s.z==b)||(a==0&&b==0))return;
+ const t=RBT.sel,c=CARDS[t],l=L(t),n=c.cnt||1,hit=c.dmg*n*(1+.1*(l-1));RBT.U.push({k:t,x:a,z:b,hp:c.hp*n*(1+.1*(l-1)),mhp:c.hp*n*(1+.1*(l-1)),hit,cd:c.cd||1,cdT:0,spd:(c.sp||40)/40*.9,rng:c.rg>60?c.rg/60:.85,l,mv:0,ph:0,fx:1,pt:0,pd:.35});kdRBUI()}
+function kdRBStart(){if(!RBT.U.length)return;RBT.phase='fight';RBT.t=0;RBT.msg='';kdRBUI()}
+function kdRBStep(dt){const S=RBT.S.filter(s=>s.hp>0),U=RBT.U.filter(u=>u.hp>0);RBT.t+=dt;
+ U.forEach(u=>{let tg=null,bd=1e9;S.forEach(s=>{if(s.hp<=0)return;const d=Math.hypot(s.x-u.x,s.z-u.z);if(d<bd){bd=d;tg=s}});if(!tg)return;
+  const sx=(tg.x-tg.z)-(u.x-u.z);if(sx)u.fx=sx<0?-1:1;u.pt=Math.max(0,u.pt-dt);
+  if(bd>u.rng){const dx=(tg.x-u.x)/bd,dz=(tg.z-u.z)/bd;u.x+=dx*u.spd*dt;u.z+=dz*u.spd*dt;u.mv=1;u.ph+=dt*7}
+  else{u.mv=0;u.cdT-=dt;if(u.cdT<=0){tg.hp-=u.hit;u.cdT=u.cd;u.pt=.35;if(u.rng>1.2)RBT.sh.push({a:[u.x,u.z],b:[tg.x,tg.z],t:.2,c:'#2a7bd6'})}}});
+ S.forEach(s=>{if(!s.dps||s.hp<=0)return;s.cdT=(s.cdT||0)-dt;if(s.cdT>0)return;let tg=null,bd=s.rng;U.forEach(u=>{if(u.hp<=0)return;const d=Math.hypot(s.x-u.x,s.z-u.z);if(d<=bd){bd=d;tg=u}});if(tg){tg.hp-=s.dps;s.cdT=1;RBT.sh.push({a:[s.x,s.z],b:[tg.x,tg.z],t:.2,c:'#e8541e'})}});
+ RBT.sh.forEach(q=>q.t-=dt);RBT.sh=RBT.sh.filter(q=>q.t>0);
+ const cas=RBT.S[0],alive=RBT.U.some(u=>u.hp>0);if(cas.hp<=0)kdRBEnd(true);else if(!alive||RBT.t>75)kdRBEnd(false)}
+function kdRBEnd(win){const k=kdInit(),r=RBT.r;RBT.phase='end';let gs=0,sl=0;const sv=RBT.S.filter(s=>['farm','mill','market'].includes(s.t)).length||1;
+ RBT.S.forEach(s=>{if(!s.loot||(!win&&s.hp>0))return;if(s.t=='gold')gs+=r.loot;else sl+=Math.round(r.sil/sv)});if(win){gs=r.loot;sl=r.sil}
+ const lost=[];RBT.U.forEach(u=>{if(u.hp<=0){k.army[u.k]=Math.max(0,(k.army[u.k]||0)-1);lost.push(CARDS[u.k].n)}});
+ k.raided=k.raided||{};k.raided[r.id]=1;S.gs+=gs;S.silver=(S.silver||0)+sl;save();kdChips();kdRender();
+ RBT.msg=(win?'🏆 <b>Victory!</b> You destroyed '+r.n+"'s castle.":'💀 <b>Defeat!</b> Your troops could not take the castle.')+'<br>Looted <b>'+gs+'</b> '+GSI+' and <b>'+sl+'</b> '+SILV+'<br><small>Troops lost: '+(lost.join(', ')||'none')+'</small>';kdRBUI()}
+let KBLN=0;
+function kdRBLoop(ts,id){const cv=$('krc');if(!cv||!RBT||RBT.lid!==id)return;requestAnimationFrame(t=>kdRBLoop(t,id));const dt=Math.min(.05,(ts-(RBT.last||ts))/1000);RBT.last=ts;
+ if(RBT.phase=='fight'){kdRBStep(dt);const e=$('krs');if(e)e.innerHTML='<b>Battle!</b> '+Math.max(0,75-Math.floor(RBT.t))+'s left &middot; troops alive '+RBT.U.filter(u=>u.hp>0).length}
+ kdRBDraw(cv)}
+function kdRBDraw(cv){const r=RBT.r,rc=cv.getContext('2d'),cw=cv.width,ch=cv.height,sc=cw/440,T=(x,y,z)=>[cw/2+(x-z)*32*sc,ch*.5+((x+z)*16-y*36)*sc],fk={p:{}};
+ RBT.S.forEach(s=>{if(s.hp>0&&s.t!='castle')fk.p[s.id]={t:s.t,l:RBT.m[s.id].l}});
+ rc.fillStyle='#2c6a38';rc.fillRect(0,0,cw,ch);rc.textAlign='center';rc.textBaseline='middle';
+ for(let a=-5;a<=5;a++)for(let b=-5;b<=5;b++){const p=T(a,0,b);rc.fillStyle=(a+b)&1?'#62b966':'#6cc36f';rc.beginPath();rc.moveTo(p[0],p[1]-16*sc);rc.lineTo(p[0]+32*sc,p[1]);rc.lineTo(p[0],p[1]+16*sc);rc.lineTo(p[0]-32*sc,p[1]);rc.fill()}
+ const L2=[],sv=RBT.S.filter(s=>['farm','mill','market'].includes(s.t)).length||1;
+ RBT.S.forEach(s=>{if(s.hp<=0)return;const sp=s.t=='castle'?k3spr('castle'+r.rl,300,330,F=>k3castle(F,r.rl)):k3sp(fk.p[s.id],s.x,s.z,fk);L2.push({d:s.x+s.z,p:T(s.x,0,s.z),s:sp,f:s.t=='castle'?CSC:1,st:s})});
+ RBT.U.forEach(u=>{if(u.hp>0)L2.push({d:u.x+u.z+.01,p:T(u.x,0,u.z),u})});L2.sort((a,b)=>a.d-b.d);
+ L2.forEach(o=>{if(o.u){const u=o.u,c=CARDS[u.k],e={k:u.k,team:0,x:0,y:0,hp:u.hp,mhp:u.mhp,mv:u.mv,ph:u.ph,fx:u.fx,pt:u.pt,pd:u.pd,sc:c.sc||1,r:12,rg:c.rg||0,l:u.l},g=cx;rc.save();rc.translate(o.p[0],o.p[1]-6*sc);rc.scale(sc*.85,sc*.85);cx=rc;try{fig(e)}catch(_){rc.fillStyle='#00a2e8';rc.beginPath();rc.arc(0,0,10,0,7);rc.fill()}cx=g;rc.restore();return}
+  const f=o.f*sc;rc.drawImage(o.s.c,o.p[0]-o.s.w/2*f,o.p[1]-o.s.ay*f,o.s.w*f,o.s.h*f);const s=o.st;
+  if(s.hp<s.mhp){const w=34*sc,p=T(s.x,s.t=='castle'?2.6:1.3,s.z);rc.fillStyle='#000';rc.fillRect(p[0]-w/2-1,p[1]-3,w+2,7);rc.fillStyle='#e53935';rc.fillRect(p[0]-w/2,p[1]-2,w*Math.max(0,s.hp/s.mhp),5)}});
+ RBT.sh.forEach(q=>{const a=T(q.a[0],.7,q.a[1]),b=T(q.b[0],.7,q.b[1]);rc.strokeStyle=q.c;rc.lineWidth=3*sc;rc.beginPath();rc.moveTo(a[0],a[1]);rc.lineTo(b[0],b[1]);rc.stroke()});
+ if(RBT.phase=='place'){rc.font='bold '+sc*15+'px sans-serif';RBT.S.forEach(s=>{if(!s.loot||s.hp<=0)return;const p=T(s.x,1.5,s.z),tx='+'+(s.t=='gold'?r.loot:Math.round(r.sil/sv)),w2=rc.measureText(tx).width+sc*16;rc.fillStyle=s.t=='gold'?KBC.gs:KBC.sil;rc.beginPath();rc.roundRect(p[0]-w2/2,p[1]-sc*11,w2,sc*22,sc*11);rc.fill();rc.strokeStyle='#333';rc.lineWidth=2;rc.stroke();rc.fillStyle='#222';rc.fillText(tx,p[0],p[1])})}
+ const pn=T(0,3.3,0);rc.font='bold '+sc*15+'px sans-serif';const w3=rc.measureText(r.n).width+sc*18;rc.fillStyle='rgba(255,255,255,.92)';rc.beginPath();rc.roundRect(pn[0]-w3/2,pn[1]-sc*13,w3,sc*26,sc*10);rc.fill();rc.strokeStyle='#4a2c12';rc.stroke();rc.fillStyle='#000';rc.fillText(r.n,pn[0],pn[1])}
 function kdRaidOpen(){const o=$('kfull');if(!o)return;let r=$('kraid');if(!r){r=document.createElement('div');r.id='kraid';o.appendChild(r)}r.innerHTML=kdRaidHTML();r.style.display='block'}
-function kdRaid(i){const k=kdInit(),r=kdRivals()[i],pw=kdArmyPow();k.raided=k.raided||{};if(!r||k.raided[r.id]||pw<=0)return;
- const win=pw*(.85+Math.random()*.3)>=r.def,a=k.army||{},lost=[];Object.keys(a).forEach(t=>{const n=Math.min(a[t],Math.ceil(a[t]*(win?.25:.6)*(.7+Math.random()*.6)));if(n>0){a[t]-=n;lost.push(n+' '+CARDS[t].n)}});
- k.raided[r.id]=1;if(win){S.gs+=r.loot;S.silver=(S.silver||0)+r.sil}save();kdChips();kdRender();
- const m=(win?'🏆 <b>Victory!</b> You raided '+r.n+' and looted <b>'+r.loot+'</b> '+GSI+' and <b>'+r.sil+'</b> '+SILV+'.':'💀 <b>Defeat!</b> '+r.n+' held out against your army.')+'<br><small>Troops lost: '+(lost.join(', ')||'none')+'</small>';
- kdRaidView(i,win?'win':'lose',m)}
 const KDT=[['👑 Welcome to your kingdom','Your castle sits in the middle of a big green plot with a forest all around. Drag the map to look around, pinch or scroll to zoom, and tap 🗺 Fit to see everything.'],
 ['⛏️ Your starter buildings','You start with a Gold Mine (makes gold scraps), a Barracks (trains troops and makes EXP) and a Stonemason Hut (does your upgrades). Tap any building to see what it does.'],
 ['💰 Collecting','Buildings keep working while you are away and show a +number bubble when goods are ready. Tap a building to collect, or press 💰 Collect all. They only store a few hours of goods, so check back often.'],
 ['🏗️ Building','Tap an empty tile to build. Trees, rocks and mushrooms are in the way, so demolish them for gold scraps first. A tiny red box means you can not place something there. You can drag any building, or the castle, to move it.'],
 ['⬆ Upgrading','Upgrades cost gold scraps, take time and need a free stonemason. Each upgrade takes longer than the last. Your castle level limits how many of each building you can have and how high they can be upgraded.'],
-['⚔️ Troops and raids','Select your Barracks to train troops from your cards. Then press ⚔️ Raid to attack rival kingdoms and loot their gold scraps. You lose some troops in every raid.'],
+['⚔️ Troops and raids','Select your Barracks to train troops from your cards. Then press ⚔️ Raid, scout a rival kingdom, place your troops on its tiles and watch them attack. Destroy buildings to loot gold scraps and silver, and take the castle to win it all. Troops that fall are lost.'],
 ['🛒 Getting more','The Kingdom Shop (in the Shop tab) sells more buildings. Gold mines make gold scraps, while farms, lumber mills and markets make silver, which buys farms, mills, barracks and gold mines. Extra Stonemason Huts cost gems. Walls, towers and decorations add beauty, which boosts everything. Have fun!']];
 function kdTutOpen(i){const o=$('kfull');if(!o)return;let t=$('ktut');if(!t){t=document.createElement('div');t.id='ktut';o.appendChild(t)}
  if(i>=KDT.length){S.kt=1;save();t.remove();if(!kdInit().name)kdNameOpen();return}
