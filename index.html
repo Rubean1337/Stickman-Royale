@@ -65,6 +65,12 @@ button:focus-visible{outline:3px solid var(--blue)}button:disabled{opacity:.45;c
 .kdstreet{position:relative;height:28px;overflow:hidden;margin:4px 0;border-radius:8px;background:linear-gradient(rgba(120,200,120,.22),rgba(80,160,90,.34))}
 .kdw{position:absolute;bottom:0;font-size:22px;animation:kdwalk 18s linear infinite alternate}.kdw.w2{animation-duration:27s;animation-delay:-9s}.kdw.w3{animation-duration:22s;animation-delay:-4s;font-size:18px}
 @keyframes kdwalk{from{left:2%}to{left:92%}}
+#kfull{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;background:linear-gradient(160deg,var(--g1),var(--g2));padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+#kbar{flex:none;display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:2px solid var(--ln);background:var(--pn)}
+#kbar button{padding:6px 12px;font-size:17px}#kbar .chip{margin:0}
+#kfull .kd{flex:1;min-height:0;display:flex;flex-direction:column;gap:4px;padding:4px 6px}
+#kfull .kdhead,#kfull .kd>small{flex:none}#kfull .kdhead{padding:6px 8px}#kfull .kdpanel{flex:none;max-height:34vh;overflow:auto}
+#kfull .kd3{aspect-ratio:auto;flex:1;min-height:0;width:100%;margin:0}
 .kd3{display:block;width:100%;aspect-ratio:5/4;border-radius:14px;border:2px solid var(--ln);touch-action:none;cursor:grab;margin:8px 0 2px}
 @media (max-width:520px){.kdgrid{grid-template-columns:repeat(4,1fr)}.kdt{font-size:34px}.tabs button{padding-left:4px;padding-right:4px}}
 @keyframes pop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
@@ -471,7 +477,7 @@ function menu(msg){dropSave();if(MP&&MP.started)mpEnd();{const r=trCheck();if(r)
  <div class="chips"><span class="chip sup" title="Spend on card upgrades">${SUP} ${S.sup} <small>Supplies</small></span><span class="chip gem" title="Spend on unlocking cards and in the Shop">${GEM} ${S.gems} <small>Gems</small></span><span class="chip tr" title="Trophy level ${trophyLv()}">${TRO} ${S.tr||0} <small>Trophies</small></span></div>
  <button class="arena" onclick="trRoad()">🏟 Arena ${ar0+1}: ${ARENAS[ar0].n} ▾<span class="pb" style="--w:${pct}%"><i></i></span><small>${ar0<ARENAS.length-1?((ar0+1)*360-(S.tr||0))+' trophies to Arena '+(ar0+2)+' · tap to see rewards and cards':'Top arena reached!'}</small></button>
  <details class="prof"><summary>👤 ${esc(S.name||'Player')} <small>(tap to edit profile)</small></summary><div class="row"><label>Your name <input id="pname" maxlength="14" value="${esc(S.name||'Player')}" onchange="setName(this)"></label> <span id="pnote" style="color:#c0392b;font-size:15px"></span> <small>${S.named?'Changing your name costs '+NAME_COST+' gems.':'Your first name is free. After that, changing it costs '+NAME_COST+' gems.'}</small></div><small>Trophy level ${trophyLv()} &middot; Deck level average ${avgL()}</small></details>
- <div class="row tabs"><button class="${page==0?'on':''}" onclick="slide(0)"><span class="ti">⚔️</span> Battle</button><button class="${page==1?'on':''}" onclick="slide(1)"><span class="ti">🃏</span> Cards ${S.deck.length}/${need}${dotC?'<i class="dot"></i>':''}</button><button class="${page==2?'on':''}" onclick="slide(2)"><span class="ti">🛒</span> Shop${dotS?'<i class="dot"></i>':''}</button><button class="${page==3?'on':''}" onclick="slide(3)"><span class="ti">🏰</span> Kingdom${kdReady()?'<i class="dot"></i>':''}</button></div>
+ <div class="row tabs"><button class="${page==0?'on':''}" onclick="slide(0)"><span class="ti">⚔️</span> Battle</button><button class="${page==1?'on':''}" onclick="slide(1)"><span class="ti">🃏</span> Cards ${S.deck.length}/${need}${dotC?'<i class="dot"></i>':''}</button><button class="${page==2?'on':''}" onclick="slide(2)"><span class="ti">🛒</span> Shop${dotS?'<i class="dot"></i>':''}</button><button class="${page==3?'on':''}" onclick="kdEnter()"><span class="ti">🏰</span> Kingdom${kdReady()?'<i class="dot"></i>':''}</button></div>
  <div id="sl" class="slider"><section><div class="bt"><div class="btl">
  <div id="qmb"></div>${tutBox()}<div id="mpb"></div>${chestBox()}${itemBox()}`;
  h+=`<div class="row">${ok?'':'<button class="b-warn" onclick="slide(1)">⚠️ Your deck is not full. Tap to fix it!</button>'}</div>
@@ -543,7 +549,7 @@ const kdUpCost=b=>Math.round(KD_B[b.t].u*Math.pow(b.l,1.7));
 const kdCount=t=>{const k=kdInit();return kdBs().filter(b=>b&&b.t==t).length+k.inv.filter(b=>b.t==t).length};
 const kdLim=t=>KD_LIM[t]||999;
 function kdReady(){return kdBs().some(b=>kdIsProd(b)&&kdPend(b)>=kdCapAmt(b)*.75)}
-function kdChips(){const a=document.querySelector('.chip.sup'),g=document.querySelector('.chip.gem');if(a)a.innerHTML=SUP+' '+S.sup+' <small>Supplies</small>';if(g)g.innerHTML=GEM+' '+S.gems+' <small>Gems</small>'}
+function kdChips(){const bs=$('kbs'),bg=$('kbg');if(bs)bs.innerHTML=SUP+' '+S.sup;if(bg)bg.innerHTML=GEM+' '+S.gems;const a=document.querySelector('.chip.sup'),g=document.querySelector('.chip.gem');if(a)a.innerHTML=SUP+' '+S.sup+' <small>Supplies</small>';if(g)g.innerHTML=GEM+' '+S.gems+' <small>Gems</small>'}
 function kdCollect(i,quiet){const k=kdInit(),b=k.p[i];if(!kdIsProd(b))return 0;const p=kdPend(b),n=Math.floor(p);if(n<1)return 0;
  const full=Date.now()-b.s>=kdCapH()*3600e3;b.s=full?Date.now():Date.now()-(p-n)/kdRate(b)*3600e3;
  const kk=KD_B[b.t].k;if(kk=='sup')S.sup+=n;else if(kk=='exp')S.exp+=n;else S.gems+=n;save();if(!quiet){kdChips();kdRender([[i,'+'+n]])}return n}
@@ -595,7 +601,12 @@ function kdTick(){kdDone();if(!$('kd3'))return;const k=kdInit();let T={sup:0,gem
  ['kdup','kdcup'].forEach(n=>{const e=$(n);if(e)e.textContent=kdFmt(Math.max(0,Math.ceil((e.dataset.end-Date.now())/1000)))});
  if(KDSEL&&k.p[KDSEL]&&kdIsProd(k.p[KDSEL])){const st=$('kdst');if(st)st.textContent=Math.floor(kdPend(k.p[KDSEL]))}}
 setInterval(kdTick,1000);
-function kingdomTab(){return '<div id="kd">'+kdHTML()+'</div>'}
+let KM=false;
+function kingdomTab(){return '<div class="box" style="text-align:center;margin-top:10px"><div style="font-size:44px">🏰</div><b>Your Kingdom</b><br><small>Enter your kingdom to build, upgrade and collect.</small><div class="row" style="justify-content:center"><button onclick="kdEnter()">Enter kingdom</button></div></div>'}
+function kdBar(){return '<div id="kbar"><button onclick="kdExit()">⬅ Back</button><b>🏰 Kingdom</b><span class="chip"><span id="kbs">'+SUP+' '+S.sup+'</span></span><span class="chip"><span id="kbg">'+GEM+' '+S.gems+'</span></span></div>'}
+function kdEnter(){KM=true;KDSEL=null;KDDEL=null;KDG=null;let o=$('kfull');if(!o){o=document.createElement('div');o.id='kfull';document.body.appendChild(o)}
+ o.style.display='flex';o.innerHTML=kdBar()+'<div id="kd">'+kdHTML()+'</div>';const d=$('kd');d.style.cssText='flex:1;min-height:0;display:flex;flex-direction:column';document.body.style.overflow='hidden'}
+function kdExit(){KM=false;KDG=null;const o=$('kfull');if(o)o.remove();document.body.style.overflow='';menu()}
 /* ---- tiny built-in 3D engine: flat-shaded polygons, perspective camera, painter's sort ---- */
 const k3c=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
 function k3f(F,P,col,o){const[a,b,c]=P,u=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],v=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];let n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];
@@ -676,8 +687,8 @@ function k3Bind(cv){if(cv._b)return;cv._b=1;let d=null;const pt=e=>{const r=cv.g
  cv.onpointerup=e=>{const was=d;d=null;if(KDG){const g=KDG;KDG=null;kdMove(g.id,g.cell);kdRender();return}
   if(was&&was.m<=6){const q=pt(e),i=k3Hit(q[0],q[1],cv);if(!i||i=='castle'){KDSEL=null;kdRender()}else kdTap(i)}};
  cv.onwheel=e=>{e.preventDefault();KC.zm=Math.max(.6,Math.min(1.8,KC.zm*(e.deltaY<0?1.1:.9)))}}
-function k3Loop(t){requestAnimationFrame(k3Loop);const cv=$('kd3');if(!cv||page!=3||document.hidden||t-K3T<40)return;const w=cv.clientWidth;if(!w)return;K3T=t;k3Bind(cv);
- const dpr=Math.min(2,window.devicePixelRatio||1),W2=Math.round(w*dpr);if(cv.width!=W2){cv.width=W2;cv.height=Math.round(W2*.8)}k3Draw(cv,t)}
+function k3Loop(t){requestAnimationFrame(k3Loop);const cv=$('kd3');if(!cv||!KM||document.hidden||t-K3T<40)return;const w=cv.clientWidth,hh=cv.clientHeight;if(!w||!hh)return;K3T=t;k3Bind(cv);
+ const dpr=Math.min(2,window.devicePixelRatio||1),W2=Math.round(w*dpr),H2=Math.round(hh*dpr);if(cv.width!=W2||cv.height!=H2){cv.width=W2;cv.height=H2}k3Draw(cv,t)}
 requestAnimationFrame(k3Loop);
 const EXP_COST=[5,20,50,100,250,500,1000,1500,3000,5000,10000,15000,30000,40000,50000];
 function upNeed(l,m,t){const mm=m||1,cs=Math.max(1,Math.round(5*Math.pow(1.75,l-1)*mm)),ce=EXP_COST[Math.max(0,Math.min(EXP_COST.length-1,l-1))],have=t=='rexp'?(S.expR||0):S.exp,g=Math.ceil(Math.max(0,cs-S.sup)/20)+Math.ceil(Math.max(0,ce-have)/(t=='rexp'?10:16)),mx=l>=MAXL;return{cs,ce,g,t,ok:!mx&&g==0,okG:!mx&&g>0&&S.gems>=g}}
