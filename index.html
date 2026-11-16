@@ -532,7 +532,7 @@ const KD_B={
  mill:{n:'Lumber Mill',e:'🪵',k:'sil',cur:'sil',b:75,c:100,u:60,cl:1,d:'Chops lots of supplies.'},
  market:{n:'Market',e:'🏪',k:'sil',b:140,c:350,u:160,cl:1,d:'Trades for tons of supplies.'},
  gold:{n:'Gold Mine',e:'⛏️',k:'gs',cur:'sil',b:90,c:300,u:150,cl:1,d:'Digs up gold scraps (supplies).'},
- barracks:{n:'Barracks',e:'🛡️',k:'exp',cur:'sil',b:15,c:400,u:260,cl:1,d:'Trains your troops: makes Common EXP for card upgrades.'},
+ barracks:{n:'Barracks',e:'🛡️',k:'deco',be:0,upg:1,cap:1,cur:'sil',c:400,u:260,cl:1,d:'Houses and trains your troops for raids. Higher levels hold more.'},
  mine:{n:'Gem Mine',e:'💎',k:'gem',b:6,c:250,u:250,cl:1,d:'Digs up gems.'},
  cave:{n:'Crystal Cave',e:'🔮',k:'gem',b:14,c:1200,u:700,cl:1,d:'Glowing crystals full of gems.'},
  wall:{n:'Wall',e:'🧱',k:'deco',be:1,c:20,cl:1,def:1,upg:1,u:30,d:'Sturdy stone wall. Neighbouring walls link up.'},
@@ -630,7 +630,7 @@ function kdPanel(){const k=kdInit(),i=KDSEL;
   if(k.inv.length){h+='<b>📦 Your inventory (free)</b><div class="kdbuild">';for(const t in iv){const d=KD_B[t];h+='<button onclick="kdPlace('+Q+',\''+t+'\')"><span class="kde2">'+d.e+'</span><b>'+d.n+' x'+iv[t]+'</b><small>Place for free</small></button>'}h+='</div>'}
   h+='<b>Build here</b><div class="kdbuild">';
   for(const t in KD_B){const d=KD_B[t];if(d.g)continue;const mx=kdCount(t)>=kdLim(t),pr=kdPrice(t),ok=!mx&&kdHave(pr.cur)>=pr.amt;
-   const eff=d.store?'Holds '+kdStoreCap({l:1}):d.hut?'1 stonemason':d.k=='deco'?'+'+d.be+' beauty':d.b+' '+KN[d.k]+'/hr';
+   const eff=d.store?'Holds '+kdStoreCap({l:1}):d.hut?'1 stonemason':d.cap?'Houses 10 troop space':d.k=='deco'?'+'+d.be+' beauty':d.b+' '+KN[d.k]+'/hr';
    h+='<button '+(ok?'':'disabled')+' onclick="kdBuild('+Q+',\''+t+'\')"><span class="kde2">'+d.e+'</span><b>'+d.n+'</b><small>'+(mx?'Limit '+kdLim(t)+' (upgrade castle)':(pr.amt?pr.amt+' '+KDCI[pr.cur]:'Free')+' &middot; '+eff+(KD_LIM[t]?' &middot; '+kdCount(t)+'/'+kdLim(t):''))+'</small></button>'}
   return h+'</div>'}
  const d=KD_B[b.t],u=kdUpg(b),busy=b.job&&b.job.end>Date.now(),lock=u||busy||kdBLock(b);
@@ -640,7 +640,7 @@ function kdPanel(){const k=kdInit(),i=KDSEL;
   h+='<div style="margin:4px 0">Makes <b>'+(r<10?r.toFixed(1):Math.round(r))+'</b> '+KU[d.k]+' per hour &middot; stored <b id="kdst"></b> of '+Math.floor(kdCapAmt(b))+'</div><div class="row">'
    +'<button onclick="kdCollect('+Q+')" '+(kdPend(b)>=1?'':'disabled')+'>💰 Collect</button>'
    +(u?'<span class="chip">⏳ Upgrading to Lv '+u.job.to+': <b id="kdup" data-end="'+u.job.end+'"></b></span>':b.l<kdMaxL()?'<button onclick="kdUp('+Q+')" '+(S.gs>=c&&fh?'':'disabled')+'>⬆ Upgrade to Lv '+(b.l+1)+' ('+c+' '+GSI+', '+kdFmt(kdUpTime(b.l))+')</button>'+(fh?'':'<small>No free stonemason.</small>'):b.l<KD_MAXL?'<span class="chip">🔒 Needs Castle Lv '+Math.ceil((b.l+1)/2)+'</span>':'<span class="chip">⭐ Max level</span>')}
- else if(d.upg){const fh=kdFreeHut(),c=kdUpCost(b);h+='<div style="margin:4px 0">'+(d.store?'Stores up to <b>'+kdStoreCap(b)+'</b> '+(d.store=='gs'?GSI:SILV)+' (you hold '+(d.store=='gs'?S.gs:(S.silver||0))+')':'Gives <b>+'+b.l+' beauty</b> (+'+b.l+'% production everywhere).')+'</div><div class="row">'+(u?'<span class="chip">⏳ Upgrading to Lv '+u.job.to+': <b id="kdup" data-end="'+u.job.end+'"></b></span>':b.l<kdMaxL()?'<button onclick="kdUp('+Q+')" '+(S.gs>=c&&fh?'':'disabled')+'>⬆ Upgrade to Lv '+(b.l+1)+' ('+c+' '+GSI+', '+kdFmt(kdUpTime(b.l))+')</button>'+(fh?'':'<small>No free stonemason.</small>'):b.l>=KD_MAXL?'<span class="chip">⭐ Max level</span>':'<span class="chip">🔒 Max for Castle Lv '+k.c+': upgrade your castle</span>')}
+ else if(d.upg){const fh=kdFreeHut(),c=kdUpCost(b);h+='<div style="margin:4px 0">'+(d.store?'Stores up to <b>'+kdStoreCap(b)+'</b> '+(d.store=='gs'?GSI:SILV)+' (you hold '+(d.store=='gs'?S.gs:(S.silver||0))+')':d.cap?'Houses <b>'+(10+6*(b.l-1))+'</b> troop space.':'Gives <b>+'+b.l+' beauty</b> (+'+b.l+'% production everywhere).')+'</div><div class="row">'+(u?'<span class="chip">⏳ Upgrading to Lv '+u.job.to+': <b id="kdup" data-end="'+u.job.end+'"></b></span>':b.l<kdMaxL()?'<button onclick="kdUp('+Q+')" '+(S.gs>=c&&fh?'':'disabled')+'>⬆ Upgrade to Lv '+(b.l+1)+' ('+c+' '+GSI+', '+kdFmt(kdUpTime(b.l))+')</button>'+(fh?'':'<small>No free stonemason.</small>'):b.l>=KD_MAXL?'<span class="chip">⭐ Max level</span>':'<span class="chip">🔒 Max for Castle Lv '+k.c+': upgrade your castle</span>')}
  else h+='<div style="margin:4px 0">Gives <b>+'+d.be+' beauty</b> (+'+d.be+'% production everywhere).</div><div class="row">';
  return h+'<button '+(lock?'disabled':'')+' onclick="kdStore('+Q+')">📦 Store</button><button class="b-rem" '+(lock?'disabled':'')+' onclick="kdDemo('+Q+')">'+(KDDEL==i?'Tap again to demolish'+(kdRefund(b.t).amt?' (+'+kdRefund(b.t).amt+' '+KDCI[kdRefund(b.t).cur]+')':''):'🗑 Demolish')+'</button></div>'}
 const kdTroops=()=>owned().filter(k=>{const c=CARDS[k];return c&&c.hp&&!c.bld&&!c.spell&&c.cnt});
@@ -657,7 +657,7 @@ function kdRivals(){const k=kdInit(),pr=kdBs().filter(b=>kdIsProd(b)),av=pr.leng
  for(let i=0;i<3;i++){const rl=Math.max(1,Math.min(6,k.c+i-1)),bl=Math.max(1,Math.min(KD_MAXL,2*rl,Math.round(av)+i-1)),r=k3rnd(sd,i,50);R.push({sd,i,bl,sil:Math.round(60*Math.pow(rl,1.4)*(.8+k3rnd(sd,i,54)*.4)),id:sd+'-'+i,n:A[Math.floor(k3rnd(sd,i,52)*A.length)]+' '+B[Math.floor(k3rnd(sd,i,53)*B.length)]+"'s Keep",rl,def:Math.round(20*Math.pow(rl,1.7)*(1+.15*(bl-1))*(.85+r*.3)),loot:Math.round(100*Math.pow(rl,1.5)*(.8+k3rnd(sd,i,51)*.4))})}return R}
 function kdRaidHTML(msg){const k=kdInit(),pw=Math.round(kdArmyPow()),done=k.raided||{};
  return '<div class="box" style="max-width:520px;margin:0 auto"><div class="row" style="justify-content:space-between"><b>⚔️ Raid other kingdoms</b><button onclick="$(\'kraid\').style.display=\'none\'">✖ Close</button></div>'+(msg?'<div class="box" style="margin:6px 0">'+msg+'</div>':'')
- +'<div>Your army power: <b>'+pw+'</b>'+(pw?'':' <small>(train troops in a Barracks first)</small>')+'</div><small>New kingdoms to raid appear every hour. You choose which troops to send and where to place them. Troops that fall in battle are lost, and some troops are lost either way.</small>'
+ +'<div>Your army power: <b>'+pw+'</b>'+(pw?'':' <small>(train troops in a Barracks first)</small>')+'</div><small>New kingdoms to raid appear every hour. You choose which troops to send and where to place them. Your troops always come home safe, win or lose.</small>'
  +kdRivals().map((r,i)=>'<div class="box" style="margin-top:6px"><b>🏰 '+r.n+'</b> <small>Castle Lv '+r.rl+' &middot; Buildings Lv '+r.bl+'</small><br>Defense power: <b>'+r.def+'</b> &middot; Loot: <b>'+r.loot+'</b> '+GSI+' &middot; <b>'+r.sil+'</b> '+SILV+'<div class="row"><button onclick="kdRaidView('+i+')">'+(done[r.id]?'Already raided':'🔍 Scout &amp; attack')+'</button></div></div>').join('')+'</div>'}
 function kdRivalMap(r){const m={},rl=r.rl,rd=(a,b,c)=>k3rnd(r.sd*7+r.i,a*13+b,c);
  for(let x=-2;x<=2;x++)for(let z=-2;z<=2;z++)if(Math.max(Math.abs(x),Math.abs(z))==2&&!(x==0&&z==2)&&rd(x,z,1)<.55+.1*rl)m[x+','+z]={t:'wall',l:r.bl};
@@ -701,10 +701,18 @@ function kdRBStep(dt){const S=RBT.S.filter(s=>s.hp>0),U=RBT.U.filter(u=>u.hp>0);
 const kdRBLeft=()=>Object.keys(kdInit().army||{}).some(t=>CARDS[t]&&kdRBAvail(t)>0);
 function kdRBEnd(win){const k=kdInit(),r=RBT.r;RBT.phase='end';let gs=0,sl=0;const sv=RBT.S.filter(s=>['farm','mill','market'].includes(s.t)).length||1;
  RBT.S.forEach(s=>{if(!s.loot||(!win&&s.hp>0))return;if(s.t=='gold')gs+=r.loot;else sl+=Math.round(r.sil/sv)});if(win){gs=r.loot;sl=r.sil}
- const lost=[];RBT.U.forEach(u=>{if(u.hp<=0){k.army[u.k]=Math.max(0,(k.army[u.k]||0)-1);lost.push(CARDS[u.k].n)}});
+ const lost=[];
  k.raided=k.raided||{};k.raided[r.id]=1;const g2=Math.min(gs,kdRoom('gs'));S.gs+=g2;const s2=Math.min(sl,kdRoom('sil'));S.silver=(S.silver||0)+s2;const ov=g2<gs||s2<sl;gs=g2;sl=s2;save();kdChips();kdRender();
- RBT.msg=(win?'🏆 <b>Victory!</b> You destroyed '+r.n+"'s castle.":'💀 <b>Defeat!</b> Your troops could not take the castle.')+'<br>Looted <b>'+gs+'</b> '+GSI+' and <b>'+sl+'</b> '+SILV+'<br><small>Troops lost: '+(lost.join(', ')||'none')+'</small>'+(ov?'<br><small>Your storage was full, so some loot was lost. Build more storage!</small>':'');kdRBUI()}
+ RBT.msg=(win?'🏆 <b>Victory!</b> You destroyed '+r.n+"'s castle.":'💀 <b>Defeat!</b> Your troops could not take the castle.')+'<br>Looted <b>'+gs+'</b> '+GSI+' and <b>'+sl+'</b> '+SILV+'<br><small>All your troops return home safely.</small>'+(ov?'<br><small>Your storage was full, so some loot was lost. Build more storage!</small>':'');kdRBUI()}
 let KBLN=0;
+let KRBT={w:null,i:null,last:0};
+function kdRBBg(){if(!document.hidden||!RBT||RBT.phase!='fight')return;const now=performance.now();let el=Math.min((now-KRBT.last)/1000,400);KRBT.last=now;
+ while(el>1e-4&&RBT&&RBT.phase=='fight'){const d=Math.min(1/30,el);el-=d;try{kdRBStep(d)}catch(e){break}}}
+function kdRBBgStart(){KRBT.last=performance.now();
+ try{if(!KRBT.w){const b=new Blob(['setInterval(()=>postMessage(0),100)'],{type:'text/javascript'});KRBT.w=new Worker(URL.createObjectURL(b));KRBT.w.onmessage=kdRBBg}}catch(e){KRBT.w=null}
+ if(!KRBT.i)KRBT.i=setInterval(kdRBBg,500)}
+function kdRBBgStop(){if(KRBT.w){KRBT.w.terminate();KRBT.w=null}if(KRBT.i){clearInterval(KRBT.i);KRBT.i=null}if(RBT)RBT.last=0}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)kdRBBgStart();else kdRBBgStop()});
 function kdRBLoop(ts,id){const cv=$('krc');if(!cv||!RBT||RBT.lid!==id)return;requestAnimationFrame(t=>kdRBLoop(t,id));const dt=Math.min(.05,(ts-(RBT.last||ts))/1000);RBT.last=ts;
  if(RBT.phase=='fight'){kdRBStep(dt);const e=$('krs');if(e)e.innerHTML='<b>Battle!</b> '+Math.max(0,120-Math.floor(RBT.t))+'s left &middot; troops alive '+RBT.U.filter(u=>u.hp>0).length}
  kdRBDraw(cv)}
@@ -723,11 +731,11 @@ function kdRBDraw(cv){const r=RBT.r,rc=cv.getContext('2d'),cw=cv.width,ch=cv.hei
  const pn=T(0,3.3,0);rc.font='bold '+sc*15+'px sans-serif';const w3=rc.measureText(r.n).width+sc*18;rc.fillStyle='rgba(255,255,255,.92)';rc.beginPath();rc.roundRect(pn[0]-w3/2,pn[1]-sc*13,w3,sc*26,sc*10);rc.fill();rc.strokeStyle='#4a2c12';rc.stroke();rc.fillStyle='#000';rc.fillText(r.n,pn[0],pn[1])}
 function kdRaidOpen(){const o=$('kfull');if(!o)return;let r=$('kraid');if(!r){r=document.createElement('div');r.id='kraid';o.appendChild(r)}r.innerHTML=kdRaidHTML();r.style.display='block'}
 const KDT=[['👑 Welcome to your kingdom','Your castle sits in the middle of a big green plot with a forest all around. Drag the map to look around, pinch or scroll to zoom, and tap 🗺 Fit to see everything.'],
-['⛏️ Your starter buildings','You start with a Gold Mine (makes gold scraps), a Barracks (trains troops and makes EXP) and a Stonemason Hut (does your upgrades). Tap any building to see what it does.'],
+['⛏️ Your starter buildings','You start with a Gold Mine (makes gold scraps), a Barracks (houses and trains troops) and a Stonemason Hut (does your upgrades). Tap any building to see what it does.'],
 ['💰 Collecting','Buildings keep working while you are away and show a +number bubble when goods are ready. Tap a building to collect, or press 💰 Collect all. They only store a few hours of goods, so check back often. Your gold scraps and silver are capped by your Gold and Silver Storages, so build and upgrade them.'],
 ['🏗️ Building','Tap an empty tile to build. Trees, rocks and mushrooms are in the way, so demolish them for gold scraps first. A tiny red box means you can not place something there. You can drag any building, or the castle, to move it.'],
 ['⬆ Upgrading','Upgrades cost gold scraps, take time and need a free stonemason. Each upgrade takes longer than the last. Your castle level limits how many of each building you can have and how high they can be upgraded.'],
-['⚔️ Troops and raids','Select your Barracks to train troops from your cards. Then press ⚔️ Raid, scout a rival kingdom, place your troops on its tiles and watch them attack in a 2 minute battle. Destroy buildings to loot gold scraps and silver, and take the castle to win it all. Troops that fall are lost.'],
+['⚔️ Troops and raids','Select your Barracks to train troops from your cards. Then press ⚔️ Raid, scout a rival kingdom, place your troops on its tiles and watch them attack in a 2 minute battle. Destroy buildings to loot gold scraps and silver, and take the castle to win it all. Your troops always come home safe.'],
 ['🛒 Getting more','The Kingdom Shop (in the Shop tab) sells more buildings. Gold mines make gold scraps, while farms, lumber mills and markets make silver, which buys farms, mills, barracks and gold mines. Extra Stonemason Huts cost gems. Walls, towers and decorations add beauty, which boosts everything. Have fun!']];
 function kdTutOpen(i){const o=$('kfull');if(!o)return;let t=$('ktut');if(!t){t=document.createElement('div');t.id='ktut';o.appendChild(t)}
  if(i>=KDT.length){S.kt=1;save();t.remove();if(!kdInit().name)kdNameOpen();return}
@@ -885,7 +893,7 @@ function buySil(i){const p=KSIL[i];if(!p||S.gems<p[1]||p[0]>kdRoom('sil'))return
 function buySup(i){const p=KSUP[i];if(!p||S.gems<p[1]||p[0]>kdRoom('gs'))return;S.gems-=p[1];S.gs+=p[0];save();menu()}
 function kdBuyOk(t){const d=KD_B[t],k=kdInit();return k.c>=d.cl&&kdHave(kdPrice(t).cur)>=kdPrice(t).amt&&kdCount(t)<kdLim(t)}
 function kdBuy(t){if(!kdBuyOk(t))return;kdPay(kdPrice(t).cur,kdPrice(t).amt);kdInit().inv.push({t,l:1});save();menu()}
-function kshopHTML(){const k=kdInit(),card=t=>{const d=KD_B[t],lk=k.c<d.cl,mx=!lk&&kdCount(t)>=kdLim(t),ef=d.store?'Holds '+kdStoreCap({l:1})+' '+(d.store=='gs'?'gold scraps':'silver'):d.hut?'1 stonemason, does upgrades':d.k=='deco'?'+'+d.be+' beauty':d.b+' '+KN[d.k]+'/hr';
+function kshopHTML(){const k=kdInit(),card=t=>{const d=KD_B[t],lk=k.c<d.cl,mx=!lk&&kdCount(t)>=kdLim(t),ef=d.store?'Holds '+kdStoreCap({l:1})+' '+(d.store=='gs'?'gold scraps':'silver'):d.hut?'1 stonemason, does upgrades':d.cap?'Houses 10 troop space':d.k=='deco'?'+'+d.be+' beauty':d.b+' '+KN[d.k]+'/hr';
  return `<div class='box' style='text-align:center'><div style='font-size:38px'>${d.e}</div><b>${d.n}</b><br><small>${mx?'Limit '+kdLim(t)+' (upgrade castle)':ef+(KD_LIM[t]?' &middot; '+kdCount(t)+'/'+kdLim(t):'')}</small><br><small>${d.d}</small><div class='row' style='justify-content:center'><button ${kdBuyOk(t)?'':'disabled'} onclick="kdBuy('${t}')">Buy for ${kdPrice(t).amt?kdPrice(t).amt+' '+KDCI[kdPrice(t).cur]:'free'}</button></div></div>`};
  return `<h2 style='margin:6px 0'>Kingdom Shop</h2><div>${GEM} Gems <b>${S.gems}</b> &nbsp; ${GSI} Gold scraps <b>${S.gs}</b> &nbsp; ${SILV} Silver <b>${S.silver||0}</b></div><small>Bought buildings go to your kingdom inventory. Place them for free from any empty plot.</small>
  <h2 style='margin:12px 0 2px'>Gold scraps</h2><div class='grid'>`+KSUP.map((p,i)=>`<div class='box' style='text-align:center'><div style='font-size:38px'>${GSI}</div><b>${p[0]} Gold scraps</b><div class='row' style='justify-content:center'><button ${S.gems>=p[1]&&p[0]<=kdRoom('gs')?'':'disabled'} onclick='buySup(${i})'>${p[0]<=kdRoom('gs')?'Buy for '+p[1]+' '+GEM:'Storage full'}</button></div></div>`).join('')+`</div>
