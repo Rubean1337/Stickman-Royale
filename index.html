@@ -79,7 +79,7 @@ button:focus-visible{outline:3px solid var(--blue)}button:disabled{opacity:.45;c
 #krtop,#krbot{position:absolute;left:6px;right:6px;z-index:2;max-width:560px;margin:0 auto;background:rgba(190,145,92,.93);border-radius:12px;padding:6px 8px;color:#000;box-shadow:0 2px 8px rgba(0,0,0,.35)}
 #krtop{top:6px}#krbot{bottom:6px}#krbot:empty{display:none}
 .krrow{display:flex;align-items:center;gap:8px;justify-content:space-between}.krname{flex:1;text-align:center}.krsm{font-size:12px;margin-top:2px}
-.krtray{display:flex;gap:6px;overflow-x:auto;padding:4px 0;-webkit-overflow-scrolling:touch}.krtray button{flex:0 0 auto}.krmsg{margin-bottom:6px}
+.krrow button{padding:4px 10px;font-size:14px}.krtray{display:flex;gap:6px;overflow-x:auto;padding:4px 0;-webkit-overflow-scrolling:touch}.krtray button{flex:0 0 auto}.krmsg{margin-bottom:6px}
 .kdbuild small{font-size:12px;line-height:1.15}.kde2{font-size:26px;line-height:1.1}
 .kdstreet{position:relative;height:28px;overflow:hidden;margin:4px 0;border-radius:8px;background:linear-gradient(rgba(120,200,120,.22),rgba(80,160,90,.34))}
 .kdw{position:absolute;bottom:0;font-size:22px;animation:kdwalk 18s linear infinite alternate}.kdw.w2{animation-duration:27s;animation-delay:-9s}.kdw.w3{animation-duration:22s;animation-delay:-4s;font-size:18px}
@@ -659,16 +659,24 @@ function kdArmyHTML(){const k=kdInit(),a=k.army||{},cap=kdCap(),u=kdUsed();let h
  kdTroops().forEach(t=>{const c=CARDS[t],n=a[t]||0,cost=c.c*20;h+='<button '+(u+c.c<=cap&&S.gs>=cost?'':'disabled')+' onclick="kdTrain(\''+t+'\',1)"><b>'+c.n+' x'+n+'</b><small>Train 1: '+c.c+' space, '+cost+' '+GSI+'</small></button>'+(n?'<button onclick="kdTrain(\''+t+'\',-1)"><small>Release 1 '+c.n+'</small></button>':'')});
  return h+'</div><small>Housed troops can raid other kingdoms. Higher barracks levels hold more.</small><br>'}
 function kdTrain(t,d){const k=kdInit(),c=CARDS[t];if(!c)return;k.army=k.army||{};if(d>0){if(kdUsed()+c.c>kdCap()||S.gs<c.c*20)return;S.gs-=c.c*20;k.army[t]=(k.army[t]||0)+1}else if(k.army[t]>0)k.army[t]--;save();kdChips();kdRender()}
-function kdRivals(){const k=kdInit(),pr=kdBs().filter(b=>kdIsProd(b)),av=pr.length?pr.reduce((t,b)=>t+b.l,0)/pr.length:1,sd=Math.floor(Date.now()/3600e3),A=['Duke','Baron','Lady','Sir','Count','Queen','Lord'],B=['Mossback','Ironfist','Stonewall','Redcap','Oakheart','Grimshaw','Foxglove'],R=[];
- for(let i=0;i<3;i++){const rl=Math.max(1,Math.min(6,k.c+i-1)),bl=Math.max(1,Math.min(KD_MAXL,2*rl,Math.round(av)+i-1)),r=k3rnd(sd,i,50);R.push({sd,i,bl,sil:Math.round(60*Math.pow(rl,1.4)*(.8+k3rnd(sd,i,54)*.4)),id:sd+'-'+i,n:A[Math.floor(k3rnd(sd,i,52)*A.length)]+' '+B[Math.floor(k3rnd(sd,i,53)*B.length)]+"'s Keep",rl,def:Math.round(20*Math.pow(rl,1.7)*(1+.15*(bl-1))*(.85+r*.3)),loot:Math.round(100*Math.pow(rl,1.5)*(.8+k3rnd(sd,i,51)*.4))})}return R}
+function kdRival(i){const k=kdInit(),pr=kdBs().filter(b=>kdIsProd(b)),av=pr.length?pr.reduce((t,b)=>t+b.l,0)/pr.length:1,sd=Math.floor(Date.now()/3600e3),A=['Duke','Baron','Lady','Sir','Count','Queen','Lord'],B=['Mossback','Ironfist','Stonewall','Redcap','Oakheart','Grimshaw','Foxglove'],E=['Keep','Hold','Fort','Castle'],o=(i%3)-1,rl=Math.max(1,Math.min(6,k.c+o)),bl=Math.max(1,Math.min(KD_MAXL,2*rl,Math.round(av)+o)),r=k3rnd(sd,i,50);
+ return{sd,i,bl,sil:Math.round(60*Math.pow(rl,1.4)*(.8+k3rnd(sd,i,54)*.4)),id:sd+'-'+i,n:A[Math.floor(k3rnd(sd,i,52)*A.length)]+' '+B[Math.floor(k3rnd(sd,i,53)*B.length)]+"'s "+E[Math.floor(k3rnd(sd,i,55)*E.length)],rl,def:Math.round(20*Math.pow(rl,1.7)*(1+.15*(bl-1))*(.85+r*.3)),loot:Math.round(100*Math.pow(rl,1.5)*(.8+k3rnd(sd,i,51)*.4))}}
+function kdRivals(){return[0,1,2].map(kdRival)}
 function kdRaidHTML(msg){const k=kdInit(),pw=Math.round(kdArmyPow()),done=k.raided||{};
  return '<div class="box" style="max-width:520px;margin:0 auto"><div class="row" style="justify-content:space-between"><b>⚔️ Raid other kingdoms</b><button onclick="$(\'kraid\').style.display=\'none\'">✖ Close</button></div>'+(msg?'<div class="box" style="margin:6px 0">'+msg+'</div>':'')
- +'<div>Your army power: <b>'+pw+'</b>'+(pw?'':' <small>(train troops in a Barracks first)</small>')+'</div><small>New kingdoms to raid appear every hour. You choose which troops to send and where to place them. Your troops always come home safe, win or lose.</small>'
+ +'<div>Your army power: <b>'+pw+'</b>'+(pw?'':' <small>(train troops in a Barracks first)</small>')+'</div><small>New kingdoms to raid appear every hour, and you can press Next Kingdom during a raid to scout another one. You choose which troops to send and where to place them. Your troops always come home safe, win or lose.</small>'
  +kdRivals().map((r,i)=>'<div class="box" style="margin-top:6px"><b>🏰 '+r.n+'</b> <small>Castle Lv '+r.rl+' &middot; Buildings Lv '+r.bl+'</small><br>Defense power: <b>'+r.def+'</b> &middot; Loot: <b>'+r.loot+'</b> '+GSI+' &middot; <b>'+r.sil+'</b> '+SILV+'<div class="row"><button onclick="kdRaidView('+i+')">'+(done[r.id]?'Already raided':'🔍 Scout &amp; attack')+'</button></div></div>').join('')+'</div>'}
-function kdRivalMap(r){const m={},rl=r.rl,rd=(a,b,c)=>k3rnd(r.sd*7+r.i,a*13+b,c);
+function kdRivalMap(r){const m={},rl=r.rl,sd=r.sd*997+r.i,rd=(a,b,c)=>k3rnd(sd,a*131+b,c);
  for(let x=-2;x<=2;x++)for(let z=-2;z<=2;z++)if(Math.max(Math.abs(x),Math.abs(z))==2&&!(x==0&&z==2)&&rd(x,z,1)<.55+.1*rl)m[x+','+z]={t:'wall',l:r.bl};
  const TW=[[3,3],[-3,3],[3,-3],[-3,-3],[3,0],[-3,0],[0,-3]],ty=['watch','cannon','spikes'];for(let j=0;j<Math.min(7,rl+1);j++)m[TW[j].join(',')]={t:ty[j%3],l:r.bl};
- m['-1,0']={t:'gold',l:r.bl};if(rl>=2)m['1,0']={t:'barracks',l:r.bl};m['0,-1']={t:'farm',l:r.bl};if(rl>=2)m['-3,-1']={t:'mill',l:r.bl};if(rl>=4)m['3,-1']={t:'market',l:r.bl};return m}
+ m['-1,0']={t:'gold',l:r.bl};if(rl>=2)m['1,0']={t:'barracks',l:r.bl};m['0,-1']={t:'farm',l:r.bl};if(rl>=2)m['-3,-1']={t:'mill',l:r.bl};if(rl>=4)m['3,-1']={t:'market',l:r.bl};
+ /* the rest of the kingdom: villages and outposts spread over the full 60x60 plot, bigger for higher castle levels */
+ const R=Math.min(26,6+4*rl),nc=2+rl,CC=[];for(let c=0;c<nc;c++)CC.push([Math.round((rd(c,1,21)*2-1)*R),Math.round((rd(c,2,22)*2-1)*R)]);
+ const free=(x,z)=>x>=-29&&x<=28&&z>=-29&&z<=28&&!m[x+','+z]&&Math.max(Math.abs(x),Math.abs(z))>=4&&!(x==0&&z>0),
+  pool=['farm','farm','mill','mill','gold','gold','gstore','sstore','tent','fountain','statue','lantern'].concat(rl>=2?['barracks']:[],rl>=4?['market','market']:[]),dfn=['watch','cannon','spikes'];
+ for(let n=0,c=0,nb=6+5*rl;c<nb&&n<nb*8;n++){const q=CC[n%nc],x=q[0]+Math.round((rd(n,3,25)*2-1)*4),z=q[1]+Math.round((rd(n,4,26)*2-1)*4);if(!free(x,z))continue;m[x+','+z]={t:pool[Math.floor(rd(n,5,23)*pool.length)],l:r.bl};c++}
+ for(let n=0,c=0,nd=2+2*rl;c<nd&&n<nd*8;n++){const q=CC[n%nc],x=q[0]+Math.round((rd(n+50,3,25)*2-1)*5),z=q[1]+Math.round((rd(n+50,4,26)*2-1)*5);if(!free(x,z))continue;m[x+','+z]={t:dfn[Math.floor(rd(n+50,5,27)*3)],l:r.bl};c++}
+ return m}
 function kdRaidDraw(cv,r,st){const m=kdRivalMap(r),cx=cv.getContext('2d'),cw=cv.width,ch=cv.height,sc=cw/440,T=(x,y,z)=>[cw/2+(x-z)*32*sc,ch*.5+((x+z)*16-y*36)*sc],fk={p:m},dead=st=='win'||st=='done';
  cx.fillStyle='#2c6a38';cx.fillRect(0,0,cw,ch);cx.textAlign='center';cx.textBaseline='middle';
  for(let a=-5;a<=5;a++)for(let b=-5;b<=5;b++){const p=T(a,0,b);cx.fillStyle=(a+b)&1?'#62b966':'#6cc36f';cx.beginPath();cx.moveTo(p[0],p[1]-16*sc);cx.lineTo(p[0]+32*sc,p[1]);cx.lineTo(p[0],p[1]+16*sc);cx.lineTo(p[0]-32*sc,p[1]);cx.fill()}
@@ -679,10 +687,10 @@ function kdRaidDraw(cv,r,st){const m=kdRivalMap(r),cx=cv.getContext('2d'),cw=cv.
  cx.font='bold '+sc*15+'px sans-serif';pills.forEach(q=>{const tx=(st=='win'||st=='done'?'✔ ':'')+q[1],w2=cx.measureText(tx).width+sc*16;cx.fillStyle=q[2];cx.beginPath();cx.roundRect(q[0][0]-w2/2,q[0][1]-sc*11,w2,sc*22,sc*11);cx.fill();cx.strokeStyle='#333';cx.lineWidth=2;cx.stroke();cx.fillStyle='#222';cx.fillText(tx,q[0][0],q[0][1])});
  const pn=T(0,3.3,0);cx.font='bold '+sc*15+'px sans-serif';const w3=cx.measureText(r.n).width+sc*18;cx.fillStyle='rgba(255,255,255,.92)';cx.beginPath();cx.roundRect(pn[0]-w3/2,pn[1]-sc*13,w3,sc*26,sc*10);cx.fill();cx.strokeStyle='#4a2c12';cx.stroke();cx.fillStyle='#000';cx.fillText(r.n,pn[0],pn[1])}
 let RBT=null;
-function kdRBStructs(r,m){const rl=r.rl,S=[{id:'castle',x:0,z:0,t:'castle',hp:1500+900*rl,mhp:1500+900*rl,dps:10+6*rl,rng:3.5}];
- Object.keys(m).forEach(id=>{const q=id.split(',').map(Number),b=m[id],d=KD_B[b.t],tw=d.def&&b.t!='wall',hp=b.t=='wall'?Math.round(200*(1+.35*(r.bl-1))):Math.round((tw?600:400)*(1+.25*(r.bl-1))*(1+.2*(rl-1)));
-  S.push({id,x:q[0],z:q[1],t:b.t,hp,mhp:hp,dps:tw?Math.round((b.t=='cannon'?30+14*rl:b.t=='spikes'?25+10*rl:15+8*rl)*(1+.12*(r.bl-1))):0,rng:b.t=='spikes'?1.3:3.3,loot:['gold','farm','mill','market'].includes(b.t)})});return S}
-function kdRaidView(i,st,msg){const k=kdInit(),r=kdRivals()[i];if(!r)return;RBT={r,i,phase:(k.raided||{})[r.id]?'done':'place',sel:null,U:[],sh:[],msg:msg||'',t:0,last:0,cam:{zm:1.25,px:0,py:0}};RBT.m=kdRivalMap(r);RBT.S=kdRBStructs(r,RBT.m);
+function kdRBStructs(r,m){const rl=r.rl,ids=Object.keys(m),LT=['gold','farm','mill','market'],gc=ids.filter(id=>m[id].t=='gold').length||1,sv=ids.filter(id=>['farm','mill','market'].includes(m[id].t)).length||1,S=[{id:'castle',x:0,z:0,t:'castle',hp:1500+900*rl,mhp:1500+900*rl,dps:10+6*rl,rng:3.5}];
+ ids.forEach(id=>{const q=id.split(',').map(Number),b=m[id],d=KD_B[b.t],tw=d.def&&b.t!='wall',hp=b.t=='wall'?Math.round(200*(1+.35*(r.bl-1))):Math.round((tw?600:400)*(1+.25*(r.bl-1))*(1+.2*(rl-1)));
+  S.push({id,x:q[0],z:q[1],t:b.t,hp,mhp:hp,dps:tw?Math.round((b.t=='cannon'?30+14*rl:b.t=='spikes'?25+10*rl:15+8*rl)*(1+.12*(r.bl-1))):0,rng:b.t=='spikes'?1.3:3.3,loot:LT.includes(b.t),val:b.t=='gold'?Math.round(r.loot/gc):Math.round(r.sil/sv)})});return S}
+function kdRaidView(i,st,msg){const k=kdInit(),r=kdRival(i);if(!r)return;RBT={r,i,seed:r.sd*997+r.i,phase:(k.raided||{})[r.id]?'done':'place',sel:null,U:[],sh:[],msg:msg||'',t:0,last:0,cam:{zm:1.25,px:0,py:0}};RBT.m=kdRivalMap(r);RBT.S=kdRBStructs(r,RBT.m);
  if(RBT.phase=='done')RBT.S.forEach(s=>{if(s.t!='castle'&&KD_B[s.t].def)s.hp=0});
  const ro=$('kraid');ro.className='kr-full';ro.style.display='block';ro.innerHTML='<canvas id="krc"></canvas><div id="krtop"></div><div id="krbot"></div>';kdRBBind($('krc'));kdRBUI()}
 const kdRBAvail=t=>(kdInit().army[t]||0)-RBT.U.filter(u=>u.k==t).length;
@@ -691,35 +699,41 @@ const kdRBSc=cv=>Math.min(cv.width/560,cv.height/520)*RBT.cam.zm;
 function kdRBStat(){const r=RBT.r;if(RBT.phase=='fight')return '<b>Battle!</b> '+Math.max(0,120-Math.floor(RBT.t))+'s left &middot; troops alive '+RBT.U.filter(u=>u.hp>0).length;
  const walls=RBT.S.filter(s=>s.t=='wall').length,tw=RBT.S.filter(s=>s.t!='castle'&&s.t!='wall'&&KD_B[s.t]&&KD_B[s.t].def).length;return 'Castle Lv '+r.rl+' &middot; Buildings Lv '+r.bl+' &middot; 🧱 '+walls+' walls &middot; 🗼 '+tw+' defenses'}
 function kdRBUI(){const k=kdInit();k.army=k.army||{};const r=RBT.r,fight=RBT.phase=='fight',pl=RBT.phase=='place',ts=Object.keys(k.army).filter(t=>CARDS[t]&&k.army[t]>0),top=$('krtop'),bot=$('krbot');if(!top||!bot)return;RBT.sst=null;
- top.innerHTML='<div class="krrow"><button id="krb" '+(fight?'disabled':'')+' onclick="kdRaidOpen()">⬅ Back</button><b class="krname">🏰 '+r.n+'</b><span class="chip">'+GSI+' '+r.loot+' &nbsp;'+SILV+' '+r.sil+'</span></div>'+kdRBBar()+'<div id="krs" class="krsm">'+kdRBStat()+'</div>';
+ top.innerHTML='<div class="krrow"><button id="krb" '+(fight?'disabled':'')+' onclick="kdRaidOpen()">⬅ Back</button><b class="krname">🏰 '+r.n+'</b><span class="chip">'+GSI+' '+r.loot+' &nbsp;'+SILV+' '+r.sil+'</span></div>'+kdRBBar()+'<div id="krs" class="krsm">'+kdRBStat()+'</div><div class="krrow" style="justify-content:flex-start;margin-top:4px"><button '+(fight?'disabled':'')+' onclick="kdRBNext()">Next Kingdom ➡</button><button onclick="kdRBFit()">🗺 Fit</button><button onclick="kdRBHome()">🏰 Castle</button></div>';
  bot.innerHTML=(RBT.msg?'<div class="krmsg">'+RBT.msg+'<div class="row"><button onclick="kdRaidOpen()">⬅ Back to raids</button></div></div>':'')
-  +(pl||fight?'<small>'+(pl?'Pick a troop, then tap the ground to place it. Drag to look around, pinch or scroll to zoom. The 2 minute battle starts when you place your first troop.':'Keep placing troops to reinforce your attack!')+'</small><div class="krtray">'+(ts.length?ts.map(t=>'<button style="'+(RBT.sel==t?'outline:3px solid #ffd54a':'')+'" '+(kdRBAvail(t)>0?'':'disabled')+' onclick="RBT.sel=\''+t+'\';kdRBUI()">'+CARDS[t].n+' &times;'+kdRBAvail(t)+'</button>').join(''):'<small>You have no troops. Train some in a Barracks first.</small>')+'</div>':'')
+  +(pl||fight?'<small>'+(pl?'Pick a troop, then tap the ground to place it. Drag to look around, pinch or scroll to zoom (🗺 Fit shows the whole kingdom). The 2 minute battle starts when you place your first troop.':'Keep placing troops to reinforce your attack!')+'</small><div class="krtray">'+(ts.length?ts.map(t=>'<button style="'+(RBT.sel==t?'outline:3px solid #ffd54a':'')+'" '+(kdRBAvail(t)>0?'':'disabled')+' onclick="RBT.sel=\''+t+'\';kdRBUI()">'+CARDS[t].n+' &times;'+kdRBAvail(t)+'</button>').join(''):'<small>You have no troops. Train some in a Barracks first.</small>')+'</div>':'')
   +(RBT.phase=='done'&&!RBT.msg?'<small>You already raided this kingdom. Pick another one!</small>':'');
  if(!RBT.lid){RBT.lid=++KBLN;const id=RBT.lid;requestAnimationFrame(t=>kdRBLoop(t,id))}}
-function kdRBBind(cv){const P={};let d=null,pin=null;const dist=()=>{const v=Object.values(P);return Math.hypot(v[0][0]-v[1][0],v[0][1]-v[1][1])||1},cz=z=>Math.max(.55,Math.min(2.8,z));
+function kdRBFit(){const cv=$('krc');if(!cv||!RBT)return;const sc0=Math.min(cv.width/560,cv.height/520);RBT.cam.zm=Math.max(.1,Math.min(2.8,Math.min(cv.width/3900,cv.height/2100)/sc0));RBT.cam.px=0;RBT.cam.py=0}
+function kdRBHome(){if(!RBT)return;RBT.cam.zm=1.25;RBT.cam.px=0;RBT.cam.py=0}
+function kdRBNext(){if(!RBT||RBT.phase=='fight')return;const k=kdInit();let j=RBT.i+1;while(j<RBT.i+300&&(k.raided||{})[kdRival(j).id])j++;kdRaidView(j)}
+function kdRBBind(cv){const P={};let d=null,pin=null;const dist=()=>{const v=Object.values(P);return Math.hypot(v[0][0]-v[1][0],v[0][1]-v[1][1])||1},cz=z=>Math.max(.1,Math.min(2.8,z));
  cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);P[e.pointerId]=[e.clientX,e.clientY];if(Object.keys(P).length==2){d=null;pin={d:dist(),z:RBT.cam.zm};return}d={x:e.clientX,y:e.clientY,m:0,px:RBT.cam.px,py:RBT.cam.py}};
  cv.onpointermove=e=>{if(P[e.pointerId])P[e.pointerId]=[e.clientX,e.clientY];if(pin&&Object.keys(P).length==2){RBT.cam.zm=cz(pin.z*dist()/pin.d);return}if(!d)return;const dx=e.clientX-d.x,dy=e.clientY-d.y;d.m=Math.max(d.m,Math.hypot(dx,dy));
-  if(d.m>6){const r=cv.getBoundingClientRect(),f=cv.width/r.width/kdRBSc(cv);RBT.cam.px=Math.max(-700,Math.min(700,d.px-dx*f));RBT.cam.py=Math.max(-420,Math.min(420,d.py-dy*f))}};
+  if(d.m>6){const r=cv.getBoundingClientRect(),f=cv.width/r.width/kdRBSc(cv);RBT.cam.px=Math.max(-1950,Math.min(1950,d.px-dx*f));RBT.cam.py=Math.max(-1000,Math.min(1000,d.py-dy*f))}};
  cv.onpointercancel=e=>{delete P[e.pointerId];d=null;pin=null};
  cv.onpointerup=e=>{delete P[e.pointerId];if(pin){if(!Object.keys(P).length)pin=null;d=null;return}const was=d;d=null;if(!was||was.m>6)return;if(RBT.phase!='place'&&RBT.phase!='fight')return;
   const q=cv.getBoundingClientRect(),f=cv.width/q.width,sc=kdRBSc(cv),ox=cv.width/2-RBT.cam.px*sc,oy=cv.height*.52-RBT.cam.py*sc,ix=((e.clientX-q.left)*f-ox)/sc/32,iy=((e.clientY-q.top)*f-oy)/sc/16;kdRBPlace(Math.round((ix+iy)/2),Math.round((iy-ix)/2))};
  cv.onwheel=e=>{e.preventDefault();RBT.cam.zm=cz(RBT.cam.zm*(e.deltaY<0?1.1:.9))}}
 function kdRBPlace(a,b){if(RBT.phase!='place'&&RBT.phase!='fight')return;if(RBT.U.some(u=>u.hp>0&&Math.round(u.x)==a&&Math.round(u.z)==b))return;
- if(!RBT.sel||kdRBAvail(RBT.sel)<1||Math.abs(a)>6||Math.abs(b)>6||RBT.S.some(s=>s.hp>0&&s.x==a&&s.z==b)||(a==0&&b==0))return;
+ if(!RBT.sel||kdRBAvail(RBT.sel)<1||a<-30||a>29||b<-30||b>29||RBT.S.some(s=>s.hp>0&&s.x==a&&s.z==b)||(a==0&&b==0))return;
  const t=RBT.sel,c=CARDS[t],l=L(t),n=c.cnt||1,hit=c.dmg*n*(1+.1*(l-1));RBT.U.push({k:t,x:a,z:b,hp:c.hp*n*(1+.1*(l-1)),mhp:c.hp*n*(1+.1*(l-1)),hit,cd:c.cd||1,cdT:0,spd:(c.sp||40)/40*.9,rng:c.rg>60?c.rg/60:.85,l,mv:0,ph:0,fx:1,pt:0,pd:.35});if(RBT.phase=='place'){RBT.phase='fight';RBT.t=0;RBT.msg=''}kdRBUI()}
 function kdRBStart(){if(!RBT.U.length)return;RBT.phase='fight';RBT.t=0;RBT.msg='';kdRBUI()}
 function kdRBPct(){if(!RBT)return 0;const B=RBT.S.filter(s=>s.t!='wall');if(!B.length)return 0;if(RBT.S[0].hp<=0)return 100;return Math.min(100,Math.floor(B.filter(s=>s.hp<=0).length/B.length*100))}
 function kdRBBar(){if(RBT.phase=='done')return '';const p=kdRBPct();return '<div style="margin:4px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><b>💥 Destroyed</b><b id="krpt">'+p+'%</b></div><div style="height:14px;border:2px solid #4a2c12;border-radius:8px;background:#e6d5bd;overflow:hidden"><div id="krpf" style="height:100%;width:'+p+'%;background:linear-gradient(180deg,#ff9a3c,#e8541e);transition:width .25s"></div></div></div>'}
 /* Mauler brain: goes for defenses, walks through gaps in the walls, only smashes a wall when there is no other way in */
-function kdRBPath(u,ST){const O=6,N=13,ix=(x,z)=>(x+O)*N+(z+O),cl=v=>Math.max(-O,Math.min(O,v)),wl=new Set(ST.filter(s=>s.t=='wall').map(s=>s.x+','+s.z));
+function kdRBPath(u,ST){const O=30,N=61,ix=(x,z)=>(x+O)*N+(z+O),cl=v=>Math.max(-O,Math.min(O,v)),wl=new Set(ST.filter(s=>s.t=='wall').map(s=>s.x+','+s.z));
  let C=ST.filter(s=>s.t!='wall'&&s.t!='castle'&&KD_B[s.t]&&KD_B[s.t].def);if(!C.length)C=ST.filter(s=>s.t!='wall');if(!C.length)return null;
- const sx=cl(Math.round(u.x)),sz=cl(Math.round(u.z)),D=new Array(N*N).fill(1e9),P=new Array(N*N).fill(-1),V=new Array(N*N).fill(0);D[ix(sx,sz)]=0;
- for(;;){let b=-1,bd=1e9;for(let i=0;i<N*N;i++)if(!V[i]&&D[i]<bd){bd=D[i];b=i}if(b<0)break;V[b]=1;const x=Math.floor(b/N)-O,z=b%N-O;
+ const st=ix(cl(Math.round(u.x)),cl(Math.round(u.z))),D=new Float64Array(N*N).fill(1e9),P=new Int32Array(N*N).fill(-1),H=[];
+ const hp=(c,i)=>{H.push([c,i]);let k=H.length-1;while(k>0){const q=(k-1)>>1;if(H[q][0]<=H[k][0])break;const t=H[q];H[q]=H[k];H[k]=t;k=q}},
+  pop=()=>{const t=H[0],l=H.pop();if(H.length){H[0]=l;let k=0;for(;;){const a=2*k+1,b=a+1;let m=k;if(a<H.length&&H[a][0]<H[m][0])m=a;if(b<H.length&&H[b][0]<H[m][0])m=b;if(m==k)break;const w=H[m];H[m]=H[k];H[k]=w;k=m}}return t};
+ D[st]=0;hp(0,st);
+ while(H.length){const [bd,b]=pop();if(bd>D[b])continue;const x=Math.floor(b/N)-O,z=b%N-O;
   for(let dx=-1;dx<=1;dx++)for(let dz=-1;dz<=1;dz++){if(!dx&&!dz)continue;const nx=x+dx,nz=z+dz;if(nx<-O||nx>O||nz<-O||nz>O)continue;
    if(dx&&dz&&(wl.has((x+dx)+','+z)||wl.has(x+','+(z+dz))))continue;
-   const c=bd+(dx&&dz?1.41:1)+(wl.has(nx+','+nz)?12:0),j=ix(nx,nz);if(c<D[j]){D[j]=c;P[j]=b}}}
+   const c=bd+(dx&&dz?1.41:1)+(wl.has(nx+','+nz)?12:0),j=ix(nx,nz);if(c<D[j]){D[j]=c;P[j]=b;hp(c,j)}}}
  let tg=null,bc=1e9;C.forEach(s=>{const c=D[ix(cl(s.x),cl(s.z))];if(c<bc){bc=c;tg=s}});if(!tg)return null;
- const path=[];let j=ix(cl(tg.x),cl(tg.z));while(j>=0&&j!=ix(sx,sz)){path.unshift([Math.floor(j/N)-O,j%N-O]);j=P[j]}
+ const path=[];let j=ix(cl(tg.x),cl(tg.z));while(j>=0&&j!=st){path.unshift([Math.floor(j/N)-O,j%N-O]);j=P[j]}
  return{tg,path}}
 function kdRBMauler(u,ST,dt){u.rp=(u.rp||0)-dt;if(!u.tg||u.tg.hp<=0||u.rp<=0){const r=kdRBPath(u,ST);u.tg=r?r.tg:null;u.path=r?r.path:[];u.rp=.4}
  const tg=u.tg;if(!tg){u.mv=0;return}u.pt=Math.max(0,u.pt-dt);const sx=(tg.x-tg.z)-(u.x-u.z);if(sx)u.fx=sx<0?-1:1;
@@ -740,7 +754,7 @@ function kdRBStep(dt){const S=RBT.S.filter(s=>s.hp>0),U=RBT.U.filter(u=>u.hp>0);
  const cas=RBT.S[0],alive=RBT.U.some(u=>u.hp>0);if(cas.hp<=0)kdRBEnd(true);else if((!alive&&!kdRBLeft())||RBT.t>120)kdRBEnd(false)}
 const kdRBLeft=()=>Object.keys(kdInit().army||{}).some(t=>CARDS[t]&&kdRBAvail(t)>0);
 function kdRBEnd(win){const k=kdInit(),r=RBT.r;RBT.phase='end';let gs=0,sl=0;const sv=RBT.S.filter(s=>['farm','mill','market'].includes(s.t)).length||1;
- RBT.S.forEach(s=>{if(!s.loot||(!win&&s.hp>0))return;if(s.t=='gold')gs+=r.loot;else sl+=Math.round(r.sil/sv)});if(win){gs=r.loot;sl=r.sil}
+ RBT.S.forEach(s=>{if(!s.loot||(!win&&s.hp>0))return;if(s.t=='gold')gs+=s.val;else sl+=s.val});if(win){gs=r.loot;sl=r.sil}
  const lost=[];
  k.raided=k.raided||{};k.raided[r.id]=1;const g2=Math.min(gs,kdRoom('gs'));S.gs+=g2;const s2=Math.min(sl,kdRoom('sil'));S.silver=(S.silver||0)+s2;const ov=g2<gs||s2<sl;gs=g2;sl=s2;save();kdChips();kdRender();
  RBT.msg=(win?'🏆 <b>Victory!</b> You destroyed '+r.n+"'s castle.":'💀 <b>Defeat!</b> Your troops could not take the castle.')+'<br>Looted <b>'+gs+'</b> '+GSI+' and <b>'+sl+'</b> '+SILV+'<br><small>All your troops return home safely.</small>'+(ov?'<br><small>Your storage was full, so some loot was lost. Build more storage!</small>':'');kdRBUI()}
@@ -759,23 +773,25 @@ function kdRBLoop(ts,id){const cv=$('krc');if(!cv||!RBT||RBT.lid!==id)return;req
  const e=$('krs');if(e){const tx=kdRBStat();if(RBT.sst!==tx){RBT.sst=tx;e.innerHTML=tx}}
  const pf=$('krpf');if(pf){const q=kdRBPct();pf.style.width=q+'%';$('krpt').textContent=q+'%'}
  if(cv.width)kdRBDraw(cv)}
-function kdRBDraw(cv){const r=RBT.r,rc=cv.getContext('2d'),cw=cv.width,ch=cv.height,sc=kdRBSc(cv),cam=RBT.cam,ox=cw/2-cam.px*sc,oy=ch*.52-cam.py*sc,T=(x,y,z)=>[ox+(x-z)*32*sc,oy+((x+z)*16-y*36)*sc],inv=(px,py)=>{const ix=(px-ox)/sc/32,iy=(py-oy)/sc/16;return[(ix+iy)/2,(iy-ix)/2]},fk={p:{}},BF=KRBF;
+function kdRBDraw(cv){const r=RBT.r,rc=cv.getContext('2d'),cw=cv.width,ch=cv.height,sc=kdRBSc(cv),cam=RBT.cam,ox=cw/2-cam.px*sc,oy=ch*.52-cam.py*sc,T=(x,y,z)=>[ox+(x-z)*32*sc,oy+((x+z)*16-y*36)*sc],inv=(px,py)=>{const ix=(px-ox)/sc/32,iy=(py-oy)/sc/16;return[(ix+iy)/2,(iy-ix)/2]},fk={p:{}},BF=KRBF,lod=sc<.4,seed=RBT.seed,occ=RBT.m;
  RBT.S.forEach(s=>{if(s.hp>0&&s.t!='castle')fk.p[s.id]={t:s.t,l:RBT.m[s.id].l}});
  rc.fillStyle='#2c6a38';rc.fillRect(0,0,cw,ch);rc.textAlign='center';rc.textBaseline='middle';
- const KW=26,PL=6,cs=[inv(0,0),inv(cw,0),inv(0,ch+150*sc),inv(cw,ch+150*sc)],a0=Math.max(-KW,Math.floor(Math.min(...cs.map(c=>c[0]))-1)),a1=Math.min(KW,Math.ceil(Math.max(...cs.map(c=>c[0]))+1)),b0=Math.max(-KW,Math.floor(Math.min(...cs.map(c=>c[1]))-1)),b1=Math.min(KW,Math.ceil(Math.max(...cs.map(c=>c[1]))+1));
+ const KW=46,cs=[inv(0,0),inv(cw,0),inv(0,ch+150*sc),inv(cw,ch+150*sc)],a0=Math.max(-KW,Math.floor(Math.min(...cs.map(c=>c[0]))-1)),a1=Math.min(KW,Math.ceil(Math.max(...cs.map(c=>c[0]))+1)),b0=Math.max(-KW,Math.floor(Math.min(...cs.map(c=>c[1]))-1)),b1=Math.min(KW,Math.ceil(Math.max(...cs.map(c=>c[1]))+1));
  const L2=[],dm=p=>{rc.beginPath();rc.moveTo(p[0],p[1]-16*sc);rc.lineTo(p[0]+32*sc,p[1]);rc.lineTo(p[0],p[1]+16*sc);rc.lineTo(p[0]-32*sc,p[1]);rc.fill()};
- for(let a=a0;a<=a1;a++)for(let b=b0;b<=b1;b++){const inB=Math.abs(a)<=PL&&Math.abs(b)<=PL,p=T(a,0,b),path=inB&&a==0&&b>0;
+ for(let a=a0;a<=a1;a++)for(let b=b0;b<=b1;b++){const inB=a>=-30&&a<=29&&b>=-30&&b<=29,p=T(a,0,b),path=inB&&a==0&&b>0;
   rc.fillStyle=path?((a+b)&1?'#c9a66b':'#bf9c60'):!inB?((a+b)&1?'#2f7a3b':'#34853f'):((a+b)&1?'#62b966':'#6cc36f');dm(p);
-  if(!inB){const n=k3rnd(a,b,9)>.05?2:1;for(let i=0;i<n;i++){const x=a+(k3rnd(a,b,3+i)-.5)*.8,z=b+(k3rnd(a,b,5+i)-.5)*.8,v=Math.floor(k3rnd(a,b,7+i)*3);L2.push({d:x+z,p:T(x,0,z),s:k3spr('ft'+v,110,190,F=>k3ftree(F,v)),f:1})}}}
- RBT.S.forEach(s=>{if(s.hp<=0)return;const sp=s.t=='castle'?k3spr('castle'+r.rl,300,330,F=>k3castle(F,r.rl)):k3sp(fk.p[s.id],s.x,s.z,fk);L2.push({d:s.x+s.z,p:T(s.x,0,s.z),s:sp,f:(s.t=='castle'?CSC*1.15:BF),st:s})});
+  let n=0,f=1;if(!inB)n=k3rnd(a,b,9)>.05?2:1;
+  else if(!path&&!occ[a+','+b]&&!(a==0&&b==0)&&Math.max(Math.abs(a),Math.abs(b))>=4&&k3rnd(seed+a,b,4)<.09){const ob=k3kind(a,b);if(ob=='tree'){n=1;f=.85}else if(!lod)L2.push({d:a+b,p:T(a,0,b),s:k3spr('ob_'+ob,110,190,F=>k3obst(F,ob)),f:1})}
+  if(lod){if(n){rc.fillStyle=!inB?(k3rnd(a,b,2)<.4?'#1d6e33':'#27853e'):'#3aa14b';rc.beginPath();rc.arc(p[0],p[1]-20*sc,26*sc,0,6.3);rc.fill()}}
+  else for(let i=0;i<n;i++){const x=a+(k3rnd(a,b,3+i)-.5)*.8,z=b+(k3rnd(a,b,5+i)-.5)*.8,v=f<1?1:Math.floor(k3rnd(a,b,7+i)*3);L2.push({d:x+z,p:T(x,0,z),s:k3spr('ft'+v,110,190,F=>k3ftree(F,v)),f})}}
+ RBT.S.forEach(s=>{if(s.hp<=0)return;const p0=T(s.x,0,s.z);if(p0[0]<-200||p0[0]>cw+200||p0[1]<-300||p0[1]>ch+300)return;const sp=s.t=='castle'?k3spr('castle'+r.rl,300,330,F=>k3castle(F,r.rl)):k3sp(fk.p[s.id],s.x,s.z,fk);L2.push({d:s.x+s.z,p:p0,s:sp,f:(s.t=='castle'?CSC*1.15:BF),st:s})});
  RBT.U.forEach(u=>{if(u.hp>0)L2.push({d:u.x+u.z+.01,p:T(u.x,0,u.z),u})});L2.sort((a,b)=>a.d-b.d);
- L2.forEach(o=>{if(o.u){const u=o.u,c=CARDS[u.k],e={k:u.k,team:0,x:0,y:0,hp:u.hp,mhp:u.mhp,mv:u.mv,ph:u.ph,fx:u.fx,pt:u.pt,pd:u.pd,sc:c.sc||1,r:12,rg:c.rg||0,l:u.l},g=cx;rc.save();rc.translate(o.p[0],o.p[1]-6*sc);rc.scale(sc*1.05,sc*1.05);cx=rc;try{fig(e)}catch(_){rc.fillStyle='#00a2e8';rc.beginPath();rc.arc(0,0,10,0,7);rc.fill()}cx=g;rc.restore();return}
+ L2.forEach(o=>{if(o.u){const u=o.u,c=CARDS[u.k],e={k:u.k,team:0,x:0,y:0,hp:u.hp,mhp:u.mhp,mv:u.mv,ph:u.ph,fx:u.fx,pt:u.pt,pd:u.pd,sc:c.sc||1,r:12,rg:c.rg||0,l:u.l},g=cx;rc.save();rc.translate(o.p[0],o.p[1]-6*sc);rc.scale(Math.max(sc,.45)*1.05,Math.max(sc,.45)*1.05);cx=rc;try{fig(e)}catch(_){rc.fillStyle='#00a2e8';rc.beginPath();rc.arc(0,0,10,0,7);rc.fill()}cx=g;rc.restore();return}
   const f=o.f*sc;rc.drawImage(o.s.c,o.p[0]-o.s.w/2*f,o.p[1]-o.s.ay*f,o.s.w*f,o.s.h*f);const s=o.st;
   if(s&&s.hp<s.mhp){const w=40*sc,p=T(s.x,(s.t=='castle'?3.1:1.7),s.z);rc.fillStyle='#000';rc.fillRect(p[0]-w/2-1,p[1]-3,w+2,8);rc.fillStyle='#e53935';rc.fillRect(p[0]-w/2,p[1]-2,w*Math.max(0,s.hp/s.mhp),6)}});
- RBT.sh.forEach(q=>{const a=T(q.a[0],.9,q.a[1]),b=T(q.b[0],.9,q.b[1]);rc.strokeStyle=q.c;rc.lineWidth=3*sc;rc.beginPath();rc.moveTo(a[0],a[1]);rc.lineTo(b[0],b[1]);rc.stroke()});
- const sv=RBT.S.filter(s=>['farm','mill','market'].includes(s.t)).length||1;
- if(RBT.phase=='place'){rc.font='bold '+sc*15+'px sans-serif';RBT.S.forEach(s=>{if(!s.loot||s.hp<=0)return;const p=T(s.x,1.9,s.z),tx='+'+(s.t=='gold'?r.loot:Math.round(r.sil/sv)),w2=rc.measureText(tx).width+sc*16;rc.fillStyle=s.t=='gold'?KBC.gs:KBC.sil;rc.beginPath();rc.roundRect(p[0]-w2/2,p[1]-sc*11,w2,sc*22,sc*11);rc.fill();rc.strokeStyle='#333';rc.lineWidth=2;rc.stroke();rc.fillStyle='#222';rc.fillText(tx,p[0],p[1])})}
- const pn=T(0,4,0);rc.font='bold '+sc*15+'px sans-serif';const w3=rc.measureText(r.n).width+sc*18;rc.fillStyle='rgba(255,255,255,.92)';rc.beginPath();rc.roundRect(pn[0]-w3/2,pn[1]-sc*13,w3,sc*26,sc*10);rc.fill();rc.strokeStyle='#4a2c12';rc.lineWidth=2;rc.stroke();rc.fillStyle='#000';rc.fillText(r.n,pn[0],pn[1])}
+ RBT.sh.forEach(q=>{const a=T(q.a[0],.9,q.a[1]),b=T(q.b[0],.9,q.b[1]);rc.strokeStyle=q.c;rc.lineWidth=Math.max(2,3*sc);rc.beginPath();rc.moveTo(a[0],a[1]);rc.lineTo(b[0],b[1]);rc.stroke()});
+ if(RBT.phase=='place'&&sc>=.45){rc.font='bold '+sc*15+'px sans-serif';RBT.S.forEach(s=>{if(!s.loot||s.hp<=0)return;const p=T(s.x,1.9,s.z);if(p[0]<-60||p[0]>cw+60||p[1]<-60||p[1]>ch+60)return;const tx='+'+s.val,w2=rc.measureText(tx).width+sc*16;rc.fillStyle=s.t=='gold'?KBC.gs:KBC.sil;rc.beginPath();rc.roundRect(p[0]-w2/2,p[1]-sc*11,w2,sc*22,sc*11);rc.fill();rc.strokeStyle='#333';rc.lineWidth=2;rc.stroke();rc.fillStyle='#222';rc.fillText(tx,p[0],p[1])})}
+ const pn=T(0,4,0);rc.font='bold '+Math.max(11,sc*15)+'px sans-serif';const w3=rc.measureText(r.n).width+sc*18;rc.fillStyle='rgba(255,255,255,.92)';rc.beginPath();rc.roundRect(pn[0]-w3/2,pn[1]-sc*13,w3,sc*26,sc*10);rc.fill();rc.strokeStyle='#4a2c12';rc.lineWidth=2;rc.stroke();rc.fillStyle='#000';rc.fillText(r.n,pn[0],pn[1])}
 function kdRaidOpen(){const o=$('kfull');if(!o)return;let r=$('kraid');if(!r){r=document.createElement('div');r.id='kraid';o.appendChild(r)}r.className='';r.innerHTML=kdRaidHTML();r.style.display='block'}
 const KDT=[['👑 Welcome to your kingdom','Your castle sits in the middle of a big green plot with a forest all around. Drag the map to look around, pinch or scroll to zoom, and tap 🗺 Fit to see everything.'],
 ['⛏️ Your starter buildings','You start with a Gold Mine (makes gold scraps), a Barracks (houses and trains troops) and a Stonemason Hut (does your upgrades). Tap any building to see what it does.'],
