@@ -70,7 +70,7 @@ button:focus-visible{outline:3px solid var(--blue)}button:disabled{opacity:.45;c
 #kfull #kdpanel,#kfull #kdpanel *:not(button):not(button *),#kfull #ktut .box,#kfull #kraid .box{color:#000}
 #khud{background:rgba(190,145,92,.92);border-radius:12px;padding:6px}
 #kfull{height:100dvh;width:100vw;max-width:100%;overflow:hidden}
-#ktut{position:absolute;left:8px;right:8px;bottom:8px;z-index:6;max-width:560px;max-height:60%;overflow:auto;margin:0 auto}
+#ktut{position:absolute;left:8px;right:8px;bottom:8px;z-index:6;max-width:560px;max-height:60%;overflow:auto;margin:0 auto}#ktut .ktk{display:flex;gap:10px;align-items:center}#ktut .ktk img{height:84px;width:auto;image-rendering:pixelated;flex:0 0 auto}#ktut .ktx{font-size:14px;line-height:1.3;margin-top:3px}@media (max-width:520px){#ktut .ktk img{height:60px}#ktut .ktx{font-size:13px}}
 @media (max-width:560px){#khud{gap:4px}#khud button,#khud .chip{padding:4px 7px;font-size:13px}#kbar{gap:5px;padding:4px 6px}#kbar button{padding:4px 9px;font-size:15px}#kfull .kdpanel{max-height:46%}#kfull .kdbuild{grid-template-columns:repeat(auto-fill,minmax(112px,1fr))}.kde2{font-size:22px}}
 #kname{position:absolute;inset:0;z-index:7;background:rgba(0,0,0,.55);padding:12px;overflow:auto}
 #kraid{position:absolute;inset:0;z-index:5;background:rgba(0,0,0,.55);overflow:auto;padding:12px;display:none}
@@ -565,7 +565,7 @@ const kdPrice=t=>{const d=KD_B[t];if(t=='hut')return{cur:'gem',amt:[0,100,250][M
 const kdHave=c=>c=='sil'?(S.silver||0):c=='gem'?S.gems:S.gs;
 const kdPay=(c,a)=>{if(c=='sil')S.silver=(S.silver||0)-a;else if(c=='gem')S.gems-=a;else S.gs-=a};
 const kdRefund=t=>t=='hut'?{cur:'gem',amt:0}:{cur:KD_B[t].cur||'gs',amt:Math.floor(KD_B[t].c/2)};
-const KWB=30,KWW=60,CSC=.5;let KDG=null,KDSEL=null,KDDEL=null,KDFL=[],KC={px:0,py:0,zm:1},K3T=0;
+const KWB=30,KWW=60,CSC=.5;let KDG=null,KDSEL=null,KDDEL=null,KDFL=[],KDFX=[],KC={px:0,py:0,zm:1},K3T=0,KTF=null;
 const kdCs=()=>(S.kd&&S.kd.cs)||[0,0],kdCsId=()=>kdCs().join(','),kdXZ=id=>id=='castle'?kdCs():id.split(',').map(Number),kdBs=()=>Object.values(kdInit().p);
 function kdInit(){let k=S.kd;if(!k||typeof k.p!='object'||!k.p){k=S.kd={c:1,p:{},inv:[],cl:{},cs:[0,0],uid:1000,pl2:1,pl3:1,b30:1}}
  if(Array.isArray(k.p)){const o={};k.p.forEach((b,i)=>{if(b&&KD_XY[i])o[KD_XY[i][0]+','+KD_XY[i][1]]=b});k.p=o;save()}
@@ -588,21 +588,25 @@ const kdHuts=()=>Object.values(kdInit().p).filter(b=>b&&b.t=='hut'),kdFreeHut=()
 const kdBeauty=()=>Math.min(KD_BCAP,kdBs().reduce((t,b)=>t+(b&&KD_B[b.t]&&(KD_B[b.t].be||0)*(KD_B[b.t].upg?b.l||1:1)||0),0));
 const kdCapH=()=>4+2*kdInit().c;
 const kdRate=b=>KD_B[b.t].b*(1+.8*(b.l-1))*(1+kdBeauty()/100);
-const kdPend=b=>kdIsProd(b)?Math.max(0,kdRate(b)*Math.min(kdCapH()*3600e3,Date.now()-b.s)/3600e3):0;
+const kdFrozen=b=>{if(!kdIsProd(b))return false;const c=KD_B[b.t].k,k=S.kd;return(c=='gs'||c=='sil')&&!!(k&&k.fz&&k.fz[c])};
+const kdPend=b=>{if(!kdIsProd(b))return 0;const c=KD_B[b.t].k,k=S.kd,z=(c=='gs'||c=='sil')&&k&&k.fz&&k.fz[c]?k.fz[c]:Date.now();return Math.max(0,kdRate(b)*Math.min(kdCapH()*3600e3,z-b.s)/3600e3)};
+/* when your gold (or silver) is full, everything that makes it stops working until there is room again */
+function kdSync(){const k=S.kd;if(!k||!k.p||Array.isArray(k.p))return;k.fz=k.fz||{gs:0,sil:0};const now=Date.now();let ch=0;
+ ['gs','sil'].forEach(c=>{const full=kdRoom(c)<=0;if(full&&!k.fz[c]){k.fz[c]=now;ch=1}else if(!full&&k.fz[c]){const d=now-k.fz[c];Object.values(k.p).forEach(b=>{if(b&&KD_B[b.t]&&KD_B[b.t].k==c&&kdIsProd(b))b.s=Math.min(now,b.s+d)});k.fz[c]=0;ch=1}});if(ch)save()}
 const kdCapAmt=b=>kdRate(b)*kdCapH();
 const kdUpCost=b=>Math.round(KD_B[b.t].u*Math.pow(b.l,1.7));
 const kdCount=t=>{const k=kdInit();return kdBs().filter(b=>b&&b.t==t).length+k.inv.filter(b=>b.t==t).length};
 const kdLim=t=>{const a=KD_LIM[t];return a?a[kdInit().c-1]:999},kdMaxL=()=>Math.min(KD_MAXL,2*kdInit().c);
 function kdReady(){return kdBs().some(b=>kdIsProd(b)&&kdPend(b)>=kdCapAmt(b)*.75)}
 function kdChips(){const bv=$('kbv');if(bv)bv.innerHTML=SILV+' '+(S.silver||0)+'/'+kdCapOf('sil');const bs=$('kbs'),bg=$('kbg');if(bs)bs.innerHTML=GSI+' '+S.gs+'/'+kdCapOf('gs');if(bg)bg.innerHTML=GEM+' '+S.gems;const a=document.querySelector('.chip.sup'),g=document.querySelector('.chip.gem');if(g)g.innerHTML=GEM+' '+S.gems+' <small>Gems</small>'}
-function kdCollect(i,quiet){const k=kdInit(),b=k.p[i];if(!kdIsProd(b))return 0;const p=kdPend(b),kk0=KD_B[b.t].k,n=Math.min(Math.floor(p),kk0=='gs'?kdRoom('gs'):kk0=='sil'?kdRoom('sil'):1e9);if(n<1){if(Math.floor(p)>=1&&!quiet)KDFL.push({i,t:'Storage full',s:Date.now()});return 0}
+function kdCollect(i,quiet){kdSync();const k=kdInit(),b=k.p[i];if(!kdIsProd(b))return 0;const p=kdPend(b),kk0=KD_B[b.t].k,n=Math.min(Math.floor(p),kk0=='gs'?kdRoom('gs'):kk0=='sil'?kdRoom('sil'):1e9);if(n<1){if(Math.floor(p)>=1&&!quiet)KDFL.push({i,t:'Storage full',s:Date.now()});return 0}
  const full=n>=Math.floor(p)&&Date.now()-b.s>=kdCapH()*3600e3;b.s=full?Date.now():Date.now()-(p-n)/kdRate(b)*3600e3;
- const kk=KD_B[b.t].k;if(kk=='gs')S.gs+=n;else if(kk=='exp')S.exp+=n;else if(kk=='sil')S.silver=(S.silver||0)+n;else S.gems+=n;save();if(!quiet){kdChips();kdRender([[i,'+'+n]])}return n}
+ const kk=KD_B[b.t].k;if(kk=='gs')S.gs+=n;else if(kk=='exp')S.exp+=n;else if(kk=='sil')S.silver=(S.silver||0)+n;else S.gems+=n;kdSync();save();if(!quiet){kdChips();kdRender([[i,'+'+n]])}return n}
 function kdAll(){const k=kdInit(),fl=[];Object.keys(k.p).forEach(i=>{const n=kdCollect(i,1);if(n)fl.push([i,'+'+n])});if(fl.length)kdChips();kdRender(fl)}
 function kdFree(i){return i!=kdCsId()&&!kdInit().p[i]&&!kdTree(i)}
-function kdTree(id){const k=kdInit();if(k.cl[id]||k.p[id]||id==kdCsId())return 0;const q=kdXZ(id),a=q[0],b=q[1],C=kdCs(),m=Math.max(Math.abs(a),Math.abs(b));if(a==C[0]&&b>C[1])return 0;if(a<-30||a>29||b<-30||b>29)return 0;return k3rnd(a,b,4)<(m<4?.04:.2)?k3kind(a,b):0}
+function kdTree(id){const k=kdInit();if(k.cl[id]||k.p[id]||id==kdCsId())return 0;const q=kdXZ(id),a=q[0],b=q[1],C=kdCs(),m=Math.max(Math.abs(a),Math.abs(b));if(a==C[0]&&b>C[1])return 0;if(a<-30||a>29||b<-30||b>29)return 0;return k3ob(a,b)?k3kind(a,b):0}
 const KD_CLR={tree:10,rock:20,mush:5};
-function k3kind(a,b){const r=k3rnd(a,b,11);return r<.6?'tree':r<.8?'rock':'mush'}
+function k3kind(a,b){const r=k3rnd(a,b,11);return k3clump(a,b)>.7?(r<.85?'tree':r<.93?'rock':'mush'):(r<.3?'tree':r<.65?'rock':'mush')}
 function k3obst(F,t){if(t=='rock'){k3pri(F,0,0,0,.34,.3,'#8d939b',6,.22);k3pri(F,.28,0,.18,.2,.18,'#a2a8b0',5,.13);k3pri(F,-.24,0,.22,.16,.14,'#7d838b',5,.1)}else{[[0,0,.14,.3],[.26,.14,.1,.2],[-.22,.2,.09,.16]].forEach(q=>{k3pri(F,q[0],0,q[1],.04,q[3],'#f1e6d0',6);k3pri(F,q[0],q[3]-.02,q[1],q[2]+.08,.12,'#d9534f',8,.02);k3box(F,q[0]+.02,q[3]+.06,q[1],.04,.03,.04,'#fff')})}}
 function kdClear(i){const k=kdInit();const kn=kdTree(i);if(!kn||S.gs<KD_CLR[kn])return;S.gs-=KD_CLR[kn];k.cl[i]=1;save();kdChips();kdRender([[i,'Cleared']])}
 function kdZmin(){const cv=$('kd3');return cv&&cv.width?Math.min(620/7700,cv.height/cv.width*620/3900):.08}
@@ -615,7 +619,8 @@ function kdDone(){const k=S.kd;if(!k||!k.p||Array.isArray(k.p))return;const now=
 function kdMove(f,t){const k=kdInit();if(!t||t==f)return;if(f=='castle'){if(k.p[t]||kdTree(t))return;k.cs=kdXZ(t);KDSEL=null}else{if(!k.p[f]||!kdFree(t))return;k.p[t]=k.p[f];delete k.p[f];KDSEL=t}save()}
 function kdTap(i){const k=kdInit(),b=k.p[i];KDDEL=null;if(i==kdCsId())return;if(kdIsProd(b)&&kdPend(b)>=1){KDSEL=i;kdCollect(i);return}KDSEL=i;kdRender()}
 function kdBuild(i,t){const k=kdInit(),d=KD_B[t];KDDEL=null;if(!d||!kdFree(i)||kdCount(t)>=kdLim(t)||kdHave(kdPrice(t).cur)<kdPrice(t).amt)return;kdPay(kdPrice(t).cur,kdPrice(t).amt);k.p[i]={t,l:1,s:Date.now(),u:++k.uid};save();kdChips();kdRender()}
-function kdPlace(i,t){const k=kdInit(),j=k.inv.findIndex(b=>b.t==t);KDDEL=null;if(j<0||!kdFree(i))return;const b=k.inv.splice(j,1)[0];b.s=Date.now();b.u=++k.uid;k.p[i]=b;save();kdRender()}
+function kdGoShop(){sview='k';kdExit();setTimeout(()=>slide(2),50)}
+function kdPlace(i,t,l){const k=kdInit(),j=k.inv.findIndex(b=>b.t==t&&(l==null||(b.l||1)==l));KDDEL=null;if(j<0||!kdFree(i))return;const b=k.inv.splice(j,1)[0];b.s=Date.now();b.u=++k.uid;k.p[i]=b;save();kdRender()}
 function kdStore(i){const k=kdInit(),b=k.p[i];if(!b||kdUpg(b)||b.job||kdBLock(b))return;KDDEL=null;kdCollect(i,1);k.inv.push({t:b.t,l:b.l});delete k.p[i];save();kdChips();kdRender()}
 function kdUp(i){const k=kdInit(),b=k.p[i];KDDEL=null;if(!b||!(kdIsProd(b)||KD_B[b.t].upg)||b.l>=kdMaxL()||kdUpg(b))return;const c=kdUpCost(b),h=kdFreeHut();if(!h||S.gs<c)return;S.gs-=c;h.job={u:b.u,to:b.l+1,end:Date.now()+kdUpTime(b.l)*1000,n:KD_B[b.t].n};save();kdChips();kdRender()}
 function kdDemo(i){const k=kdInit(),b=k.p[i];if(!b||kdUpg(b)||b.job||kdBLock(b))return;if(KDDEL!=i){KDDEL=i;kdRender();return}KDDEL=null;if(kdIsProd(b))kdCollect(i,1);{const r=kdRefund(b.t);kdPay(r.cur,-r.amt)}delete k.p[i];save();kdChips();kdRender()}
@@ -623,27 +628,34 @@ function kdCastle(){const k=kdInit(),c=KD_CC[k.c-1],h=kdFreeHut();KDDEL=null;if(
 function kdHTML(){return '<canvas id="kd3" class="kd3"></canvas><div id="khud">'+kdHud()+'</div><div class="box kdpanel" id="kdpanel">'+kdPanel()+'</div>'}
 function kdHud(){const k=kdInit(),bt=kdBeauty(),hs=kdHuts(),fr=hs.filter(h=>!h.job).length,cu=hs.find(h=>h.job&&h.job.u=='C'),fh=kdFreeHut();let T={gs:0,gem:0,exp:0,sil:0};
  kdBs().forEach(b=>{if(kdIsProd(b))T[KD_B[b.t].k]+=Math.floor(kdPend(b))});
- return '<span class="chip cc" title="Buildings store up to '+kdCapH()+' hours of goods">🏰 Lv '+k.c+'</span><span class="chip lv" title="Each beauty point adds +1% to everything your buildings make (up to +'+KD_BCAP+'%)">⭐ +'+bt+'%</span><span class="chip">⚒️ '+fr+'/'+hs.length+' free</span>'
+ return '<span class="chip cc" style="cursor:pointer" onclick="KDSEL=\'castle\';kdRender()" title="Tap to open your castle. Buildings store up to '+kdCapH()+' hours of goods">🏰 Lv '+k.c+'</span><span class="chip lv" title="Each beauty point adds +1% to everything your buildings make (up to +'+KD_BCAP+'%)">⭐ +'+bt+'%</span><span class="chip">⚒️ '+fr+'/'+hs.length+' free</span>'
  +'<button id="kdall" onclick="kdAll()" '+(T.gs+T.gem+T.exp+T.sil?'':'disabled')+'>💰 Collect all <span id="kdtot">'+kdTotTxt(T)+'</span></button>'
- +(k.c<KD_MAXC?(cu?'<span class="chip">⏳ Castle: <b id="kdcup" data-end="'+cu.job.end+'"></b></span>':'<button title="More building slots and higher upgrade levels" onclick="kdCastle()" '+(S.gs>=KD_CC[k.c-1]&&fh?'':'disabled')+'>⬆ Castle Lv '+(k.c+1)+' ('+KD_CC[k.c-1]+' '+GSI+', '+kdFmt(kdUpTime(k.c))+')</button>'):'<span class="chip">👑 Max castle</span>')
+ +(cu?'<span class="chip">⏳ Castle: <b id="kdcup" data-end="'+cu.job.end+'"></b></span>':'')
  +'<button onclick="kdRaidOpen()">⚔️ Raid</button><button onclick="kdTutOpen(0)">❓</button><button onclick="kdNameOpen()">✏️ Name</button><button onclick="kdFit()">🗺 Fit</button><button onclick="KC.px=0;KC.py=0">🏰</button><button onclick="kdZoom(1.3)">➕</button><button onclick="kdZoom(.77)">➖</button>'}
 function kdTotTxt(T){const a=[];if(T.gs)a.push('+'+T.gs+' '+GSI);if(T.gem)a.push('+'+T.gem+' '+GEM);if(T.exp)a.push('+'+T.exp+' '+EXPI);if(T.sil)a.push('+'+T.sil+' '+SILV);return a.join(' ')||'(nothing yet)'}
+function kdCastlePanel(){const k=kdInit(),cu=kdHuts().find(h=>h.job&&h.job.u=='C'),fh=kdFreeHut(),max=k.c>=KD_MAXC,c=max?0:KD_CC[k.c-1];
+ let h='<b>🏰 Castle &middot; Level '+k.c+'/'+KD_MAXC+'</b><br><small>The heart of your kingdom. A higher castle level lets you build more of each building and upgrade them higher.</small><div style="margin:4px 0">Buildings can reach <b>Lv '+kdMaxL()+'</b> &middot; they store <b>'+kdCapH()+' hours</b> of goods &middot; 🧱 walls allowed: <b>'+kdLim('wall')+'</b></div>';
+ if(!max){const nx=[];for(const t in KD_LIM){const a=KD_LIM[t][k.c-1],b=KD_LIM[t][k.c];if(b>a&&KD_B[t])nx.push(KD_B[t].e+' '+a+' ➜ '+b)}
+  h+='<div style="margin:4px 0"><small><b>Level '+(k.c+1)+' unlocks:</b> buildings up to Lv '+Math.min(KD_MAXL,2*(k.c+1))+', '+(4+2*(k.c+1))+' hours of storage'+(nx.length?', and more buildings ('+nx.join(', ')+')':'')+'.</small></div>'}
+ h+='<div class="row">';
+ if(cu)h+='<span class="chip">⏳ Upgrading to Lv '+cu.job.to+': <b id="kdup" data-end="'+cu.job.end+'"></b></span>';
+ else if(!max)h+='<button onclick="kdCastle()" '+(S.gs>=c&&fh?'':'disabled')+'>⬆ Upgrade to Lv '+(k.c+1)+' ('+c+' '+GSI+', '+kdFmt(kdUpTime(k.c))+')</button>'+(fh?'':'<small>No free stonemason.</small>');
+ else h+='<span class="chip">👑 Max castle level</span>';
+ return h+'</div>'}
 function kdPanel(){const k=kdInit(),i=KDSEL;
  if(!i)return '';if(0)return '<b>Welcome, your majesty!</b><br><small>Your whole kingdom is open: tap any tile to build, and drag any building (or the castle) to move it. Upgrades take time and need a free stonemason, so keep your Stonemason Huts staffed (max 3). Decorations give beauty, which boosts everything.</small>';
+ if(i=='castle')return kdCastlePanel();
  const b=k.p[i],Q="'"+i+"'";
  if(!b&&kdTree(i)){const kn=kdTree(i),c=KD_CLR[kn];return '<b>'+({tree:'🌳 Trees',rock:'🪨 Rock',mush:'🍄 Mushrooms'})[kn]+'</b><br><small>This is in the way, so you can not build here. Demolish it first.</small><div class="row"><button '+(S.gs>=c?'':'disabled')+' onclick="kdClear('+Q+')">'+(kn=='rock'?'⛏️ Break rock':kn=='mush'?'🧹 Clear mushrooms':'🪓 Demolish trees')+' ('+c+' '+GSI+')</button></div>'}
- if(!b){let h='<small>Tile '+i+'</small><br>';const iv={};k.inv.forEach(x=>iv[x.t]=(iv[x.t]||0)+1);
-  if(k.inv.length){h+='<b>📦 Your inventory (free)</b><div class="kdbuild">';for(const t in iv){const d=KD_B[t];h+='<button onclick="kdPlace('+Q+',\''+t+'\')"><span class="kde2">'+d.e+'</span><b>'+d.n+' x'+iv[t]+'</b><small>Place for free</small></button>'}h+='</div>'}
-  h+='<b>Build here</b><div class="kdbuild">';
-  for(const t in KD_B){const d=KD_B[t];if(d.g)continue;const mx=kdCount(t)>=kdLim(t),pr=kdPrice(t),ok=!mx&&kdHave(pr.cur)>=pr.amt;
-   const eff=d.store?'Holds '+kdStoreCap({l:1}):d.hut?'1 stonemason':d.cap?'Houses 10 troop space':d.k=='deco'?'+'+d.be+' beauty':d.b+' '+KN[d.k]+'/hr';
-   h+='<button '+(ok?'':'disabled')+' onclick="kdBuild('+Q+',\''+t+'\')"><span class="kde2">'+d.e+'</span><b>'+d.n+'</b><small>'+(mx?'Limit '+kdLim(t)+' (upgrade castle)':(pr.amt?pr.amt+' '+KDCI[pr.cur]:'Free')+' &middot; '+eff+(KD_LIM[t]?' &middot; '+kdCount(t)+'/'+kdLim(t):''))+'</small></button>'}
-  return h+'</div>'}
+ if(!b){let h='<small>Tile '+i+'</small><br><b>📦 Your inventory</b> <small>(tap a building to place it here for free)</small>';const iv={};k.inv.forEach(x=>{const key=x.t+'|'+(x.l||1);iv[key]=(iv[key]||0)+1});
+  if(k.inv.length){h+='<div class=\"kdbuild\">';for(const key in iv){const t=key.split('|')[0],l=key.split('|')[1],d=KD_B[t];h+='<button onclick=\"kdPlace('+Q+',\''+t+'\','+l+')\"><span class=\"kde2\">'+d.e+'</span><b>'+d.n+' x'+iv[key]+'</b><small>'+((d.upg||d.b>0)?'Lv '+l+' &middot; ':'')+'Place for free</small></button>'}h+='</div>'}
+  else h+='<br><small>Your inventory is empty. Buy buildings in the Kingdom Shop.</small>';
+  return h+'<div class=\"row\"><button onclick=\"kdGoShop()\">🛒 Kingdom Shop</button><span class=\"chip\">🧱 Walls '+kdCount('wall')+'/'+kdLim('wall')+'</span></div>'}
  const d=KD_B[b.t],u=kdUpg(b),busy=b.job&&b.job.end>Date.now(),lock=u||busy||kdBLock(b);
- let h='<b>'+d.e+' '+d.n+(kdIsProd(b)||d.upg?' &middot; Level '+b.l+'/'+kdMaxL():'')+'</b><br><small>'+d.d+'</small><br>';if(b.t=='barracks')h+=kdArmyHTML();
+ let h='<b>'+d.e+' '+d.n+(kdIsProd(b)||d.upg?' &middot; Level '+b.l+'/'+kdMaxL():'')+'</b><br><small>'+d.d+'</small><br>'+(b.t=='wall'?'<small>🧱 Walls: '+kdCount('wall')+' / '+kdLim('wall')+' allowed (a higher castle level allows more)</small><br>':'');if(b.t=='barracks')h+=kdArmyHTML();
  if(d.hut)h+='<div style="margin:4px 0">'+(busy?'🔨 Busy upgrading '+b.job.n+' to Lv '+b.job.to+': <b id="kdup" data-end="'+b.job.end+'"></b>':'✅ The stonemason is free and ready for work.')+'</div><div class="row">';
  else if(kdIsProd(b)){const r=kdRate(b),fh=kdFreeHut(),c=kdUpCost(b);
-  h+='<div style="margin:4px 0">Makes <b>'+(r<10?r.toFixed(1):Math.round(r))+'</b> '+KU[d.k]+' per hour &middot; stored <b id="kdst"></b> of '+Math.floor(kdCapAmt(b))+'</div><div class="row">'
+  h+='<div style="margin:4px 0">Makes <b>'+(r<10?r.toFixed(1):Math.round(r))+'</b> '+KU[d.k]+' per hour &middot; stored <b id="kdst"></b> of '+Math.floor(kdCapAmt(b))+'</div>'+(kdFrozen(b)?'<div style="margin:4px 0">💤 <b>Stopped:</b> your '+(d.k=='gs'?'gold scraps are':'silver is')+' full. Spend some or upgrade a '+(d.k=='gs'?'Gold':'Silver')+' Storage and this building starts working again.</div>':'')+'<div class="row">'
    +'<button onclick="kdCollect('+Q+')" '+(kdPend(b)>=1?'':'disabled')+'>💰 Collect</button>'
    +(u?'<span class="chip">⏳ Upgrading to Lv '+u.job.to+': <b id="kdup" data-end="'+u.job.end+'"></b></span>':b.l<kdMaxL()?'<button onclick="kdUp('+Q+')" '+(S.gs>=c&&fh?'':'disabled')+'>⬆ Upgrade to Lv '+(b.l+1)+' ('+c+' '+GSI+', '+kdFmt(kdUpTime(b.l))+')</button>'+(fh?'':'<small>No free stonemason.</small>'):b.l<KD_MAXL?'<span class="chip">🔒 Needs Castle Lv '+Math.ceil((b.l+1)/2)+'</span>':'<span class="chip">⭐ Max level</span>')}
  else if(d.upg){const fh=kdFreeHut(),c=kdUpCost(b);h+='<div style="margin:4px 0">'+(d.store?'Stores up to <b>'+kdStoreCap(b)+'</b> '+(d.store=='gs'?GSI:SILV)+' (you hold '+(d.store=='gs'?S.gs:(S.silver||0))+')':d.cap?'Houses <b>'+(10+6*(b.l-1))+'</b> troop space.':'Gives <b>+'+b.l+' beauty</b> (+'+b.l+'% production everywhere).')+'</div><div class="row">'+(u?'<span class="chip">⏳ Upgrading to Lv '+u.job.to+': <b id="kdup" data-end="'+u.job.end+'"></b></span>':b.l<kdMaxL()?'<button onclick="kdUp('+Q+')" '+(S.gs>=c&&fh?'':'disabled')+'>⬆ Upgrade to Lv '+(b.l+1)+' ('+c+' '+GSI+', '+kdFmt(kdUpTime(b.l))+')</button>'+(fh?'':'<small>No free stonemason.</small>'):b.l>=KD_MAXL?'<span class="chip">⭐ Max level</span>':'<span class="chip">🔒 Max for Castle Lv '+k.c+': upgrade your castle</span>')}
@@ -773,15 +785,15 @@ function kdRBLoop(ts,id){const cv=$('krc');if(!cv||!RBT||RBT.lid!==id)return;req
  const e=$('krs');if(e){const tx=kdRBStat();if(RBT.sst!==tx){RBT.sst=tx;e.innerHTML=tx}}
  const pf=$('krpf');if(pf){const q=kdRBPct();pf.style.width=q+'%';$('krpt').textContent=q+'%'}
  if(cv.width)kdRBDraw(cv)}
-function kdRBDraw(cv){const r=RBT.r,rc=cv.getContext('2d'),cw=cv.width,ch=cv.height,sc=kdRBSc(cv),cam=RBT.cam,ox=cw/2-cam.px*sc,oy=ch*.52-cam.py*sc,T=(x,y,z)=>[ox+(x-z)*32*sc,oy+((x+z)*16-y*36)*sc],inv=(px,py)=>{const ix=(px-ox)/sc/32,iy=(py-oy)/sc/16;return[(ix+iy)/2,(iy-ix)/2]},fk={p:{}},BF=KRBF,lod=sc<.4,seed=RBT.seed,occ=RBT.m;
+function kdRBDraw(cv){const r=RBT.r,rc=cv.getContext('2d'),cw=cv.width,ch=cv.height,sc=kdRBSc(cv),cam=RBT.cam,ox=cw/2-cam.px*sc,oy=ch*.52-cam.py*sc,T=(x,y,z)=>[ox+(x-z)*32*sc,oy+((x+z)*16-y*36)*sc],inv=(px,py)=>{const ix=(px-ox)/sc/32,iy=(py-oy)/sc/16;return[(ix+iy)/2,(iy-ix)/2]},fk={p:{}},BF=KRBF,lod=sc<.4,seed=RBT.seed,occ=RBT.m,o1=seed%89,o2=seed%97;
  RBT.S.forEach(s=>{if(s.hp>0&&s.t!='castle')fk.p[s.id]={t:s.t,l:RBT.m[s.id].l}});
  rc.fillStyle='#2c6a38';rc.fillRect(0,0,cw,ch);rc.textAlign='center';rc.textBaseline='middle';
  const KW=46,cs=[inv(0,0),inv(cw,0),inv(0,ch+150*sc),inv(cw,ch+150*sc)],a0=Math.max(-KW,Math.floor(Math.min(...cs.map(c=>c[0]))-1)),a1=Math.min(KW,Math.ceil(Math.max(...cs.map(c=>c[0]))+1)),b0=Math.max(-KW,Math.floor(Math.min(...cs.map(c=>c[1]))-1)),b1=Math.min(KW,Math.ceil(Math.max(...cs.map(c=>c[1]))+1));
  const L2=[],dm=p=>{rc.beginPath();rc.moveTo(p[0],p[1]-16*sc);rc.lineTo(p[0]+32*sc,p[1]);rc.lineTo(p[0],p[1]+16*sc);rc.lineTo(p[0]-32*sc,p[1]);rc.fill()};
  for(let a=a0;a<=a1;a++)for(let b=b0;b<=b1;b++){const inB=a>=-30&&a<=29&&b>=-30&&b<=29,p=T(a,0,b),path=inB&&a==0&&b>0;
-  rc.fillStyle=path?((a+b)&1?'#c9a66b':'#bf9c60'):!inB?((a+b)&1?'#2f7a3b':'#34853f'):((a+b)&1?'#62b966':'#6cc36f');dm(p);
-  let n=0,f=1;if(!inB)n=k3rnd(a,b,9)>.05?2:1;
-  else if(!path&&!occ[a+','+b]&&!(a==0&&b==0)&&Math.max(Math.abs(a),Math.abs(b))>=4&&k3rnd(seed+a,b,4)<.09){const ob=k3kind(a,b);if(ob=='tree'){n=1;f=.85}else if(!lod)L2.push({d:a+b,p:T(a,0,b),s:k3spr('ob_'+ob,110,190,F=>k3obst(F,ob)),f:1})}
+  const cl=k3clump(a+o1,b+o2);rc.fillStyle=path?((a+b)&1?'#c9a66b':'#bf9c60'):!inB?(cl>.6?((a+b)&1?'#2f7a3b':'#34853f'):((a+b)&1?'#3b8d47':'#41964d')):((a+b)&1?'#62b966':'#6cc36f');dm(p);
+  let n=0,f=1;if(!inB)n=cl>.6?(cl>.78?2:1):0;
+  else if(!path&&!occ[a+','+b]&&!(a==0&&b==0)&&Math.max(Math.abs(a),Math.abs(b))>=4&&((k3rnd(seed+a,b,4)<.6&&cl>.78)||k3rnd(seed+a,b,4)<.01)){const ob=k3kind(a,b);if(ob=='tree'){n=1;f=.85}else if(!lod)L2.push({d:a+b,p:T(a,0,b),s:k3spr('ob_'+ob,110,190,F=>k3obst(F,ob)),f:1})}
   if(lod){if(n){rc.fillStyle=!inB?(k3rnd(a,b,2)<.4?'#1d6e33':'#27853e'):'#3aa14b';rc.beginPath();rc.arc(p[0],p[1]-20*sc,26*sc,0,6.3);rc.fill()}}
   else for(let i=0;i<n;i++){const x=a+(k3rnd(a,b,3+i)-.5)*.8,z=b+(k3rnd(a,b,5+i)-.5)*.8,v=f<1?1:Math.floor(k3rnd(a,b,7+i)*3);L2.push({d:x+z,p:T(x,0,z),s:k3spr('ft'+v,110,190,F=>k3ftree(F,v)),f})}}
  RBT.S.forEach(s=>{if(s.hp<=0)return;const p0=T(s.x,0,s.z);if(p0[0]<-200||p0[0]>cw+200||p0[1]<-300||p0[1]>ch+300)return;const sp=s.t=='castle'?k3spr('castle'+r.rl,300,330,F=>k3castle(F,r.rl)):k3sp(fk.p[s.id],s.x,s.z,fk);L2.push({d:s.x+s.z,p:p0,s:sp,f:(s.t=='castle'?CSC*1.15:BF),st:s})});
@@ -793,21 +805,34 @@ function kdRBDraw(cv){const r=RBT.r,rc=cv.getContext('2d'),cw=cv.width,ch=cv.hei
  if(RBT.phase=='place'&&sc>=.45){rc.font='bold '+sc*15+'px sans-serif';RBT.S.forEach(s=>{if(!s.loot||s.hp<=0)return;const p=T(s.x,1.9,s.z);if(p[0]<-60||p[0]>cw+60||p[1]<-60||p[1]>ch+60)return;const tx='+'+s.val,w2=rc.measureText(tx).width+sc*16;rc.fillStyle=s.t=='gold'?KBC.gs:KBC.sil;rc.beginPath();rc.roundRect(p[0]-w2/2,p[1]-sc*11,w2,sc*22,sc*11);rc.fill();rc.strokeStyle='#333';rc.lineWidth=2;rc.stroke();rc.fillStyle='#222';rc.fillText(tx,p[0],p[1])})}
  const pn=T(0,4,0);rc.font='bold '+Math.max(11,sc*15)+'px sans-serif';const w3=rc.measureText(r.n).width+sc*18;rc.fillStyle='rgba(255,255,255,.92)';rc.beginPath();rc.roundRect(pn[0]-w3/2,pn[1]-sc*13,w3,sc*26,sc*10);rc.fill();rc.strokeStyle='#4a2c12';rc.lineWidth=2;rc.stroke();rc.fillStyle='#000';rc.fillText(r.n,pn[0],pn[1])}
 function kdRaidOpen(){const o=$('kfull');if(!o)return;let r=$('kraid');if(!r){r=document.createElement('div');r.id='kraid';o.appendChild(r)}r.className='';r.innerHTML=kdRaidHTML();r.style.display='block'}
-const KDT=[['👑 Welcome to your kingdom','Your castle sits in the middle of a big green plot with a forest all around. Drag the map to look around, pinch or scroll to zoom, and tap 🗺 Fit to see everything.'],
-['⛏️ Your starter buildings','You start with a Gold Mine (makes gold scraps), a Barracks (houses and trains troops) and a Stonemason Hut (does your upgrades). Tap any building to see what it does.'],
-['💰 Collecting','Buildings keep working while you are away and show a +number bubble when goods are ready. Tap a building to collect, or press 💰 Collect all. They only store a few hours of goods, so check back often. Your gold scraps and silver are capped by your Gold and Silver Storages, so build and upgrade them.'],
-['🏗️ Building','Tap an empty tile to build. Trees, rocks and mushrooms are in the way, so demolish them for gold scraps first. A tiny red box means you can not place something there. You can drag any building, or the castle, to move it.'],
-['⬆ Upgrading','Upgrades cost gold scraps, take time and need a free stonemason. Each upgrade takes longer than the last. Your castle level limits how many of each building you can have and how high they can be upgraded.'],
-['⚔️ Troops and raids','Select your Barracks to train troops from your cards. Then press ⚔️ Raid, scout a rival kingdom, place your troops on its tiles and watch them attack in a 2 minute battle. Destroy buildings to loot gold scraps and silver, and take the castle to win it all. Your troops always come home safe.'],
-['🛒 Getting more','The Kingdom Shop (in the Shop tab) sells more buildings. Gold mines make gold scraps, while farms, lumber mills and markets make silver, which buys farms, mills, barracks and gold mines. Extra Stonemason Huts cost gems. Walls, towers and decorations add beauty, which boosts everything. Have fun!']];
+const KDT=[
+['👑 Welcome to your kingdom','Greetings, my ruler! This is your very own kingdom. Your castle sits in the middle of a big 60 by 60 plot with forests all around it. I will show you everything, step by step. You can open this guide again any time with the ❓ button.','castle'],
+['🧭 Getting around','Drag the map to look around. Pinch (or scroll the mouse wheel) to zoom. 🗺 Fit shows your whole kingdom, 🏰 jumps back to your castle, and ➕ ➖ zoom in and out. Trees, rocks and mushrooms grow in clumps, and the open meadows between them are where you can build.','castle'],
+['⛏️ Your starter buildings','You begin with a Gold Mine that digs up gold scraps, a Barracks that houses and trains your troops, and a Stonemason Hut that carries out your upgrades. Tap any building to see what it does and what you can do with it.','gold'],
+['💰 Your resources','Gold scraps come from Gold Mines and pay for upgrades and for clearing land. Silver comes from Farms, Lumber Mills and Markets and buys new buildings. Gems are rare, come from Gem Mines and Crystal Caves, and pay for things like extra Stonemason Huts. The chips at the top show what you hold out of your maximum.',null],
+[()=>'🧺 Collecting','Buildings keep working while you are away and show a +number bubble when goods are ready. Tap a building to collect, or press 💰 Collect all. Each building only stores about '+kdCapH()+' hours of goods at your castle level, so check back often and upgrade your castle to store more.','gold'],
+['🏦 Storage and full stockpiles','Your gold scraps and silver are capped by your Gold and Silver Storages, and every storage you build and upgrade raises the cap. When your gold or silver is completely FULL, every building that makes it stops working (you will see 💤 Full above it) until you spend some or build more storage. So spend your goods often!','gstore'],
+['🏗️ Placing buildings','Tap an empty tile to open your 📦 inventory, then tap a building there to place it for free. New buildings come from the Kingdom Shop in the Shop tab, and the 🛒 button on that panel takes you right there. A red box means you cannot place something on that spot. Drag any building (or the castle) to move it, or select it and press 📦 Store to put it back in your inventory. It keeps its level.',null],
+['🌲 Clearing land','Trees, rocks and mushrooms are in the way, so you can not build on them. Tap one and pay a little gold scraps to clear it: trees cost 10, rocks 20 and mushrooms 5. Clearing a clump gives you lots of room.',null],
+[()=>'🧱 Walls','Walls link up with their neighbours and add beauty. At your castle level you can have '+kdLim('wall')+' walls (a higher castle level allows more). Rival kingdoms use walls too, so remember that when you raid: some troops are smart enough to walk through gaps instead of breaking walls.',null],
+['⬆ Upgrading','Upgrades cost gold scraps, take time (each level takes about 2.5 times longer than the last) and need a free stonemason. You can have up to 3 Stonemason Huts, so up to 3 upgrades at once. A building can reach at most twice your castle level, so tap your castle to upgrade it and unlock higher levels and more buildings.','hut'],
+['🔨 Under construction','While something is being upgraded it turns into a construction site, with scaffolding, a busy builder, a swinging hammer and a timer above it. When it finishes you get a burst of golden stars and the new level.',null],
+['⭐ Seeing your levels','Every upgradable building wears a ★ level badge. As it levels up it gets a colored glow and a colored patch of ground under it: grey for Levels 1 to 2, green for 3 to 4, blue for 5 to 6, gold for 7 to 8 and purple for 9 to 10. It also grows a little bigger each level.',null],
+['🌷 Beauty','Decorations, walls and towers give beauty. Every point of beauty boosts everything your buildings produce by 1%, up to a maximum of +50%. Flowers, lanterns and trees are cheap ways to get a nice boost.',null],
+['🛡️ Barracks and troops','Select your Barracks to train troops from the cards you own. Higher barracks levels hold more troops. Troops you train stay housed in the barracks, ready to go raiding.','barracks'],
+['⚔️ Raiding','Press ⚔️ Raid and pick a kingdom to scout. You will see the whole kingdom at full size. Choose a troop, tap the ground to place it, and the 2 minute battle begins. The 💥 Destroyed bar shows how much of the village you have wrecked. Every gold or silver building you destroy pays out loot, and taking the castle wins it all. Your troops always come home safe, win or lose.',null],
+['🔭 Scouting','Do not like the kingdom you found? Press Next Kingdom ➡ to scout another one, as many times as you like. Use 🗺 Fit to see all of it, and look for gaps in the walls. Maulers go straight for the defenses and walk through any gap they can find instead of smashing walls.',null],
+['🎉 You are ready!','Spend your gold on upgrades, keep your stonemasons busy, never let your stores sit full, and raid often. Now go build the best kingdom in the land. Tap ❓ whenever you want me again!','castle']];
+function kdTutFocus(ty){KTF=null;if(!ty)return;const k=kdInit();let a,b;if(ty=='castle'){const C=kdCs();a=C[0];b=C[1]}else{const id=Object.keys(k.p).find(x=>k.p[x]&&k.p[x].t==ty);if(!id)return kdTutFocus('castle');const q=kdXZ(id);a=q[0];b=q[1]}KTF=[a,b];KC.px=(a-b)*32;KC.py=(a+b)*16;KC.zm=1.6;KDSEL=null}
 function kdTutOpen(i){const o=$('kfull');if(!o)return;let t=$('ktut');if(!t){t=document.createElement('div');t.id='ktut';o.appendChild(t)}
- if(i>=KDT.length){S.kt=1;save();t.remove();if(!kdInit().name)kdNameOpen();return}
- t.innerHTML='<div class="box"><b>'+KDT[i][0]+'</b> <small>('+(i+1)+'/'+KDT.length+')</small><br>'+KDT[i][1]+'<div class="row" style="margin-top:6px"><button onclick="kdTutOpen('+(i+1)+')">'+(i+1<KDT.length?'Next ➜':'Got it!')+'</button>'+(i+1<KDT.length?'<button onclick="kdTutOpen(99)">Skip</button>':'')+'</div></div>'}
+ if(i>=KDT.length){S.kt=1;save();KTF=null;t.remove();if(!kdInit().name)kdNameOpen();return}
+ i=Math.max(0,i);const d=KDT[i],last=i==KDT.length-1,ti=typeof d[0]=='function'?d[0]():d[0],tx=typeof d[1]=='function'?d[1]():d[1];kdTutFocus(d[2]);
+ t.innerHTML='<div class="box ktk"><img src="'+(last?KLI:KRI)+'" alt="King"><div><b>'+ti+'</b> <small>('+(i+1)+'/'+KDT.length+')</small><div class="ktx">'+tx+'</div><div class="row" style="margin-top:6px">'+(i?'<button onclick="kdTutOpen('+(i-1)+')">⬅ Back</button>':'')+'<button onclick="kdTutOpen('+(i+1)+')">'+(last?'Got it!':'Next ➜')+'</button>'+(last?'':'<button onclick="kdTutOpen(99)">Skip</button>')+'</div></div></div>'}
 function kdNameOpen(msg,val){const o=$('kfull');if(!o)return;let n=$('kname');if(!n){n=document.createElement('div');n.id='kname';o.appendChild(n)}const k=kdInit();
  n.innerHTML='<div class="box" style="max-width:420px;margin:30px auto"><b>✏️ Name your kingdom</b><br><small>Your name goes on it too: <b>'+esc(S.name||'Player')+'</b> (change it in your profile)</small><div class="row" style="margin-top:8px"><input id="kni" maxlength="18" value="'+esc(val!=null?val:(k.name||''))+'" placeholder="Kingdom name" style="font:inherit;padding:6px 8px;border:2px solid var(--ln);border-radius:8px;flex:1;min-width:0"><button onclick="kdNameSave()">Save</button></div><div style="color:#b00;margin-top:6px">'+(msg||'')+'</div>'+(k.name?'<div class="row"><button onclick="$(\'kname\').remove()">Cancel</button></div>':'')+'</div>'}
 function kdNameSave(){const v=($('kni').value||'').trim().replace(/\s+/g,' ').slice(0,18);if(!v){kdNameOpen('Please type a name.','');return}if(badName(v)){kdNameOpen('That name is not allowed. Please pick another.',v);return}kdInit().name=v;save();$('kname').remove();const b=$('kbn');if(b)b.textContent='🏰 '+v}
-function kdRender(fl){const el=$('kd');if(!el)return;if(!$('kd3'))el.innerHTML=kdHTML();else{$('khud').innerHTML=kdHud();$('kdpanel').innerHTML=kdPanel()}kdTick();(fl||[]).forEach(([i,t])=>KDFL.push({i,t,s:Date.now()}))}
-function kdTick(){kdDone();if(!$('kd3'))return;const k=kdInit();let T={gs:0,gem:0,exp:0,sil:0};
+function kdRender(fl){const el=$('kd');if(!el)return;if(!$('kd3'))el.innerHTML=kdHTML();else{$('khud').innerHTML=kdHud();$('kdpanel').innerHTML=kdPanel()}kdTick();(fl||[]).forEach(([i,t])=>{KDFL.push({i,t,s:Date.now()});if(/^Lv /.test(t))KDFX.push({i,s:Date.now()})})}
+function kdTick(){kdDone();kdSync();if(!$('kd3'))return;const k=kdInit();let T={gs:0,gem:0,exp:0,sil:0};
  kdBs().forEach(b=>{if(kdIsProd(b))T[KD_B[b.t].k]+=Math.floor(kdPend(b))});
  const tt=$('kdtot');if(tt)tt.innerHTML=kdTotTxt(T);const ab=$('kdall');if(ab)ab.disabled=!(T.gs+T.gem+T.exp+T.sil);
  ['kdup','kdcup'].forEach(n=>{const e=$(n);if(e)e.textContent=kdFmt(Math.max(0,Math.ceil((e.dataset.end-Date.now())/1000)))});
@@ -863,21 +888,37 @@ function k3spr(key,w,h,build){let s=K3S[key];if(s)return s;const c=document.crea
  x.translate(w/2,h-60);x.lineJoin='round';F.forEach(f=>{x.beginPath();f.q.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.closePath();x.fillStyle=f.c;x.fill();x.strokeStyle='rgba(0,0,0,.25)';x.stroke()});
  return K3S[key]={c,w,h,ay:h-60}}
 const k3rnd=(x,z,s)=>Math.abs(Math.sin(x*12.9898+z*78.233+s*37.7)*43758.5453)%1;
+/* smooth value noise: trees and rocks grow in clumps with open meadows between them (far fewer sprites to draw) */
+const k3vn=(x,z,s)=>{const X=Math.floor(x),Z=Math.floor(z),fx=x-X,fz=z-Z,u=fx*fx*(3-2*fx),v=fz*fz*(3-2*fz),r=(i,j)=>k3rnd(X+i,Z+j,s);return(r(0,0)*(1-u)+r(1,0)*u)*(1-v)+(r(0,1)*(1-u)+r(1,1)*u)*v};
+const k3clump=(a,b)=>k3vn(a/6,b/6,21),k3forest=(a,b)=>{const c=k3clump(a,b);return c>.6?(c>.78?2:1):0},
+ k3ob=(a,b)=>{const m=Math.max(Math.abs(a),Math.abs(b)),r=k3rnd(a,b,4);return m<4?r<.03:(r<.6&&k3clump(a,b)>.78)||r<.012};
 function k3ftree(F,v){if(v==0){k3pri(F,0,0,0,.08,.3,'#6b4423',6);k3pri(F,0,.2,0,.45,.6,'#1f7a3a',7,0);k3pri(F,0,.55,0,.35,.55,'#2a9145',7,0);k3pri(F,0,.95,0,.22,.5,'#35a653',7,0)}
  else if(v==1){k3pri(F,0,0,0,.09,.4,'#7a4a21',6);k3pri(F,0,.35,0,.42,.6,'#3aa14b',8,.18)}
  else{k3pri(F,0,0,0,.08,.3,'#5a3a1c',6);k3pri(F,0,.2,0,.4,.8,'#17602f',6,0);k3pri(F,0,.7,0,.28,.7,'#1d7438',6,0)}}
 
 function k3red(s){if(!s.rc){const c=document.createElement('canvas');c.width=s.c.width;c.height=s.c.height;const x=c.getContext('2d');x.drawImage(s.c,0,0);x.globalCompositeOperation='source-atop';x.fillStyle='rgba(230,30,30,.6)';x.fillRect(0,0,c.width,c.height);s.rc=c}return s.rc}
 let K3TIER=1;
+function kdScaf(cx,p,sc,t,w,h,sd){const x=p[0],y=p[1],hw=w*sc,hh=w/2*sc,H=h*sc,P=[[x-hw,y],[x,y+hh],[x+hw,y],[x,y-hh]];cx.lineCap='round';
+ cx.globalAlpha=.6;cx.strokeStyle='#7a4a1c';cx.lineWidth=2.5*sc;cx.beginPath();cx.moveTo(P[3][0],P[3][1]);cx.lineTo(P[3][0],P[3][1]-H);cx.stroke();cx.globalAlpha=1;
+ [[P[0],3],[P[2],3],[P[1],3.6]].forEach(([q,th])=>{cx.strokeStyle='#7a4a1c';cx.lineWidth=th*sc;cx.beginPath();cx.moveTo(q[0],q[1]);cx.lineTo(q[0],q[1]-H);cx.stroke()});
+ [.35,.7,1].forEach(f=>{cx.strokeStyle=f==1?'#d9ad6a':'#b5853f';cx.lineWidth=3*sc;cx.beginPath();cx.moveTo(P[0][0],P[0][1]-H*f);cx.lineTo(P[1][0],P[1][1]-H*f);cx.lineTo(P[2][0],P[2][1]-H*f);cx.stroke()});
+ cx.strokeStyle='#8b5a2b';cx.lineWidth=2*sc;cx.beginPath();cx.moveTo(P[0][0],P[0][1]);cx.lineTo(P[1][0],P[1][1]-H*.7);cx.moveTo(P[1][0],P[1][1]);cx.lineTo(P[2][0],P[2][1]-H*.7);cx.moveTo(P[0][0],P[0][1]-H*.35);cx.lineTo(P[1][0],P[1][1]-H);cx.moveTo(P[1][0],P[1][1]-H*.35);cx.lineTo(P[2][0],P[2][1]-H);cx.stroke();
+ cx.fillStyle='#ff7a1a';cx.beginPath();cx.moveTo(P[2][0],P[2][1]-H);cx.lineTo(P[2][0]+sc*14,P[2][1]-H-sc*4);cx.lineTo(P[2][0],P[2][1]-H-sc*9);cx.fill();
+ cx.font=sc*19+'px sans-serif';cx.fillText('👷',x-hw*.3,y-H*.62+Math.sin(t/190+sd)*sc*2.5);
+ cx.save();cx.translate(x+hw*.5,y-H-sc*5);cx.rotate(Math.sin(t/110+sd)*.9);cx.font=sc*20+'px sans-serif';cx.fillText('🔨',0,0);cx.restore();
+ for(let i=0;i<3;i++){const ph=((t/700)+i/3+sd*.13)%1;cx.globalAlpha=.55*(1-ph);cx.fillStyle='#e8d9b8';cx.beginPath();cx.arc(x+(i-1)*hw*.55+Math.sin(ph*6+i)*sc*4,y+hh*.4-ph*sc*28,sc*(5+10*ph),0,6.3);cx.fill()}cx.globalAlpha=1}
+const KDTC=[null,'#cbd5e1','#4ade80','#60a5fa','#fbbf24','#c084fc'],kdTier=l=>l>=9?5:l>=7?4:l>=5?3:l>=3?2:1,kdUp2=b=>!!b&&b.t!='wall'&&KD_B[b.t]&&(kdIsProd(b)||KD_B[b.t].upg);
+function k3glow(s,t){s.gl=s.gl||{};if(s.gl[t])return s.gl[t];const m=22,c=document.createElement('canvas');c.width=s.w+2*m;c.height=s.h+2*m;const x=c.getContext('2d');x.shadowColor=KDTC[t];x.shadowBlur=14;x.drawImage(s.c,m,m);x.drawImage(s.c,m,m);x.shadowBlur=0;x.drawImage(s.c,m,m);return s.gl[t]={c,w:c.width,h:c.height,ay:s.ay+m}}
+function kdBadge(cx,x,y,l,sc){const t=kdTier(l),tx='★'+l;cx.font='bold '+Math.max(10,sc*13)+'px sans-serif';const w=cx.measureText(tx).width+sc*12,h=sc*17;cx.fillStyle=KDTC[t];cx.beginPath();cx.roundRect(x-w/2,y-h/2,w,h,h/2);cx.fill();cx.strokeStyle=t>=2?'#222':'rgba(0,0,0,.45)';cx.lineWidth=2;cx.stroke();cx.fillStyle='#111';cx.fillText(tx,x,y+1)}
 function k3sp(b,x,z,k){let m=0;if(b.t=='wall'){const w=(a,c)=>{const o=k.p[(x+a)+','+(z+c)];return o&&o.t=='wall'};m=(w(1,0)?1:0)|(w(-1,0)?2:0)|(w(0,1)?4:0)|(w(0,-1)?8:0)}
  const tr=b.t=='wall'?Math.min(3,Math.ceil((b.l||1)/3)):1;return k3spr(b.t+m+(tr>1?'t'+tr:''),150,210,F=>{K3TIER=tr;k3b(F,b.t,0,0,(a,c)=>m&&((a==1&&c==0&&m&1)||(a==-1&&c==0&&m&2)||(a==0&&c==1&&m&4)||(a==0&&c==-1&&m&8))?{t:'wall'}:null)})}
 let K3OV=null;
 function k3ov(){if(K3OV)return K3OV;const c=document.createElement('canvas');c.width=2400;c.height=1200;const x=c.getContext('2d');x.translate(1200,600);x.scale(.3125,.3125);x.fillStyle='#2c6a38';x.fillRect(-3900,-1950,7800,3900);
  for(let a=-KWW;a<KWW;a++)for(let b=-KWW;b<KWW;b++){const inB=a>=-KWB&&a<KWB&&b>=-KWB&&b<KWB,m=Math.max(Math.abs(a),Math.abs(b)),ix=(a-b)*32,iy=(a+b)*16;
-  x.fillStyle=!inB?'#2f7a3b':'#6cc36f';x.beginPath();x.moveTo(ix,iy-16);x.lineTo(ix+32,iy);x.lineTo(ix,iy+16);x.lineTo(ix-32,iy);x.fill();
-  if(!inB||k3rnd(a,b,4)<(m<4?.04:.2)){x.fillStyle=!inB?(k3rnd(a,b,2)<.4?'#1d6e33':'#27853e'):'#3aa14b';x.beginPath();x.arc(ix,iy-20,26,0,6.3);x.fill()}}
+  x.fillStyle=!inB?(k3clump(a,b)>.6?'#2f7a3b':'#3b8d47'):'#6cc36f';x.beginPath();x.moveTo(ix,iy-16);x.lineTo(ix+32,iy);x.lineTo(ix,iy+16);x.lineTo(ix-32,iy);x.fill();
+  if(!inB?k3forest(a,b):k3ob(a,b)){x.fillStyle=!inB?(k3rnd(a,b,2)<.4?'#1d6e33':'#27853e'):'#3aa14b';x.beginPath();x.arc(ix,iy-20,26,0,6.3);x.fill()}}
  return K3OV=c}
-const ob0=(a,b,id)=>{const k=S.kd;return Math.abs(a+.5)<30.5&&Math.abs(b+.5)<30.5&&!k.cl[id]&&!k.p[id]&&k3rnd(a,b,4)<(Math.max(Math.abs(a),Math.abs(b))<4?.04:.2)};
+const ob0=(a,b,id)=>{const k=S.kd;return Math.abs(a+.5)<30.5&&Math.abs(b+.5)<30.5&&!k.cl[id]&&!k.p[id]&&k3ob(a,b)};
 function k3Draw(cv,t){const k=kdInit(),cx=cv.getContext('2d'),cw=cv.width,ch=cv.height,sc=cw/620*KC.zm,ox=cw/2-KC.px*sc,oy=ch*.52-KC.py*sc,C=kdCs(),cid=kdCsId(),lod=sc<.4;
  const T=(x,y,z)=>[ox+(x-z)*32*sc,oy+((x+z)*16-y*36)*sc],inv=(px,py)=>{const ix=(px-ox)/sc/32,iy=(py-oy)/sc/16;return[(ix+iy)/2,(iy-ix)/2]};
  cx.fillStyle='#2c6a38';cx.fillRect(0,0,cw,ch);cx.textAlign='center';cx.textBaseline='middle';
@@ -885,25 +926,31 @@ function k3Draw(cv,t){const k=kdInit(),cx=cv.getContext('2d'),cw=cv.width,ch=cv.
  const L=[],dg=id=>KDG&&KDG.id==id,dm=(p)=>{cx.beginPath();cx.moveTo(p[0],p[1]-16*sc);cx.lineTo(p[0]+32*sc,p[1]);cx.lineTo(p[0],p[1]+16*sc);cx.lineTo(p[0]-32*sc,p[1]);cx.fill()};
  if(lod){cx.drawImage(k3ov(),ox-3900*sc,oy-1950*sc,7800*sc,3900*sc)}
  else for(let a=a0;a<=a1;a++)for(let b=b0;b<=b1;b++){const inB=a>=-KWB&&a<KWB&&b>=-KWB&&b<KWB,m=Math.max(Math.abs(a),Math.abs(b)),id=a+','+b,p=T(a,0,b),path=inB&&a==C[0]&&b>C[1];
-  cx.fillStyle=path?((a+b)&1?'#c9a66b':'#bf9c60'):!inB?((a+b)&1?'#2f7a3b':'#34853f'):((a+b)&1?'#62b966':'#6cc36f');dm(p);
-  if(KDSEL==id){cx.fillStyle=ob0(a,b,id)?'rgba(230,70,70,.6)':'rgba(255,213,74,.85)';dm(p)}
-  let n=0,f=1,ob=0;if(!inB)n=k3rnd(a,b,9)>.05?2:1;else if(!k.cl[id]&&!k.p[id]&&id!=cid&&!path&&k3rnd(a,b,4)<(m<4?.04:.2)){ob=k3kind(a,b);if(ob=='tree'){n=1;f=.85}else L.push({d:a+b,p:T(a,0,b),s:k3spr('ob_'+ob,110,190,F=>k3obst(F,ob)),f:1,r:!!(KDG||KDSEL==id)})}
+  cx.fillStyle=path?((a+b)&1?'#c9a66b':'#bf9c60'):!inB?(k3clump(a,b)>.6?((a+b)&1?'#2f7a3b':'#34853f'):((a+b)&1?'#3b8d47':'#41964d')):((a+b)&1?'#62b966':'#6cc36f');dm(p);
+  if(KDSEL==id||(KDSEL=='castle'&&id==cid)){cx.fillStyle=(KDSEL!='castle'&&ob0(a,b,id))?'rgba(230,70,70,.6)':'rgba(255,213,74,.85)';dm(p)}
+  let n=0,f=1,ob=0;if(!inB)n=k3forest(a,b);else if(!k.cl[id]&&!k.p[id]&&id!=cid&&!path&&k3ob(a,b)){ob=k3kind(a,b);if(ob=='tree'){n=1;f=.85}else L.push({d:a+b,p:T(a,0,b),s:k3spr('ob_'+ob,110,190,F=>k3obst(F,ob)),f:1,r:!!(KDG||KDSEL==id)})}
   if(inB&&((KDG&&(ob||(k.p[id]&&!dg(id))||id==cid))||(KDSEL==id&&ob))){cx.fillStyle='rgba(225,30,30,.55)';dm(p)}
   for(let i=0;i<n;i++){const x=a+(k3rnd(a,b,3+i)-.5)*.8,z=b+(k3rnd(a,b,5+i)-.5)*.8,v=f<1?1:Math.floor(k3rnd(a,b,7+i)*3);L.push({d:x+z,p:T(x,0,z),s:k3spr('ft'+v,110,190,F=>k3ftree(F,v)),f,r:!!(inB&&ob&&(KDG||KDSEL==id))})}}
- if(!dg('castle'))L.push({d:C[0]+C[1],p:T(C[0],0,C[1]),s:k3spr('castle'+k.c,300,330,F=>k3castle(F,k.c)),f:CSC,r:!!KDG});
- Object.keys(k.p).forEach(id=>{if(dg(id))return;const b=k.p[id],q=kdXZ(id),x=q[0],z=q[1];if(!lod&&(x<a0-3||x>a1+3||z<b0-3||z>b1+3))return;L.push({d:x+z,p:T(x,0,z),s:k3sp(b,x,z,k),f:1,r:!!KDG})});
- L.sort((a,b)=>a.d-b.d);L.forEach(o=>{const f=o.f*sc;cx.drawImage(o.r?k3red(o.s):o.s.c,o.p[0]-o.s.w/2*f,o.p[1]-o.s.ay*f,o.s.w*f,o.s.h*f)});
+ const jobU=new Set(kdHuts().filter(h=>h.job).map(h=>h.job.u));if(!dg('castle'))L.push({d:C[0]+C[1],p:T(C[0],0,C[1]),s:k3spr('castle'+k.c,300,330,F=>k3castle(F,k.c)),f:CSC,r:!!KDG,jb:jobU.has('C')});
+ Object.keys(k.p).forEach(id=>{if(dg(id))return;const b=k.p[id],q=kdXZ(id),x=q[0],z=q[1];if(!lod&&(x<a0-3||x>a1+3||z<b0-3||z>b1+3))return;const lv=b.l||1,up=kdUp2(b),tr=up?kdTier(lv):0;let sp=k3sp(b,x,z,k);if(tr>=2&&!lod)sp=k3glow(sp,tr);L.push({d:x+z,p:T(x,0,z),s:sp,f:up?1+.035*(lv-1):1,r:!!KDG,jb:jobU.has(b.u)})});
+ if(!lod){Object.keys(k.p).forEach(id=>{const b=k.p[id];if(dg(id)||!kdUp2(b)||(b.l||1)<3)return;const q=kdXZ(id);cx.globalAlpha=.38;cx.fillStyle=KDTC[kdTier(b.l)];dm(T(q[0],0,q[1]));cx.globalAlpha=1});
+  kdHuts().forEach(h=>{if(!h.job)return;let q=null;if(h.job.u=='C')q=C;else{const id=Object.keys(k.p).find(x=>k.p[x]&&k.p[x].u==h.job.u);if(id)q=kdXZ(id)}if(q){cx.globalAlpha=.35+.25*Math.sin(t/180);cx.fillStyle='#ff9a3c';dm(T(q[0],0,q[1]));cx.globalAlpha=1}})}
+ L.sort((a,b)=>a.d-b.d);L.forEach(o=>{const f=o.f*sc;if(o.jb)cx.globalAlpha=.55;cx.drawImage(o.r?k3red(o.s):o.s.c,o.p[0]-o.s.w/2*f,o.p[1]-o.s.ay*f,o.s.w*f,o.s.h*f);cx.globalAlpha=1});
+ if(!lod)kdHuts().forEach(h=>{if(!h.job)return;let q=null,bt=null;const cst=h.job.u=='C';if(cst)q=C;else{const id=Object.keys(k.p).find(x=>k.p[x]&&k.p[x].u==h.job.u);if(id){q=kdXZ(id);bt=k.p[id].t}}if(!q)return;const p=T(q[0],0,q[1]);if(p[0]<-160||p[0]>cw+160||p[1]<-220||p[1]>ch+260)return;kdScaf(cx,p,sc,t,cst?50:30,cst?125:bt=='wall'?38:66,q[0]*3+q[1])});
  if(KDG&&KDG.cell){const q=kdXZ(KDG.cell),p=T(q[0],0,q[1]),ok=KDG.id=='castle'?(KDG.cell==cid||(!k.p[KDG.cell]&&!kdTree(KDG.cell))):(KDG.cell==KDG.id||kdFree(KDG.cell));
   cx.fillStyle=ok?'rgba(80,220,100,.65)':'rgba(240,70,70,.65)';dm(p);
   const s=KDG.id=='castle'?k3spr('castle'+k.c,300,330,F=>k3castle(F,k.c)):k3sp(k.p[KDG.id],q[0],q[1],k),f=(KDG.id=='castle'?CSC:1)*sc;cx.globalAlpha=.8;cx.drawImage(ok?s.c:k3red(s),p[0]-s.w/2*f,p[1]-s.ay*f,s.w*f,s.h*f);cx.globalAlpha=1}
- if(!lod){Object.keys(k.p).forEach((id,n)=>{const b=k.p[id];if(!kdIsProd(b)||dg(id))return;const q=kdXZ(id),p0=T(q[0],0,q[1]+.5);if(p0[0]<-60||p0[0]>cw+60||p0[1]<-80||p0[1]>ch+80)return;cx.font='bold '+sc*13+'px sans-serif';cx.fillStyle='rgba(0,0,0,.65)';cx.fillText('Lv'+b.l,p0[0],p0[1]+sc*8);
-  const m=Math.floor(kdPend(b));if(m>=1){const p=T(q[0],1.2,q[1]),y=p[1]+Math.sin(t/260+n)*sc*3,tx='+'+m;cx.font='bold '+sc*15+'px sans-serif';const w2=cx.measureText(tx).width+sc*16;
+ if(!lod){Object.keys(k.p).forEach(id=>{const b=k.p[id];if(!b||dg(id)||!(kdUp2(b)||(b.t=='wall'&&KDSEL==id)))return;const q=kdXZ(id),p0=T(q[0],0,q[1]+.5);if(p0[0]<-60||p0[0]>cw+60||p0[1]<-80||p0[1]>ch+80)return;kdBadge(cx,p0[0],p0[1]+sc*9,b.l||1,sc)});
+  Object.keys(k.p).forEach((id,n)=>{const b=k.p[id];if(!kdIsProd(b)||dg(id))return;const q=kdXZ(id),p0=T(q[0],0,q[1]+.5);if(p0[0]<-60||p0[0]>cw+60||p0[1]<-80||p0[1]>ch+80)return;
+  const m=Math.floor(kdPend(b));if(kdFrozen(b)){const p=T(q[0],1.2,q[1]),y=p[1]+Math.sin(t/500+n)*sc*2;cx.font='bold '+sc*14+'px sans-serif';const tx='💤 Full',w2=cx.measureText(tx).width+sc*14;cx.fillStyle='rgba(235,235,245,.95)';cx.beginPath();cx.roundRect(p[0]-w2/2,y-sc*11,w2,sc*22,sc*11);cx.fill();cx.strokeStyle='#555';cx.lineWidth=2;cx.stroke();cx.fillStyle='#333';cx.fillText(tx,p[0],y)}else if(m>=1){const p=T(q[0],1.2,q[1]),y=p[1]+Math.sin(t/260+n)*sc*3,tx='+'+m;cx.font='bold '+sc*15+'px sans-serif';const w2=cx.measureText(tx).width+sc*16;
    cx.fillStyle=KBC[KD_B[b.t].k];cx.beginPath();cx.roundRect(p[0]-w2/2,y-sc*11,w2,sc*22,sc*11);cx.fill();cx.strokeStyle='#333';cx.lineWidth=2;cx.stroke();cx.fillStyle='#222';cx.fillText(tx,p[0],y)}});
   Object.keys(k.p).forEach(id=>{const b=k.p[id];if(b&&b.t=='hut'&&b.job&&!dg(id)){const q=kdXZ(id),p=T(q[0],.9,q[1]);cx.font=sc*18+'px sans-serif';cx.fillText('🔨',p[0],p[1]+Math.sin(t/120)*sc*3)}})}
  if(!lod)kdHuts().forEach(h=>{if(!h.job)return;let q=null;const cst=h.job.u=='C';if(cst)q=C;else{const id=Object.keys(k.p).find(x=>k.p[x]&&k.p[x].u==h.job.u);if(id)q=kdXZ(id)}if(!q)return;
   const p=T(q[0],cst?2.4:1.9,q[1]),tx='⬆ Lv'+h.job.to+' '+kdFmt(Math.max(0,Math.ceil((h.job.end-Date.now())/1000)));cx.font='bold '+sc*14+'px sans-serif';const w2=cx.measureText(tx).width+sc*16;
   cx.fillStyle='#fff3c4';cx.beginPath();cx.roundRect(p[0]-w2/2,p[1]-sc*11,w2,sc*22,sc*11);cx.fill();cx.strokeStyle='#333';cx.lineWidth=2;cx.stroke();cx.fillStyle='#222';cx.fillText(tx,p[0],p[1])});
+ if(!lod&&KTF){const p=T(KTF[0],0,KTF[1]),r=sc*(38+5*Math.sin(t/200));cx.strokeStyle='#ffd54a';cx.lineWidth=sc*4;cx.beginPath();cx.ellipse(p[0],p[1],r,r/2,0,0,6.3);cx.stroke();const y=T(KTF[0],4.4,KTF[1]);cx.font='bold '+sc*26+'px sans-serif';cx.fillText('⬇',y[0],y[1]+Math.sin(t/150)*sc*5)}
  if(!lod&&k.name){const p=T(C[0],3.3,C[1]),own='👑 '+(S.name||'Player');cx.font='bold '+sc*15+'px sans-serif';const w2=Math.max(cx.measureText(k.name).width,cx.measureText(own).width)+sc*18;cx.fillStyle='rgba(255,255,255,.92)';cx.beginPath();cx.roundRect(p[0]-w2/2,p[1]-sc*20,w2,sc*40,sc*10);cx.fill();cx.strokeStyle='#4a2c12';cx.lineWidth=2;cx.stroke();cx.fillStyle='#000';cx.fillText(k.name,p[0],p[1]-sc*8);cx.font=sc*12+'px sans-serif';cx.fillText(own,p[0],p[1]+sc*9)}
+ const nw2=Date.now();KDFX=KDFX.filter(f=>nw2-f.s<1300);KDFX.forEach(f=>{const q=kdXZ(f.i),a=(nw2-f.s)/1300,p=T(q[0],0,q[1]);cx.globalAlpha=1-a;cx.strokeStyle='#ffd54a';cx.lineWidth=Math.max(2,sc*5);cx.beginPath();cx.ellipse(p[0],p[1],sc*(30+110*a),sc*(15+55*a),0,0,6.3);cx.stroke();cx.fillStyle='#fff3a0';cx.font='bold '+sc*20+'px sans-serif';for(let j=0;j<6;j++){const an=j*1.047+a*2;cx.fillText('★',p[0]+Math.cos(an)*sc*(40+70*a),p[1]-sc*(20+90*a)+Math.sin(an)*sc*20)}cx.globalAlpha=1});
  const now=Date.now();KDFL=KDFL.filter(f=>now-f.s<1000);KDFL.forEach(f=>{const q=kdXZ(f.i),a=(now-f.s)/1000,p=T(q[0],1+a*.8,q[1]);cx.globalAlpha=1-a;cx.font='bold '+Math.max(12,sc*18)+'px sans-serif';cx.lineWidth=4;cx.strokeStyle='#000';cx.strokeText(f.t,p[0],p[1]);cx.fillStyle='#fff';cx.fillText(f.t,p[0],p[1]);cx.globalAlpha=1})}
 function k3Cell(px,py,cv){const sc=cv.width/620*KC.zm,ox=cv.width/2-KC.px*sc,oy=cv.height*.52-KC.py*sc,ix=(px-ox)/sc/32,iy=(py-oy)/sc/16,a=Math.round((ix+iy)/2),b=Math.round((iy-ix)/2);return a<-KWB||a>=KWB||b<-KWB||b>=KWB?null:a+','+b}
 function k3Hit(px,py,cv){const k=kdInit(),cid=kdCsId(),sc=cv.width/620*KC.zm,c1=k3Cell(px,py+22*sc,cv);if(c1&&(k.p[c1]||c1==cid))return c1==cid?'castle':c1;const c0=k3Cell(px,py,cv);return c0==cid?'castle':c0}
@@ -912,7 +959,7 @@ function k3Bind(cv){if(cv._b)return;cv._b=1;let d=null,pin=null;const P={},pt=e=
  cv.onpointermove=e=>{if(P[e.pointerId])P[e.pointerId]=[e.clientX,e.clientY];if(pin&&Object.keys(P).length==2){KC.zm=Math.max(kdZmin(),Math.min(2,pin.z*dist()/pin.d));return}if(!d)return;const dx=e.clientX-d.x,dy=e.clientY-d.y;d.m=Math.max(d.m,Math.hypot(dx,dy));if(d.m>6){if(d.drag){const q=pt(e);KDG={id:d.drag,cell:k3Cell(q[0],q[1]+22*(cv.width/620*KC.zm),cv)}}else{const r=cv.getBoundingClientRect(),sc=cv.width/620*KC.zm,f=cv.width/r.width/sc;KC.px=Math.max(-3900,Math.min(3900,d.px-dx*f));KC.py=Math.max(-1950,Math.min(1950,d.py-dy*f))}}};
  cv.onpointercancel=e=>{delete P[e.pointerId];d=null;pin=null;KDG=null};
  cv.onpointerup=e=>{delete P[e.pointerId];if(pin){if(!Object.keys(P).length)pin=null;d=null;return}const was=d;d=null;if(KDG){const g=KDG;KDG=null;kdMove(g.id,g.cell);kdRender();return}
-  if(was&&was.m<=6){const q=pt(e),i=k3Hit(q[0],q[1],cv);if(!i||i=='castle'){KDSEL=null;kdRender()}else kdTap(i)}};
+  if(was&&was.m<=6){const q=pt(e),i=k3Hit(q[0],q[1],cv);if(!i){KDSEL=null;kdRender()}else if(i=='castle'){KDDEL=null;KDSEL='castle';kdRender()}else kdTap(i)}};
  cv.onwheel=e=>{e.preventDefault();kdZoom(e.deltaY<0?1.1:.9)}}
 function k3Loop(t){requestAnimationFrame(k3Loop);const cv=$('kd3');if(!cv||!KM||document.hidden||t-K3T<40)return;const w=cv.clientWidth,hh=cv.clientHeight;if(!w||!hh)return;K3T=t;k3Bind(cv);
  const dpr=Math.min(2,window.devicePixelRatio||1),W2=Math.round(w*dpr),H2=Math.round(hh*dpr);if(cv.width!=W2||cv.height!=H2){cv.width=W2;cv.height=H2}k3Draw(cv,t)}
