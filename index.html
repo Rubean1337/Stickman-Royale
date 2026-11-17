@@ -78,7 +78,7 @@ button:focus-visible{outline:3px solid var(--blue)}button:disabled{opacity:.45;c
 #krc{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
 #krtop,#krbot{position:absolute;left:6px;right:6px;z-index:2;max-width:560px;margin:0 auto;background:rgba(190,145,92,.93);border-radius:12px;padding:6px 8px;color:#000;box-shadow:0 2px 8px rgba(0,0,0,.35)}
 #krtop{top:6px}#krbot{bottom:6px}#krbot:empty{display:none}
-.krrow{display:flex;align-items:center;gap:8px;justify-content:space-between}.krname{flex:1;text-align:center}.krsm{font-size:12px;margin-top:2px}
+.krrow{display:flex;align-items:center;gap:8px;justify-content:space-between}.krname{text-align:center;line-height:1.2;margin-top:3px}.krname b{font-size:16px}.krname small{font-size:13px}.krsm{font-size:12px;margin-top:2px}
 .krrow button{padding:4px 10px;font-size:14px}.krtray{display:flex;gap:6px;overflow-x:auto;padding:4px 0;-webkit-overflow-scrolling:touch}.krtray button{flex:0 0 auto}.krmsg{margin-bottom:6px}
 .kdbuild small{font-size:12px;line-height:1.15}.kde2{font-size:26px;line-height:1.1}
 .kdstreet{position:relative;height:28px;overflow:hidden;margin:4px 0;border-radius:8px;background:linear-gradient(rgba(120,200,120,.22),rgba(80,160,90,.34))}
@@ -671,8 +671,17 @@ function kdArmyHTML(){const k=kdInit(),a=k.army||{},cap=kdCap(),u=kdUsed();let h
  kdTroops().forEach(t=>{const c=CARDS[t],n=a[t]||0,cost=c.c*20;h+='<button '+(u+c.c<=cap&&S.gs>=cost?'':'disabled')+' onclick="kdTrain(\''+t+'\',1)"><b>'+c.n+' x'+n+'</b><small>Train 1: '+c.c+' space, '+cost+' '+GSI+'</small></button>'+(n?'<button onclick="kdTrain(\''+t+'\',-1)"><small>Release 1 '+c.n+'</small></button>':'')});
  return h+'</div><small>Housed troops can raid other kingdoms. Higher barracks levels hold more.</small><br>'}
 function kdTrain(t,d){const k=kdInit(),c=CARDS[t];if(!c)return;k.army=k.army||{};if(d>0){if(kdUsed()+c.c>kdCap()||S.gs<c.c*20)return;S.gs-=c.c*20;k.army[t]=(k.army[t]||0)+1}else if(k.army[t]>0)k.army[t]--;save();kdChips();kdRender()}
-function kdRival(i){const k=kdInit(),pr=kdBs().filter(b=>kdIsProd(b)),av=pr.length?pr.reduce((t,b)=>t+b.l,0)/pr.length:1,sd=Math.floor(Date.now()/3600e3),A=['Duke','Baron','Lady','Sir','Count','Queen','Lord'],B=['Mossback','Ironfist','Stonewall','Redcap','Oakheart','Grimshaw','Foxglove'],E=['Keep','Hold','Fort','Castle'],o=(i%3)-1,rl=Math.max(1,Math.min(6,k.c+o)),bl=Math.max(1,Math.min(KD_MAXL,2*rl,Math.round(av)+o)),r=k3rnd(sd,i,50);
- return{sd,i,bl,sil:Math.round(60*Math.pow(rl,1.4)*(.8+k3rnd(sd,i,54)*.4)),id:sd+'-'+i,n:A[Math.floor(k3rnd(sd,i,52)*A.length)]+' '+B[Math.floor(k3rnd(sd,i,53)*B.length)]+"'s "+E[Math.floor(k3rnd(sd,i,55)*E.length)],rl,def:Math.round(20*Math.pow(rl,1.7)*(1+.15*(bl-1))*(.85+r*.3)),loot:Math.round(100*Math.pow(rl,1.5)*(.8+k3rnd(sd,i,51)*.4))}}
+function kdRival(i){const k=kdInit(),pr=kdBs().filter(b=>kdIsProd(b)),av=pr.length?pr.reduce((t,b)=>t+b.l,0)/pr.length:1,sd=Math.floor(Date.now()/3600e3),o=(i%3)-1,rl=Math.max(1,Math.min(6,k.c+o)),bl=Math.max(1,Math.min(KD_MAXL,2*rl,Math.round(av)+o)),r=k3rnd(sd,i,50),
+ HH=n=>{let x=Math.imul(sd^0x9e3779b9,0x85ebca6b)^Math.imul(i+1,0xc2b2ae35)^Math.imul(n+1,0x27d4eb2f);x^=x>>>15;x=Math.imul(x,0x2c1b3c6d);x^=x>>>12;x=Math.imul(x,0x297a2d39);x^=x>>>15;return(x>>>0)/4294967296},
+ pk=(L,n)=>L[Math.floor(HH(n)*L.length)],
+ FN=['Aldric','Brenna','Cedric','Dorothea','Edmund','Freya','Gideon','Helena','Ivor','Jocelyn','Kellan','Lyra','Magnus','Nessa','Osric','Petra','Quinn','Rowan','Sybil','Tobias','Ulric','Vera','Wystan','Yara','Zane','Maeve','Bram','Elowen'],
+ SN=['Oakheart','Ironfist','Stonewall','Redcap','Grimshaw','Foxglove','Mossback','Thornwood','Blackwater','Highmoor','Ashford','Brightblade','Dunmere','Fairwind','Greystone','Hollowell','Larkspur','Marlowe','Northcott','Ravenscar','Silverbrook','Wolfsbane','Yarrow','Underhill'],
+ TT=['Lady','Lord','Sir','Dame','Duke','Duchess','Baron','Baroness','Queen','King','Count','Countess'],
+ KP=['Iron','Golden','Silver','Mossy','Raven','Stone','Wolf','Fox','Amber','Crimson','Misty','Thorn','Frost','Sun','Moon','Oak'],
+ KS=['vale','brook','haven','hold','fall','watch','mere','reach','crest','moor','wick','ford'],
+ KF=['{X}','Kingdom of {X}','{X} Keep','{X} Castle'],
+ owner=(HH(58)<.6?pk(TT,57)+' ':'')+pk(FN,52)+' '+pk(SN,53),kname=pk(KF,56).replace('{X}',pk(KP,54)+pk(KS,55));
+ return{sd,i,bl,sil:Math.round(60*Math.pow(rl,1.4)*(.8+k3rnd(sd,i,59)*.4)),id:sd+'-'+i,n:kname,o:owner,rl,def:Math.round(20*Math.pow(rl,1.7)*(1+.15*(bl-1))*(.85+r*.3)),loot:Math.round(100*Math.pow(rl,1.5)*(.8+k3rnd(sd,i,51)*.4))}}
 function kdRivals(){return[0,1,2].map(kdRival)}
 function kdRaidHTML(msg){const k=kdInit(),pw=Math.round(kdArmyPow()),done=k.raided||{};
  return '<div class="box" style="max-width:520px;margin:0 auto"><div class="row" style="justify-content:space-between"><b>⚔️ Raid other kingdoms</b><button onclick="$(\'kraid\').style.display=\'none\'">✖ Close</button></div>'+(msg?'<div class="box" style="margin:6px 0">'+msg+'</div>':'')
@@ -692,7 +701,7 @@ function kdRivalMap(r){const m={},rl=r.rl,sd=r.sd*997+r.i,rd=(a,b,c)=>k3rnd(sd,a
 function kdRaidDraw(cv,r,st){const m=kdRivalMap(r),cx=cv.getContext('2d'),cw=cv.width,ch=cv.height,sc=cw/440,T=(x,y,z)=>[cw/2+(x-z)*32*sc,ch*.5+((x+z)*16-y*36)*sc],fk={p:m},dead=st=='win'||st=='done';
  cx.fillStyle='#2c6a38';cx.fillRect(0,0,cw,ch);cx.textAlign='center';cx.textBaseline='middle';
  for(let a=-5;a<=5;a++)for(let b=-5;b<=5;b++){const p=T(a,0,b);cx.fillStyle=(a+b)&1?'#62b966':'#6cc36f';cx.beginPath();cx.moveTo(p[0],p[1]-16*sc);cx.lineTo(p[0]+32*sc,p[1]);cx.lineTo(p[0],p[1]+16*sc);cx.lineTo(p[0]-32*sc,p[1]);cx.fill()}
- const L=[{d:0,p:T(0,0,0),s:k3spr('castle'+r.rl,300,330,F=>k3castle(F,r.rl)),f:CSC}],sv=Object.keys(m).filter(id=>['farm','mill','market'].includes(m[id].t)).length||1,pills=[];
+ const L=[{d:0,p:T(0,0,0),s:k3csp(r.rl),f:CSC}],sv=Object.keys(m).filter(id=>['farm','mill','market'].includes(m[id].t)).length||1,pills=[];
  Object.keys(m).forEach(id=>{const q=id.split(',').map(Number),b=m[id];L.push({d:q[0]+q[1],p:T(q[0],0,q[1]),s:k3sp(b,q[0],q[1],fk),f:1,r:dead&&KD_B[b.t].def});
   if(b.t=='gold')pills.push([T(q[0],1.5,q[1]),'+'+r.loot,KBC.gs]);else if(['farm','mill','market'].includes(b.t))pills.push([T(q[0],1.5,q[1]),'+'+Math.round(r.sil/sv),KBC.sil])});
  L.sort((a,b)=>a.d-b.d);L.forEach(o=>{const f=o.f*sc;cx.drawImage(o.r?k3red(o.s):o.s.c,o.p[0]-o.s.w/2*f,o.p[1]-o.s.ay*f,o.s.w*f,o.s.h*f)});
@@ -711,10 +720,10 @@ const kdRBSc=cv=>Math.min(cv.width/560,cv.height/520)*RBT.cam.zm;
 function kdRBStat(){const r=RBT.r;if(RBT.phase=='fight')return '<b>Battle!</b> '+Math.max(0,120-Math.floor(RBT.t))+'s left &middot; troops alive '+RBT.U.filter(u=>u.hp>0).length;
  const walls=RBT.S.filter(s=>s.t=='wall').length,tw=RBT.S.filter(s=>s.t!='castle'&&s.t!='wall'&&KD_B[s.t]&&KD_B[s.t].def).length;return 'Castle Lv '+r.rl+' &middot; Buildings Lv '+r.bl+' &middot; 🧱 '+walls+' walls &middot; 🗼 '+tw+' defenses'}
 function kdRBUI(){const k=kdInit();k.army=k.army||{};const r=RBT.r,fight=RBT.phase=='fight',pl=RBT.phase=='place',ts=Object.keys(k.army).filter(t=>CARDS[t]&&k.army[t]>0),top=$('krtop'),bot=$('krbot');if(!top||!bot)return;RBT.sst=null;
- top.innerHTML='<div class="krrow"><button id="krb" '+(fight?'disabled':'')+' onclick="kdRaidOpen()">⬅ Back</button><b class="krname">🏰 '+r.n+'</b><span class="chip">'+GSI+' '+r.loot+' &nbsp;'+SILV+' '+r.sil+'</span></div>'+kdRBBar()+'<div id="krs" class="krsm">'+kdRBStat()+'</div><div class="krrow" style="justify-content:flex-start;margin-top:4px"><button '+(fight?'disabled':'')+' onclick="kdRBNext()">Next Kingdom ➡</button><button onclick="kdRBFit()">🗺 Fit</button><button onclick="kdRBHome()">🏰 Castle</button></div>';
- bot.innerHTML=(RBT.msg?'<div class="krmsg">'+RBT.msg+'<div class="row"><button onclick="kdRaidOpen()">⬅ Back to raids</button></div></div>':'')
+ top.innerHTML='<div class="krrow"><button id="krb" '+(fight?'disabled':'')+' onclick="kdRaidClose()">⬅ Back</button><span class="chip">'+GSI+' '+r.loot+' &nbsp;'+SILV+' '+r.sil+'</span></div><div class="krname"><b>🏰 '+esc(r.n)+'</b> <small>👑 '+esc(r.o)+'</small></div>'+kdRBBar()+'<div id="krs" class="krsm">'+kdRBStat()+'</div><div class="krrow" style="justify-content:flex-start;margin-top:4px"><button '+(fight?'disabled':'')+' onclick="kdRBNext()">Next Kingdom ➡</button><button onclick="kdRBFit()">🗺 Fit</button><button onclick="kdRBHome()">🏰 Castle</button></div>';
+ bot.innerHTML=(RBT.msg?'<div class="krmsg">'+RBT.msg+'<div class="row"><button onclick="kdRBNext()">Next Kingdom ➡</button><button onclick="kdRaidClose()">⬅ Back to my kingdom</button></div></div>':'')
   +(pl||fight?'<small>'+(pl?'Pick a troop, then tap the ground to place it. Drag to look around, pinch or scroll to zoom (🗺 Fit shows the whole kingdom). The 2 minute battle starts when you place your first troop.':'Keep placing troops to reinforce your attack!')+'</small><div class="krtray">'+(ts.length?ts.map(t=>'<button style="'+(RBT.sel==t?'outline:3px solid #ffd54a':'')+'" '+(kdRBAvail(t)>0?'':'disabled')+' onclick="RBT.sel=\''+t+'\';kdRBUI()">'+CARDS[t].n+' &times;'+kdRBAvail(t)+'</button>').join(''):'<small>You have no troops. Train some in a Barracks first.</small>')+'</div>':'')
-  +(RBT.phase=='done'&&!RBT.msg?'<small>You already raided this kingdom. Pick another one!</small>':'');
+  +(RBT.phase=='done'&&!RBT.msg?'<small>You already raided this kingdom. Press Next Kingdom to find another one!</small>':'');
  if(!RBT.lid){RBT.lid=++KBLN;const id=RBT.lid;requestAnimationFrame(t=>kdRBLoop(t,id))}}
 function kdRBFit(){const cv=$('krc');if(!cv||!RBT)return;const sc0=Math.min(cv.width/560,cv.height/520);RBT.cam.zm=Math.max(.1,Math.min(2.8,Math.min(cv.width/3900,cv.height/2100)/sc0));RBT.cam.px=0;RBT.cam.py=0}
 function kdRBHome(){if(!RBT)return;RBT.cam.zm=1.25;RBT.cam.px=0;RBT.cam.py=0}
@@ -761,7 +770,9 @@ function kdRBStep(dt){const S=RBT.S.filter(s=>s.hp>0),U=RBT.U.filter(u=>u.hp>0);
   const sx=(tg.x-tg.z)-(u.x-u.z);if(sx)u.fx=sx<0?-1:1;u.pt=Math.max(0,u.pt-dt);
   if(bd>u.rng){const dx=(tg.x-u.x)/bd,dz=(tg.z-u.z)/bd;u.x+=dx*u.spd*dt;u.z+=dz*u.spd*dt;u.mv=1;u.ph+=dt*7}
   else{u.mv=0;u.cdT-=dt;if(u.cdT<=0){tg.hp-=u.hit;u.cdT=u.cd;u.pt=.35;if(u.rng>1.2)RBT.sh.push({a:[u.x,u.z],b:[tg.x,tg.z],t:.2,c:'#2a7bd6'})}}});
- S.forEach(s=>{if(!s.dps||s.hp<=0)return;s.cdT=(s.cdT||0)-dt;if(s.cdT>0)return;let tg=null,bd=s.rng;U.forEach(u=>{if(u.hp<=0)return;const d=Math.hypot(s.x-u.x,s.z-u.z);if(d<=bd){bd=d;tg=u}});if(tg){tg.hp-=s.dps;s.cdT=1;RBT.sh.push({a:[s.x,s.z],b:[tg.x,tg.z],t:.2,c:'#e8541e'})}});
+ S.forEach(s=>{if(!s.dps||s.hp<=0)return;s.cdT=(s.cdT||0)-dt;s.fa=Math.max(0,(s.fa||0)-dt);s.pt=Math.max(0,(s.pt||0)-dt);let tg=null,bd=s.rng;U.forEach(u=>{if(u.hp<=0)return;const d=Math.hypot(s.x-u.x,s.z-u.z);if(d<=bd){bd=d;tg=u}});
+  if(tg){const a=Math.atan2(tg.z-s.z,tg.x-s.x);if(s.ang==null)s.ang=a;let df=a-s.ang;while(df>Math.PI)df-=2*Math.PI;while(df<-Math.PI)df+=2*Math.PI;s.ang+=df*Math.min(1,dt*10);s.fl=(tg.x-tg.z)<(s.x-s.z)}
+  if(s.cdT>0||!tg)return;tg.hp-=s.dps;s.cdT=1;s.fa=.25;s.pt=.55;s.pd=.55;RBT.sh.push({a:[s.x,s.z],b:[tg.x,tg.z],t:.2,c:'#e8541e',ha:s.t=='watch'?1.5:.55,w:s.t=='cannon'?6:3})});
  RBT.sh.forEach(q=>q.t-=dt);RBT.sh=RBT.sh.filter(q=>q.t>0);
  const cas=RBT.S[0],alive=RBT.U.some(u=>u.hp>0);if(cas.hp<=0)kdRBEnd(true);else if((!alive&&!kdRBLeft())||RBT.t>120)kdRBEnd(false)}
 const kdRBLeft=()=>Object.keys(kdInit().army||{}).some(t=>CARDS[t]&&kdRBAvail(t)>0);
@@ -769,7 +780,7 @@ function kdRBEnd(win){const k=kdInit(),r=RBT.r;RBT.phase='end';let gs=0,sl=0;con
  RBT.S.forEach(s=>{if(!s.loot||(!win&&s.hp>0))return;if(s.t=='gold')gs+=s.val;else sl+=s.val});if(win){gs=r.loot;sl=r.sil}
  const lost=[];
  k.raided=k.raided||{};k.raided[r.id]=1;const g2=Math.min(gs,kdRoom('gs'));S.gs+=g2;const s2=Math.min(sl,kdRoom('sil'));S.silver=(S.silver||0)+s2;const ov=g2<gs||s2<sl;gs=g2;sl=s2;save();kdChips();kdRender();
- RBT.msg=(win?'🏆 <b>Victory!</b> You destroyed '+r.n+"'s castle.":'💀 <b>Defeat!</b> Your troops could not take the castle.')+'<br>Looted <b>'+gs+'</b> '+GSI+' and <b>'+sl+'</b> '+SILV+'<br><small>All your troops return home safely.</small>'+(ov?'<br><small>Your storage was full, so some loot was lost. Build more storage!</small>':'');kdRBUI()}
+ RBT.msg=(win?'🏆 <b>Victory!</b> You conquered <b>'+esc(r.n)+'</b> and defeated '+esc(r.o)+'.':'💀 <b>Defeat!</b> Your troops could not take the castle.')+'<br>Looted <b>'+gs+'</b> '+GSI+' and <b>'+sl+'</b> '+SILV+'<br><small>All your troops return home safely.</small>'+(ov?'<br><small>Your storage was full, so some loot was lost. Build more storage!</small>':'');kdRBUI()}
 let KBLN=0;
 let KRBT={w:null,i:null,last:0};
 function kdRBBg(){if(!document.hidden||!RBT||RBT.phase!='fight')return;const now=performance.now();let el=Math.min((now-KRBT.last)/1000,400);KRBT.last=now;
@@ -786,7 +797,7 @@ function kdRBLoop(ts,id){const cv=$('krc');if(!cv||!RBT||RBT.lid!==id)return;req
  const pf=$('krpf');if(pf){const q=kdRBPct();pf.style.width=q+'%';$('krpt').textContent=q+'%'}
  if(cv.width)kdRBDraw(cv)}
 function kdRBDraw(cv){const r=RBT.r,rc=cv.getContext('2d'),cw=cv.width,ch=cv.height,sc=kdRBSc(cv),cam=RBT.cam,ox=cw/2-cam.px*sc,oy=ch*.52-cam.py*sc,T=(x,y,z)=>[ox+(x-z)*32*sc,oy+((x+z)*16-y*36)*sc],inv=(px,py)=>{const ix=(px-ox)/sc/32,iy=(py-oy)/sc/16;return[(ix+iy)/2,(iy-ix)/2]},fk={p:{}},BF=KRBF,lod=sc<.4,seed=RBT.seed,occ=RBT.m,o1=seed%89,o2=seed%97;
- RBT.S.forEach(s=>{if(s.hp>0&&s.t!='castle')fk.p[s.id]={t:s.t,l:RBT.m[s.id].l}});
+ RBT.S.forEach(s=>{if(s.hp>0&&s.t!='castle')fk.p[s.id]={t:s.t,l:RBT.m[s.id].l,rd:1}});
  rc.fillStyle='#2c6a38';rc.fillRect(0,0,cw,ch);rc.textAlign='center';rc.textBaseline='middle';
  const KW=46,cs=[inv(0,0),inv(cw,0),inv(0,ch+150*sc),inv(cw,ch+150*sc)],a0=Math.max(-KW,Math.floor(Math.min(...cs.map(c=>c[0]))-1)),a1=Math.min(KW,Math.ceil(Math.max(...cs.map(c=>c[0]))+1)),b0=Math.max(-KW,Math.floor(Math.min(...cs.map(c=>c[1]))-1)),b1=Math.min(KW,Math.ceil(Math.max(...cs.map(c=>c[1]))+1));
  const L2=[],dm=p=>{rc.beginPath();rc.moveTo(p[0],p[1]-16*sc);rc.lineTo(p[0]+32*sc,p[1]);rc.lineTo(p[0],p[1]+16*sc);rc.lineTo(p[0]-32*sc,p[1]);rc.fill()};
@@ -796,15 +807,16 @@ function kdRBDraw(cv){const r=RBT.r,rc=cv.getContext('2d'),cw=cv.width,ch=cv.hei
   else if(!path&&!occ[a+','+b]&&!(a==0&&b==0)&&Math.max(Math.abs(a),Math.abs(b))>=4&&((k3rnd(seed+a,b,4)<.6&&cl>.78)||k3rnd(seed+a,b,4)<.01)){const ob=k3kind(a,b);if(ob=='tree'){n=1;f=.85}else if(!lod)L2.push({d:a+b,p:T(a,0,b),s:k3spr('ob_'+ob,110,190,F=>k3obst(F,ob)),f:1})}
   if(lod){if(n){rc.fillStyle=!inB?(k3rnd(a,b,2)<.4?'#1d6e33':'#27853e'):'#3aa14b';rc.beginPath();rc.arc(p[0],p[1]-20*sc,26*sc,0,6.3);rc.fill()}}
   else for(let i=0;i<n;i++){const x=a+(k3rnd(a,b,3+i)-.5)*.8,z=b+(k3rnd(a,b,5+i)-.5)*.8,v=f<1?1:Math.floor(k3rnd(a,b,7+i)*3);L2.push({d:x+z,p:T(x,0,z),s:k3spr('ft'+v,110,190,F=>k3ftree(F,v)),f})}}
- RBT.S.forEach(s=>{if(s.hp<=0)return;const p0=T(s.x,0,s.z);if(p0[0]<-200||p0[0]>cw+200||p0[1]<-300||p0[1]>ch+300)return;const sp=s.t=='castle'?k3spr('castle'+r.rl,300,330,F=>k3castle(F,r.rl)):k3sp(fk.p[s.id],s.x,s.z,fk);L2.push({d:s.x+s.z,p:p0,s:sp,f:(s.t=='castle'?CSC*1.15:BF),st:s})});
+ RBT.S.forEach(s=>{if(s.hp<=0)return;const p0=T(s.x,0,s.z);if(p0[0]<-200||p0[0]>cw+200||p0[1]<-300||p0[1]>ch+300)return;const sp=s.t=='castle'?k3csp(r.rl):k3sp(fk.p[s.id],s.x,s.z,fk);L2.push({d:s.x+s.z,p:p0,s:sp,f:(s.t=='castle'?CSC*1.15:BF),st:s,dy:(s.t=='watch'||s.t=='cannon')?{t:s.t,q:k3tq(fk.p[s.id]),st:s,sd:s.x*7+s.z}:null})});
  RBT.U.forEach(u=>{if(u.hp>0)L2.push({d:u.x+u.z+.01,p:T(u.x,0,u.z),u})});L2.sort((a,b)=>a.d-b.d);
  L2.forEach(o=>{if(o.u){const u=o.u,c=CARDS[u.k],e={k:u.k,team:0,x:0,y:0,hp:u.hp,mhp:u.mhp,mv:u.mv,ph:u.ph,fx:u.fx,pt:u.pt,pd:u.pd,sc:c.sc||1,r:12,rg:c.rg||0,l:u.l},g=cx;rc.save();rc.translate(o.p[0],o.p[1]-6*sc);rc.scale(Math.max(sc,.45)*1.05,Math.max(sc,.45)*1.05);cx=rc;try{fig(e)}catch(_){rc.fillStyle='#00a2e8';rc.beginPath();rc.arc(0,0,10,0,7);rc.fill()}cx=g;rc.restore();return}
-  const f=o.f*sc;rc.drawImage(o.s.c,o.p[0]-o.s.w/2*f,o.p[1]-o.s.ay*f,o.s.w*f,o.s.h*f);const s=o.st;
+  const f=o.f*sc;if(o.dy)kdDyn(rc,o,sc,Date.now(),0);rc.drawImage(o.s.c,o.p[0]-o.s.w/2*f,o.p[1]-o.s.ay*f,o.s.w*f,o.s.h*f);if(o.dy)kdDyn(rc,o,sc,Date.now(),1);const s=o.st;
   if(s&&s.hp<s.mhp){const w=40*sc,p=T(s.x,(s.t=='castle'?3.1:1.7),s.z);rc.fillStyle='#000';rc.fillRect(p[0]-w/2-1,p[1]-3,w+2,8);rc.fillStyle='#e53935';rc.fillRect(p[0]-w/2,p[1]-2,w*Math.max(0,s.hp/s.mhp),6)}});
- RBT.sh.forEach(q=>{const a=T(q.a[0],.9,q.a[1]),b=T(q.b[0],.9,q.b[1]);rc.strokeStyle=q.c;rc.lineWidth=Math.max(2,3*sc);rc.beginPath();rc.moveTo(a[0],a[1]);rc.lineTo(b[0],b[1]);rc.stroke()});
+ RBT.sh.forEach(q=>{const a=T(q.a[0],q.ha||.9,q.a[1]),b=T(q.b[0],.9,q.b[1]);rc.strokeStyle=q.c;rc.lineWidth=Math.max(2,(q.w||3)*sc);rc.beginPath();rc.moveTo(a[0],a[1]);rc.lineTo(b[0],b[1]);rc.stroke()});
  if(RBT.phase=='place'&&sc>=.45){rc.font='bold '+sc*15+'px sans-serif';RBT.S.forEach(s=>{if(!s.loot||s.hp<=0)return;const p=T(s.x,1.9,s.z);if(p[0]<-60||p[0]>cw+60||p[1]<-60||p[1]>ch+60)return;const tx='+'+s.val,w2=rc.measureText(tx).width+sc*16;rc.fillStyle=s.t=='gold'?KBC.gs:KBC.sil;rc.beginPath();rc.roundRect(p[0]-w2/2,p[1]-sc*11,w2,sc*22,sc*11);rc.fill();rc.strokeStyle='#333';rc.lineWidth=2;rc.stroke();rc.fillStyle='#222';rc.fillText(tx,p[0],p[1])})}
- const pn=T(0,4,0);rc.font='bold '+Math.max(11,sc*15)+'px sans-serif';const w3=rc.measureText(r.n).width+sc*18;rc.fillStyle='rgba(255,255,255,.92)';rc.beginPath();rc.roundRect(pn[0]-w3/2,pn[1]-sc*13,w3,sc*26,sc*10);rc.fill();rc.strokeStyle='#4a2c12';rc.lineWidth=2;rc.stroke();rc.fillStyle='#000';rc.fillText(r.n,pn[0],pn[1])}
-function kdRaidOpen(){const o=$('kfull');if(!o)return;let r=$('kraid');if(!r){r=document.createElement('div');r.id='kraid';o.appendChild(r)}r.className='';r.innerHTML=kdRaidHTML();r.style.display='block'}
+ const pn=T(0,4,0),fs=Math.max(11,sc*15),own='👑 '+r.o;rc.font='bold '+fs+'px sans-serif';const w1=rc.measureText(r.n).width;rc.font=fs*.8+'px sans-serif';const w3=Math.max(w1,rc.measureText(own).width)+fs*1.2,h3=fs*2.7;rc.fillStyle='rgba(255,255,255,.92)';rc.beginPath();rc.roundRect(pn[0]-w3/2,pn[1]-h3/2,w3,h3,fs*.7);rc.fill();rc.strokeStyle='#4a2c12';rc.lineWidth=2;rc.stroke();rc.fillStyle='#000';rc.font='bold '+fs+'px sans-serif';rc.fillText(r.n,pn[0],pn[1]-fs*.55);rc.font=fs*.8+'px sans-serif';rc.fillText(own,pn[0],pn[1]+fs*.7)}
+function kdRaidOpen(){const o=$('kfull');if(!o)return;let r=$('kraid');if(!r){r=document.createElement('div');r.id='kraid';o.appendChild(r)}const k=kdInit();let j=0;while(j<300&&(k.raided||{})[kdRival(j).id])j++;kdRaidView(j)}
+function kdRaidClose(){const r=$('kraid');if(r){r.style.display='none';r.innerHTML='';r.className=''}}
 const KDT=[
 ['👑 Welcome to your kingdom','Greetings, my ruler! This is your very own kingdom. Your castle sits in the middle of a big 60 by 60 plot with forests all around it. I will show you everything, step by step. You can open this guide again any time with the ❓ button.','castle'],
 ['🧭 Getting around','Drag the map to look around. Pinch (or scroll the mouse wheel) to zoom. 🗺 Fit shows your whole kingdom, 🏰 jumps back to your castle, and ➕ ➖ zoom in and out. Trees, rocks and mushrooms grow in clumps, and the open meadows between them are where you can build.','castle'],
@@ -820,7 +832,7 @@ const KDT=[
 ['⭐ Seeing your levels','Every upgradable building wears a ★ level badge. As it levels up it gets a colored glow and a colored patch of ground under it: grey for Levels 1 to 2, green for 3 to 4, blue for 5 to 6, gold for 7 to 8 and purple for 9 to 10. It also grows a little bigger each level.',null],
 ['🌷 Beauty','Decorations, walls and towers give beauty. Every point of beauty boosts everything your buildings produce by 1%, up to a maximum of +50%. Flowers, lanterns and trees are cheap ways to get a nice boost.',null],
 ['🛡️ Barracks and troops','Select your Barracks to train troops from the cards you own. Higher barracks levels hold more troops. Troops you train stay housed in the barracks, ready to go raiding.','barracks'],
-['⚔️ Raiding','Press ⚔️ Raid and pick a kingdom to scout. You will see the whole kingdom at full size. Choose a troop, tap the ground to place it, and the 2 minute battle begins. The 💥 Destroyed bar shows how much of the village you have wrecked. Every gold or silver building you destroy pays out loot, and taking the castle wins it all. Your troops always come home safe, win or lose.',null],
+['⚔️ Raiding','Press ⚔️ Raid and you are taken straight to a rival kingdom, shown at full size with the name of its kingdom and its ruler. Choose a troop, tap the ground to place it, and the 2 minute battle begins. The 💥 Destroyed bar shows how much of the village you have wrecked. Every gold or silver building you destroy pays out loot, and taking the castle wins it all. Your troops always come home safe, win or lose.',null],
 ['🔭 Scouting','Do not like the kingdom you found? Press Next Kingdom ➡ to scout another one, as many times as you like. Use 🗺 Fit to see all of it, and look for gaps in the walls. Maulers go straight for the defenses and walk through any gap they can find instead of smashing walls.',null],
 ['🎉 You are ready!','Spend your gold on upgrades, keep your stonemasons busy, never let your stores sit full, and raid often. Now go build the best kingdom in the land. Tap ❓ whenever you want me again!','castle']];
 function kdTutFocus(ty){KTF=null;if(!ty)return;const k=kdInit();let a,b;if(ty=='castle'){const C=kdCs();a=C[0];b=C[1]}else{const id=Object.keys(k.p).find(x=>k.p[x]&&k.p[x].t==ty);if(!id)return kdTutFocus('castle');const q=kdXZ(id);a=q[0];b=q[1]}KTF=[a,b];KC.px=(a-b)*32;KC.py=(a+b)*16;KC.zm=1.6;KDSEL=null}
@@ -846,46 +858,117 @@ function kdEnter(){KM=true;KDSEL=null;KDDEL=null;KDG=null;let o=$('kfull');if(!o
 function kdExit(){KM=false;KDG=null;const o=$('kfull');if(o)o.remove();document.body.style.overflow='';menu()}
 /* ---- tiny built-in 3D engine: flat-shaded polygons, perspective camera, painter's sort ---- */
 const k3c=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
-function k3f(F,P,col,o){const[a,b,c]=P,u=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],v=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];let n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];
+function k3f(F,P,col,o){if(K3J)P=P.map(p=>[p[0]+(k3h(p[0],p[1],p[2])-.5)*K3J,p[1]>.001?p[1]+(k3h(p[2],p[0],p[1])-.5)*K3J*.6:p[1],p[2]+(k3h(p[1],p[2],p[0])-.5)*K3J]);const[a,b,c]=P,u=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],v=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];let n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];
  const f=[0,1,2].map(i=>P.reduce((s,p)=>s+p[i],0)/P.length);if(n[0]*(f[0]-o[0])+n[1]*(f[1]-o[1])+n[2]*(f[2]-o[2])<0)n=n.map(q=>-q);
- const m=Math.hypot(n[0],n[1],n[2])||1,br=.5+.55*Math.max(0,(n[0]*-.4+n[1]*.8+n[2]*.45)/m);F.push({P,c:'rgb('+k3c(col).map(q=>Math.min(255,q*br|0))+')'})}
+ const m=Math.hypot(n[0],n[1],n[2])||1,br=(.5+.55*Math.max(0,(n[0]*-.4+n[1]*.8+n[2]*.45)/m))*(1+(k3h(f[0]*9.1,f[1]*9.1,f[2]*9.1)-.5)*K3V);F.push({P,c:'rgb('+k3c(col).map(q=>Math.min(255,q*br|0))+')'})}
 function k3box(F,x,y,z,w,h,d,col){const X=w/2,Z=d/2,p=[[x-X,y,z-Z],[x+X,y,z-Z],[x+X,y,z+Z],[x-X,y,z+Z],[x-X,y+h,z-Z],[x+X,y+h,z-Z],[x+X,y+h,z+Z],[x-X,y+h,z+Z]],o=[x,y+h/2,z];
  [[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7],[4,5,6,7]].forEach(q=>k3f(F,q.map(i=>p[i]),col,o))}
 function k3pri(F,x,y,z,r,h,col,n,r2){n=n||8;r2=r2==null?r:r2;const o=[x,y+h/2,z],A=[],B=[];for(let i=0;i<n;i++){const a=i/n*6.2832;A.push([x+Math.cos(a)*r,y,z+Math.sin(a)*r]);B.push([x+Math.cos(a)*r2,y+h,z+Math.sin(a)*r2])}
  for(let i=0;i<n;i++){const j=(i+1)%n;k3f(F,r2>0?[A[i],A[j],B[j],B[i]]:[A[i],A[j],B[i]],col,o)}if(r2>0)k3f(F,B,col,o)}
-function k3castle(F,L){const h=1.2+.1*L;
- k3box(F,0,0,0,1.7,h,1.7,'#dcd6c8');k3pri(F,0,h,0,1.25,.9,'#3b6fd0',4,0);k3pri(F,0,h+.9,0,.03,.5,'#6b4a2b',4);k3box(F,.2,h+1.15,0,.4,.25,.03,'#ffd23f');
- for(const sx of[-1,1])for(const sz of[-1,1]){k3pri(F,sx*1.05,0,sz*1.05,.4,h+.3,'#cfc9bb',10);k3pri(F,sx*1.05,h+.3,sz*1.05,.5,.6,'#d94a3d',10,0)}
- k3box(F,0,0,1.05,1.7,.6,.25,'#bdb7a8');k3box(F,0,0,-1.05,1.7,.6,.25,'#bdb7a8');k3box(F,1.05,0,0,.25,.6,1.7,'#bdb7a8');k3box(F,-1.05,0,0,.25,.6,1.7,'#bdb7a8');
- k3box(F,0,0,.9,.5,.65,.1,'#4a3220')}
-function k3b(F,t,x,z,at){const nb=(a,b)=>{const q=at(x+a,z+b);return q&&q.t=='wall'};
+let K3Q=3,K3J=0,K3V=0,K3OA=.25;
+const k3h=(a,b,c)=>{const v=Math.sin(a*127.1+b*311.7+c*74.7)*43758.5453;return v-Math.floor(v)},K3WH=[0,.8,.95,1.05,1.15,1.25];
+/* quality 1..5: low levels are lumpy, wobbly and patchy (badly made); high levels are crisp, trimmed and ornate */
+function k3set(q){q=q||0;K3Q=q||3;K3J=[0,.07,.04,.015,0,0][q];K3V=[0,.3,.18,.08,.02,0][q];K3OA=[.25,.4,.33,.27,.22,.2][q]}
+function k3tq(b){const d=KD_B[b.t];if(!d||b.t=='hut'||(d.k=='deco'&&!d.upg&&!(d.def&&b.rd)))return 3;return kdTier(b.l||1)}
+function k3csp(L){return k3spr('castle'+L,300,330,F=>{k3set([0,1,2,3,3,4,5][L]||3);k3castle(F,L);k3set(0)})}
+function k3castle(F,L){const Q=K3Q,pk=(...a)=>a[Math.min(a.length,Q)-1],B=(x,y,z,w,h,d,c)=>k3box(F,x,y,z,w,h,d,c),P=(x,y,z,r,h,c,n,r2)=>k3pri(F,x,y,z,r,h,c,n,r2),h=1.2+.1*L,
+ wall=pk('#7a5a36','#b9a88a','#dcd6c8','#e6e0d2','#f4f0e6'),trim=pk('#5a4020','#8a7a5a','#bdb7a8','#cfc9bb','#c9a24a'),roof=pk('#b89a4a','#8a5a30','#3b6fd0','#2f5fc0','#3b4fa8'),tw=pk('#7a5a36','#a89572','#cfc9bb','#d8d2c4','#f0ebe0'),tr=pk('#b89a4a','#8a5a30','#d94a3d','#c0392b','#c9a24a'),win=Q>=4?'#ffe9a0':'#4a6a8a';
+ if(Q==1){B(0,0,0,1.5,.9,1.5,wall);P(0,.9,0,1.2,.8,roof,4,0);for(let i=0;i<10;i++){const a=i/10*6.283;P(Math.cos(a)*1.15,0,Math.sin(a)*1.15,.08,.55+(i%3)*.08,'#6a4a2a',5,.01)}
+  B(0,0,.76,.4,.55,.06,'#3a2418');P(.0,1.7,0,.03,.4,'#6b4a2b',4);B(.14,1.95,0,.3,.18,.03,'#c0574a');return}
+ if(Q==2){B(0,0,0,1.6,.5,1.6,'#a89a80');B(0,.5,0,1.5,h-.4,1.5,wall);P(0,h+.1,0,1.2,.75,roof,4,0);
+  for(const sx of[-1,1])for(const sz of[-1,1]){B(sx*.95,0,sz*.95,.5,h*.8,.5,tw);P(sx*.95,h*.8,sz*.95,.45,.5,tr,4,0)}
+  B(0,0,.82,.42,.6,.06,'#3a2418');B(0,.6,.82,.5,.06,.06,trim);P(0,h+.85,0,.03,.45,'#6b4a2b',4);B(.2,h+1.1,0,.4,.22,.03,'#d9534f');wf(F,-.45,h*.55,.81,win);return}
+ /* Q>=3: stone keep with round towers */
+ B(0,0,0,1.7,h,1.7,wall);if(Q>=4)B(0,h*.45,0,1.76,.07,1.76,trim);if(Q>=5)B(0,h-.08,0,1.8,.1,1.8,'#c9a24a');
+ P(0,h,0,1.25,.9,roof,4,0);P(0,h+.9,0,.03,.5,'#6b4a2b',4);B(.2,h+1.15,0,.4,.25,.03,'#ffd23f');if(Q>=5)P(0,h+1.4,0,.07,.18,'#ffd23f',6,0);
+ for(const sx of[-1,1])for(const sz of[-1,1]){P(sx*1.05,0,sz*1.05,.4,h+.3,tw,10);if(Q>=4)P(sx*1.05,h*.6,sz*1.05,.42,.06,trim,10);P(sx*1.05,h+.3,sz*1.05,.5,.6,tr,10,0);
+  if(Q>=4){P(sx*1.05,h+.9,sz*1.05,.02,.35,'#6b4a2b',4);B(sx*1.05+.1,h+1.12,sz*1.05,.2,.12,.02,Q>=5?'#ffd23f':'#d9534f')}if(Q>=5)P(sx*1.05,h+.9,sz*1.05,.07,.16,'#ffd23f',6,0)}
+ B(0,0,1.05,1.7,.6,.25,'#bdb7a8');B(0,0,-1.05,1.7,.6,.25,'#bdb7a8');B(1.05,0,0,.25,.6,1.7,'#bdb7a8');B(-1.05,0,0,.25,.6,1.7,'#bdb7a8');
+ if(Q>=4)for(let i=-3;i<=3;i++){B(i*.24,.6,1.05,.12,.1,.25,'#bdb7a8');B(1.05,.6,i*.24,.25,.1,.12,'#bdb7a8')}
+ B(0,0,.9,.5,.65,.1,'#4a3220');if(Q>=4){B(0,.65,.9,.62,.1,.12,trim);for(let i=-2;i<=2;i++)B(i*.1,0,.96,.025,.6,.02,'#6e6e78')}
+ if(Q>=3){wf(F,-.5,h*.55,.86,win);wf(F,.5,h*.55,.86,win);wr(F,.86,h*.55,-.4,win);wr(F,.86,h*.55,.4,win)}}
+/* live parts: the tower archer (the game's own archer sprite) and the cannon barrel, which swings round to follow its target */
+function kdArcher(c,x,y,s,fl,pr){if(!ARR)return;c.save();c.imageSmoothingEnabled=false;const fr=pr>=0?AAT[Math.min(AAT.length-1,Math.floor(pr*AAT.length))]:AWK[0],w=fr[2]*s,h=fr[3]*s;c.translate(x,y-h/2);if(fl)c.scale(-1,1);c.drawImage(ARI,fr[0],fr[1],fr[2],fr[3],-fr[4]*s,-h/2,w,h);c.restore()}
+function kdBarrel(c,p,s,Q,ang,rec,fl){const ph=Q>=3?.5:.42,dx=Math.cos(ang),dz=Math.sin(ang),X=(l,y)=>[p[0]+(dx-dz)*l*32*s,p[1]+((dx+dz)*l*16-y*36)*s],bk=.12*rec,a=X(-.2-bk,ph),b=X(.5-bk,ph+.04),vx=b[0]-a[0],vy=b[1]-a[1],ln=Math.hypot(vx,vy)||1,nx=-vy/ln,ny=vx/ln,w0=7.5*s,w1=5.2*s,mc=Q>=5?'#ffd23f':'#55555f';
+ c.save();c.lineJoin='round';c.fillStyle=Q>=5?'#2a2a30':Q>=3?'#2b2b33':'#3a3a40';c.strokeStyle='rgba(0,0,0,.55)';c.lineWidth=Math.max(1,1.2*s);
+ c.beginPath();c.moveTo(a[0]+nx*w0,a[1]+ny*w0);c.lineTo(b[0]+nx*w1,b[1]+ny*w1);c.lineTo(b[0]-nx*w1,b[1]-ny*w1);c.lineTo(a[0]-nx*w0,a[1]-ny*w0);c.closePath();c.fill();c.stroke();
+ c.strokeStyle='rgba(255,255,255,.28)';c.lineWidth=Math.max(1,2*s);c.beginPath();c.moveTo(a[0]+nx*w0*.45,a[1]+ny*w0*.45);c.lineTo(b[0]+nx*w1*.45,b[1]+ny*w1*.45);c.stroke();
+ c.strokeStyle=mc;c.lineWidth=Math.max(2,3.2*s);c.beginPath();c.moveTo(b[0]+nx*w1,b[1]+ny*w1);c.lineTo(b[0]-nx*w1,b[1]-ny*w1);c.stroke();
+ if(Q>=3){const m=[a[0]+vx*.5,a[1]+vy*.5],w=(w0+w1)/2;c.lineWidth=Math.max(1.5,2.4*s);c.beginPath();c.moveTo(m[0]+nx*w,m[1]+ny*w);c.lineTo(m[0]-nx*w,m[1]-ny*w);c.stroke()}
+ c.fillStyle='#1d1d22';c.beginPath();c.arc(a[0],a[1],w0*.85,0,6.3);c.fill();
+ if(fl>0){const k=fl/.25,r=(10+16*(1-k))*s;c.globalAlpha=Math.min(1,k*1.4);const g=c.createRadialGradient(b[0],b[1],0,b[0],b[1],r);g.addColorStop(0,'#fff6c0');g.addColorStop(.5,'#ffb23a');g.addColorStop(1,'rgba(255,90,30,0)');c.fillStyle=g;c.beginPath();c.arc(b[0],b[1],r,0,6.3);c.fill();c.globalAlpha=1}
+ c.restore()}
+function kdDyn(c,o,sc,ms,ph){const d=o.dy,s=o.f*sc,p=o.p,st=d.st,Q=d.q,sd=d.sd||0;
+ if(d.t=='watch'){if(ph!=1)return;let fl=k3h(sd,1,2)<.5,pr=-1;if(st){if(st.fl!=null)fl=st.fl;if(st.pt>0)pr=1-st.pt/st.pd}else{const cy=((ms/1000)+sd*3.7)%7;if(cy<.7)pr=cy/.7}
+  const H=K3WH[Q]+.1,bob=pr<0?Math.sin(ms/420+sd)*.7*s:0;kdArcher(c,p[0],p[1]-H*36*s+bob,s*.9,fl,pr);return}
+ if(d.t=='cannon'){let ang,rec=0,fl=0;if(st&&st.ang!=null){ang=st.ang;fl=Math.max(0,st.fa||0);rec=fl/.25}else ang=.78+Math.sin(ms/1700+sd)*.75;
+  const back=Math.cos(ang)+Math.sin(ang)<0;if(back?ph!=0:ph!=1)return;kdBarrel(c,p,s,Q,ang,rec,fl)}}
+const wf=(F,a,y,c,col)=>k3box(F,a,y,c,.14,.18,.03,col),wr=(F,a,y,c,col)=>k3box(F,a,y,c,.03,.18,.14,col);
+function k3b(F,t,x,z,at){const Q=K3Q,pk=(...a)=>a[Math.min(a.length,Q)-1],nb=(a,b)=>{const q=at(x+a,z+b);return q&&q.t=='wall'},
+ B=(a,y,c,w,h,d,col)=>k3box(F,x+a,y,z+c,w,h,d,col),P=(a,y,c,r,h,col,n,r2)=>k3pri(F,x+a,y,z+c,r,h,col,n,r2),
+ wF=(a,y,c)=>B(a,y,c,.12,.14,.03,Q>=4?'#ffe9a0':'#5b7a99'),wR=(a,y,c)=>B(a,y,c,.03,.14,.12,Q>=4?'#ffe9a0':'#5b7a99');
  switch(t){
- case'farm':k3box(F,x,0,z,.85,.1,.85,'#8a5a2b');for(let i=-1;i<2;i++)k3box(F,x+i*.25,.1,z,.15,.18,.65,'#58b848');break;
- case'mill':k3box(F,x,0,z,.7,.45,.6,'#9a6b3a');k3pri(F,x,.45,z,.6,.35,'#c0392b',4,.12);k3pri(F,x+.35,0,z+.3,.1,.25,'#b07a40',6);break;
- case'market':k3box(F,x,0,z,.7,.35,.7,'#e8d4a0');k3box(F,x,.35,z,.9,.1,.9,'#d9534f');k3box(F,x,.45,z,.5,.1,.5,'#fafafa');break;
- case'mine':k3pri(F,x,0,z,.44,.5,'#7d8590',6,.2);k3pri(F,x+.1,.4,z,.13,.5,'#4fc3f7',5,0);break;
- case'cave':k3pri(F,x,0,z,.46,.5,'#6b4fa0',8,.25);k3pri(F,x-.1,.4,z,.12,.5,'#c084fc',5,0);k3pri(F,x+.12,.4,z+.1,.1,.4,'#e879f9',5,0);break;
- case'gold':k3pri(F,x,0,z,.46,.5,'#8b7355',7,.22);k3box(F,x,0,z+.38,.3,.28,.1,'#2a2118');k3box(F,x+.3,0,z-.2,.14,.12,.14,'#ffd23f');k3box(F,x-.3,0,z-.25,.12,.1,.12,'#ffc400');k3pri(F,x,.45,z,.08,.12,'#ffd23f',5);break;
- case'barracks':k3box(F,x,0,z,.9,.42,.62,'#b5483c');k3box(F,x,.42,z,1,.1,.72,'#6b2d26');k3pri(F,x,.52,z,.5,.28,'#8a3b32',4,.1);k3box(F,x+.38,.4,z-.3,.04,.6,.04,'#6b4a2b');k3box(F,x+.3,.8,z-.3,.14,.18,.03,'#3b82f6');k3box(F,x,0,z+.32,.22,.3,.04,'#3a2418');break;
- case'wall':{const Q=[['#a8a8b0','#bcbcc4','#9a9aa4'],['#8fa3c0','#a9bad3','#7f93b0'],['#c9a24a','#e3c46a','#b08a35']][K3TIER-1||0],E=nb(1,0),W=nb(-1,0),S2=nb(0,1),N=nb(0,-1);if(!(E||W||S2||N)){k3box(F,x,0,z,.98,.5,.3,Q[0]);for(let i=-1;i<2;i++)k3box(F,x+i*.32,.5,z,.2,.14,.3,Q[1]);break}
-  k3box(F,x,0,z,.36,.62,.36,Q[2]);k3box(F,x,.62,z,.44,.12,.44,Q[1]);
-  if(E){k3box(F,x+.25,0,z,.5,.5,.3,Q[0]);k3box(F,x+.28,.5,z,.22,.12,.3,Q[1])}if(W){k3box(F,x-.25,0,z,.5,.5,.3,Q[0]);k3box(F,x-.28,.5,z,.22,.12,.3,Q[1])}
-  if(S2){k3box(F,x,0,z+.25,.3,.5,.5,Q[0]);k3box(F,x,.5,z+.28,.3,.12,.22,Q[1])}if(N){k3box(F,x,0,z-.25,.3,.5,.5,Q[0]);k3box(F,x,.5,z-.28,.3,.12,.22,Q[1])}break}
- case'gstore':case'sstore':{const g=t=='gstore';k3box(F,x,0,z,.8,.4,.7,'#6b5a3a');k3box(F,x,.4,z,.9,.1,.8,'#8d7646');[[-.2,-.1],[.1,.15],[.2,-.15]].forEach(q=>k3box(F,x+q[0],.5,z+q[1],.28,.14,.16,g?'#ffd23f':'#d6dde4'));k3box(F,x,0,z+.36,.24,.3,.04,'#3a2a18');break}
- case'hut':k3box(F,x,0,z,.75,.42,.62,'#9a9aa4');k3pri(F,x,.42,z,.62,.34,'#8b5a2b',4,.1);k3box(F,x+.22,.5,z-.15,.14,.4,.14,'#6e6e78');k3box(F,x+.3,0,z+.34,.22,.14,.14,'#3a3a42');k3box(F,x-.1,0,z+.32,.2,.3,.04,'#3a2418');break
- case'watch':k3box(F,x,0,z,.45,.9,.45,'#a8a8b0');k3box(F,x,.9,z,.65,.15,.65,'#8d8d96');k3pri(F,x,1.05,z,.42,.4,'#3b6fd0',4,0);break;
- case'cannon':k3pri(F,x,0,z,.4,.35,'#9a9aa4',9);k3box(F,x,.35,z,.2,.2,.7,'#2b2b33');k3pri(F,x-.25,0,z-.25,.1,.2,'#4a4a52',6);break;
- case'spikes':k3box(F,x,0,z,.85,.08,.85,'#4a3a2a');for(let i=-1;i<2;i++)for(let j=-1;j<2;j++)k3pri(F,x+i*.27,.08,z+j*.27,.07,.3,'#c9ced4',5,0);break;
- case'tree':k3pri(F,x,0,z,.08,.3,'#7a4a21',6);k3pri(F,x,.25,z,.34,.55,'#2f9e44',7,0);k3pri(F,x,.6,z,.25,.45,'#38b349',7,0);break;
- case'flower':k3box(F,x,0,z,.8,.08,.8,'#7a4a21');[[-.2,-.2,'#f06292'],[.2,-.15,'#ffd54f'],[0,.2,'#ba68c8'],[-.25,.15,'#ff8a65']].forEach(q=>k3box(F,x+q[0],.08,z+q[1],.14,.2,.14,q[2]));break;
- case'lantern':k3pri(F,x,0,z,.05,.55,'#5a4630',6);k3box(F,x,.55,z,.2,.22,.2,'#ffd54f');k3pri(F,x,.77,z,.18,.12,'#5a4630',4,0);break;
- case'fountain':k3pri(F,x,0,z,.44,.16,'#b8c2cc',10);k3pri(F,x,.16,z,.34,.05,'#4fc3f7',10);k3pri(F,x,.2,z,.07,.4,'#9ad7ff',6,.03);break;
- case'tent':k3pri(F,x,0,z,.46,.3,'#fafafa',8);k3pri(F,x,.3,z,.5,.5,'#e53935',8,0);break;
- case'statue':k3box(F,x,0,z,.4,.28,.4,'#9aa0a6');k3pri(F,x,.28,z,.12,.4,'#c9ced4',6);k3pri(F,x,.68,z,.1,.14,'#c9ced4',6,.04);break}}
+ case'farm':{const n=pk(2,3,4,4,5),h=pk(.09,.14,.2,.24,.26);B(0,0,0,.92,.08,.92,pk('#7a5530','#7f5a30','#8a5a2b','#86582a','#7a4f26'));
+  for(let i=0;i<n;i++){const o=-.33+i*(.66/(n-1));B(o,.08,0,.11,h,.7,pk('#86a94d','#6fae45','#4fb53f','#d6bc38','#f2c93a'));if(Q>=3)B(o,.08+h,0,.13,.05,.7,Q>=4?'#f6dc5c':'#3f9f34')}
+  if(Q>=2)[[-1,-1],[1,-1],[-1,1],[1,1]].forEach(q=>B(q[0]*.44,.08,q[1]*.44,.05,.2,.05,'#6a4a2a'));
+  if(Q>=3){B(0,.2,.44,.88,.03,.03,'#8a6a42');B(.44,.2,0,.03,.03,.88,'#8a6a42');B(-.3,.08,-.3,.04,.36,.04,'#6a4a2a');B(-.3,.3,-.3,.22,.03,.03,'#6a4a2a');P(-.3,.44,-.3,.06,.08,'#e6c27a',6);P(-.3,.52,-.3,.1,.04,'#7a5a36',6,.05)}
+  if(Q>=4)P(.32,.08,.3,.1,.13,'#e0b84a',8);if(Q>=5){B(.44,.08,-.44,.03,.6,.03,'#6b4a2b');B(.5,.5,-.44,.14,.1,.02,'#ffd23f')}break}
+ case'mill':{const wl=pk('#6e5030','#7a5a36','#8a6a42','#9a7048','#a98055'),rf=pk('#b89a4a','#8a5a30','#b5483c','#3b6fd0','#2f55b0'),wy=Q>=3?.1:0,wh=Q>=3?.32:.4;
+  if(Q>=3)B(0,0,-.05,.76,.1,.6,'#8d8d96');B(0,wy,-.05,.7,wh,.55,wl);P(0,wy+wh,-.05,.62,pk(.28,.3,.32,.36,.4),rf,4,Q>=2?.1:.2);B(-.15,0,.235,.2,.28,.03,'#3a2418');
+  if(Q>=3){wF(.2,.2,.235);wR(.355,.2,-.05);B(.22,.42,-.2,.12,.34,.12,'#7d7d86')}
+  if(Q>=2){B(.3,0,.36,.3,.12,.2,'#b0845a');P(.3,.12,.36,.11,.02,'#c9ced4',10)}
+  const lg=pk(2,3,6,6,8);for(let i=0;i<lg;i++){const r=Math.floor(i/3),c=i%3;B(-.32,r*.09,.3+c*.1-r*.04,.3,.09,.1,i%2?'#7a4a21':'#8a5a2b')}
+  if(Q>=5){B(0,wy+wh+.28,-.05,.5,.03,.05,'#ffd23f');B(.34,.4,-.28,.03,.5,.03,'#6b4a2b');B(.4,.78,-.28,.14,.1,.02,'#ffd23f')}break}
+ case'market':{B(0,0,.05,.7,.3,.4,pk('#8a6a42','#9a7a50','#e8d4a0','#efe0b8','#f4ecd8'));
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(q=>{if(Q==1&&q[1]<0)return;B(q[0]*.4,0,q[1]*.3,.05,.64,.05,pk('#6a4a2a','#7a5a36','#8a6a42','#7a5a36','#c9a24a'))});
+  const n=pk(1,4,5,5,6),cl=[['#b9a37a'],['#a65a4a','#e8e0cc'],['#d9534f','#fafafa'],['#d9534f','#fafafa'],['#3b6fd0','#fff4d0']][Q-1];
+  for(let i=0;i<n;i++)B(-.42+(i+.5)*(.84/n),.62-(Q==1?(i%2)*.04:0),0,.84/n,.06,.86,cl[i%cl.length]);
+  if(Q>=4)for(let i=0;i<n;i++)B(-.42+(i+.5)*(.84/n),.54,.44,.84/n*.9,.08,.04,cl[i%cl.length]);
+  const gc=['#e53935','#ffd54f','#7cb342','#ff8a65','#ba68c8'];for(let i=0;i<pk(2,3,4,5,5);i++)B(-.26+i*.13,.3,.05+(i%2)*.1,.1,.08,.1,gc[i%5]);
+  B(.44,0,.36,.2,.18,.2,'#8a6a42');if(Q>=3)B(.2,0,.4,.18,.14,.18,'#9a7a50');if(Q>=5){P(0,.7,0,.1,.03,'#ffd23f',8);B(-.4,.64,-.3,.03,.3,.03,'#6b4a2b');B(-.33,.84,-.3,.14,.1,.02,'#ffd23f')}break}
+ case'mine':case'cave':case'gold':{const gd=t=='gold',cv=t=='cave',hc=gd?pk('#7a6a50','#82704f','#8b7355','#96795a','#a08060'):cv?pk('#5e4a80','#664f90','#6b4fa0','#7452b0','#7c58c0'):pk('#6f7680','#757d88','#7d8590','#858e9a','#8e98a6'),wd=pk('#6a4a2a','#7a5a36','#8a6a42','#7a7a84','#c9a24a');
+  P(0,0,0,.5,.52,hc,7,.22);B(0,0,.36,.34,.3,.12,'#1b1612');B(-.2,0,.4,.07,.34,.07,wd);B(.2,0,.4,.07,.34,.07,wd);B(0,.3,.4,.48,.07,.09,wd);
+  if(Q>=3){B(-.08,0,.55,.04,.02,.3,'#6e6e76');B(.08,0,.55,.04,.02,.3,'#6e6e76');B(0,.03,.6,.2,.12,.16,'#6b6b74');B(0,.15,.6,.16,.04,.12,gd?'#ffd23f':cv?'#c084fc':'#4fc3f7')}
+  if(Q>=4)B(.26,.36,.44,.06,.09,.06,'#ffd54f');
+  if(gd){[[.34,0,.3],[-.34,0,.28],[.3,0,-.3],[-.3,0,-.32],[.36,0,-.05],[-.38,0,.05]].slice(0,pk(1,2,3,4,6)).forEach(q=>B(q[0],0,q[2],.14,.1,.14,'#ffd23f'));P(0,.5,0,.08,.12,'#ffd23f',5);if(Q>=5){B(-.36,0,.3,.16,.1,.1,'#ffe066');B(-.36,.1,.3,.12,.1,.1,'#ffd23f')}}
+  else{const g=cv?'#c084fc':'#4fc3f7',g2=cv?'#e879f9':'#9ad7ff';[[.12,.4,.02,.13],[-.1,.42,.1,.1],[0,.45,-.12,.12],[.2,.36,-.08,.09],[-.18,.38,-.1,.08]].slice(0,pk(1,2,3,4,5)).forEach((q,i)=>P(q[0],q[1],q[2],q[3],.34+(i%2)*.1,i%2?g2:g,5,0))}break}
+ case'barracks':{const wl=pk('#7a5a36','#8a6a42','#b5483c','#b84a3e','#c9564a'),rf=pk('#b89a4a','#7a4a2a','#8a3b32','#6b2d26','#3b4a78'),by=Q>=3?.14:0;
+  if(Q>=3)B(0,0,0,.94,.14,.66,'#8d8d96');B(0,by,0,.9,.42-by,.62,wl);B(0,.42,0,1,.1,.72,pk('#6a4a2a','#5a3a20','#6b2d26','#5a2420','#8a6a2a'));P(0,.52,0,.5,pk(.2,.24,.28,.3,.34),rf,4,.1);
+  B(0,by,.32,.22,.3,.04,'#3a2418');if(Q>=2)B(0,.3,.33,.28,.04,.04,'#6a4a2a');if(Q>=3){wF(-.3,.22,.32);wF(.3,.22,.32);wR(.46,.22,0)}
+  B(.38,.4,-.3,.04,.6,.04,'#6b4a2b');B(.3,.8,-.3,.14,pk(.1,.14,.18,.18,.2),.03,pk('#9a8a6a','#a0522d','#3b82f6','#3b82f6','#ffd23f'));
+  if(Q>=4){B(-.4,0,.44,.04,.36,.04,'#7a5a36');B(-.4,.22,.44,.22,.04,.04,'#7a5a36');P(-.4,.34,.44,.06,.08,'#e6c27a',6)}
+  if(Q>=5)for(let i=-2;i<=2;i++){B(i*.2,.52,.36,.1,.1,.06,'#d9d2c0')}break}
+ case'wall':{const Qc=[['#7a5a36','#8a6a42','#6a4a2a'],['#8a8478','#9a9488','#7a7468'],['#a8a8b0','#bcbcc4','#9a9aa4'],['#8fa3c0','#a9bad3','#7f93b0'],['#e8e4da','#fffaf0','#c9a24a']][Q-1],E=nb(1,0),W=nb(-1,0),S2=nb(0,1),N=nb(0,-1);
+  const seg=(ox,oz,w,d)=>{if(Q==1){const lx=w>=d,n=Math.max(1,Math.round((lx?w:d)/.17));for(let i=0;i<n;i++){const o=(i-(n-1)/2)*(lx?w:d)/n;P(ox+(lx?o:0),0,oz+(lx?0:o),.09,.5+((i*7)%3)*.05,Qc[0],5,.02)}}else{B(ox,0,oz,w,.5,d,Qc[0]);B(ox,.5,oz,w,.1,d,Qc[1]);if(Q>=3)B(ox,.6,oz,w>d?w*.5:w,.08,w>d?d:d*.5,Qc[1])}};
+  if(!(E||W||S2||N)){if(Q==1){for(let i=-2;i<=2;i++)P(i*.2,0,0,.09,.52+(Math.abs(i)%2)*.08,Qc[0],5,.02)}else{B(0,0,0,.98,.5,.3,Qc[0]);for(let i=-1;i<2;i++)B(i*.32,.5,0,.2,.14,.3,Qc[1])}break}
+  if(Q==1)P(0,0,0,.14,.72,Qc[2],6,.05);else{B(0,0,0,.36,.62,.36,Qc[2]);B(0,.62,0,.44,.12,.44,Qc[1]);if(Q>=4)P(0,.74,0,.12,.1,Q>=5?'#ffd23f':'#7f93b0',5,0)}
+  if(E)seg(.25,0,.5,.3);if(W)seg(-.25,0,.5,.3);if(S2)seg(0,.25,.3,.5);if(N)seg(0,-.25,.3,.5);break}
+ case'gstore':case'sstore':{const g=t=='gstore',it=g?'#ffd23f':'#d6dde4',wl=pk('#6a4a2a','#7a5a36','#6b5a3a','#6e6e78','#e0d8c8'),rf=pk('#9a8040','#8d7646','#8d7646','#555560','#c9a24a');
+  B(0,0,0,.8,.4,.7,wl);B(0,.4,0,.9,.1,.8,rf);[[-.2,-.1],[.1,.15],[.2,-.15],[-.1,.2],[0,-.2]].slice(0,pk(2,3,3,4,5)).forEach(q=>B(q[0],.5,q[1],.28,.14,.16,it));if(Q>=3)P(0,.5,0,.2,.12,it,8,.14);if(Q>=5)P(0,.62,0,.12,.1,it,8,.06);
+  B(0,0,.36,.24,.3,.04,'#3a2a18');if(Q>=2)B(0,.3,.37,.3,.04,.04,'#5a3a20');if(Q>=4){B(0,.12,.36,.8,.03,.03,'#9aa0a6');B(0,.3,.36,.8,.03,.03,'#9aa0a6')}if(Q>=5)B(0,.15,.385,.06,.06,.02,'#ffd23f');break}
+ case'hut':B(0,0,0,.75,.42,.62,'#9a9aa4');B(0,.14,.315,.75,.02,.01,'#7a7a84');B(0,.28,.315,.75,.02,.01,'#7a7a84');P(0,.42,0,.62,.34,'#8b5a2b',4,.1);B(.22,.5,-.15,.14,.4,.14,'#6e6e78');B(.22,.9,-.15,.18,.05,.18,'#5a5a64');B(.3,0,.34,.22,.14,.14,'#3a3a42');B(-.1,0,.32,.2,.3,.04,'#3a2418');wF(-.3,.22,.315);B(.36,0,.36,.16,.12,.16,'#b8b8c0');B(.36,.12,.36,.12,.1,.12,'#a8a8b0');B(-.38,0,.4,.14,.1,.1,'#3a3a42');break;
+ case'watch':{const H=K3WH[Q],st=pk('#7a5a36','#8a6a42','#a8a8b0','#b8b8c2','#e4dfd2'),tr=pk('#5a4020','#6a4a28','#8d8d96','#7f7f8a','#c9a24a'),wd=pk('#6a4a2a','#7a5a36');
+  if(Q<=2){[[-1,-1],[1,-1],[-1,1],[1,1]].forEach(q=>B(q[0]*.2,0,q[1]*.2,.07,H,.07,wd));B(0,H*.35,.2,.42,.04,.03,wd);B(.2,H*.35,0,.03,.04,.42,wd);B(0,H*.65,.2,.42,.04,.03,wd);B(.2,H*.65,0,.03,.04,.42,wd);B(0,H,0,.62,.07,.62,'#8a6a42');
+   B(0,H+.07,.29,.6,.08,.04,wd);B(.29,H+.07,0,.04,.08,.6,wd);B(0,H+.07,-.29,.6,.08,.04,wd);B(-.29,H+.07,0,.04,.08,.6,wd);B(.0,0,.27,.09,H,.03,'#5a3a20')}
+  else{if(Q>=3)P(0,0,0,.34,.1,'#8d8d96',8);P(0,0,0,.3,H,st,8,.27);P(0,H,0,.36,.09,tr,8);for(let i=0;i<8;i++){const a=i/8*6.283;B(Math.cos(a)*.31,H+.09,Math.sin(a)*.31,.1,.1,.1,tr)}
+   B(0,0,.285,.12,.22,.03,'#3a2418');if(Q>=4){B(0,H*.5,.275,.04,.18,.03,'#222');B(.275,H*.5,0,.03,.18,.04,'#222');B(-.3,H+.09,-.3,.03,.4,.03,'#6b4a2b');B(-.22,H+.35,-.3,.16,.1,.02,'#3b6fd0')}
+   if(Q>=5){P(0,H*.55,0,.295,.04,'#ffd23f',8);P(0,H*.2,0,.3,.03,'#ffd23f',8)}}break}
+ case'cannon':{const wd=pk('#6a4a2a','#7a5a36','#8a6a42','#5a5a64','#3a3a44'),by=Q>=3?.18:.1;
+  if(Q<=2){B(0,0,0,.72,.1,.72,wd);B(0,.1,-.2,.5,.08,.1,'#5a3a20')}else P(0,0,0,.42,.18,pk('#9a9aa4','#9a9aa4','#9a9aa4','#8a8a94','#c9c4b4'),9);
+  B(0,by,0,.34,.14,.46,wd);B(-.25,Q>=3?.04:0,0,.06,.24,.24,'#2b2b33');B(.25,Q>=3?.04:0,0,.06,.24,.24,'#2b2b33');P(0,by+.14,0,.1,.12,'#4a4a52',6);
+  if(Q>=3){P(.32,0,.32,.06,.06,'#2b2b33',8);P(.4,0,.26,.06,.06,'#2b2b33',8);P(.34,.06,.28,.05,.05,'#2b2b33',8)}if(Q>=5)P(0,by+.2,0,.13,.03,'#ffd23f',8);break}
+ case'spikes':{B(0,0,0,.9,.08,.9,pk('#5a3a20','#4a3a2a','#4a4a52','#3a3a44','#2a2a32'));const n=pk(2,3,3,4,4),sh=pk(.26,.28,.3,.32,.34),cl=pk('#8a6a42','#9aa0a6','#c9ced4','#dfe5ea','#fff4c0');
+  for(let i=0;i<n;i++)for(let j=0;j<n;j++)P(-.33+i*(.66/(n-1)),.08,-.33+j*(.66/(n-1)),Q==1?.09:.065,sh,cl,Q==1?4:5,0);break}
+ case'tree':P(0,0,0,.08,.3,'#7a4a21',6);P(0,.25,0,.34,.55,'#2f9e44',7,0);P(0,.6,0,.25,.45,'#38b349',7,0);break;
+ case'flower':B(0,0,0,.8,.08,.8,'#7a4a21');[[-.2,-.2,'#f06292'],[.2,-.15,'#ffd54f'],[0,.2,'#ba68c8'],[-.25,.15,'#ff8a65'],[.22,.2,'#4fc3f7'],[0,-.02,'#fafafa']].forEach(q=>{B(q[0],.08,q[1],.03,.16,.03,'#3f9f34');B(q[0],.24,q[1],.14,.1,.14,q[2])});break;
+ case'lantern':P(0,0,0,.1,.06,'#5a4630',6);P(0,.06,0,.05,.5,'#5a4630',6);B(0,.56,0,.2,.22,.2,'#ffd54f');B(0,.78,0,.26,.04,.26,'#5a4630');P(0,.82,0,.18,.12,'#5a4630',4,0);break;
+ case'fountain':P(0,0,0,.44,.16,'#b8c2cc',10);P(0,.16,0,.34,.05,'#4fc3f7',10);P(0,.12,0,.12,.4,'#b8c2cc',8,.08);P(0,.5,0,.2,.05,'#b8c2cc',8);P(0,.55,0,.15,.03,'#4fc3f7',8);P(0,.55,0,.04,.2,'#9ad7ff',6,.03);break;
+ case'tent':P(0,0,0,.46,.3,'#fafafa',8);P(0,.3,0,.5,.5,'#e53935',8,0);B(0,0,.43,.16,.24,.03,'#3a2418');P(0,.8,0,.02,.22,'#6b4a2b',4);B(.08,.95,0,.16,.08,.02,'#ffd54f');break;
+ case'statue':B(0,0,0,.44,.2,.44,'#8a9096');B(0,.2,0,.36,.1,.36,'#9aa0a6');P(0,.3,0,.12,.4,'#c9ced4',6);B(.12,.4,0,.04,.3,.04,'#9aa0a6');P(0,.7,0,.1,.14,'#c9ced4',6,.04);break}}
 const K3S={},IX=p=>[(p[0]-p[2])*32,(p[0]+p[2])*16-p[1]*36];let K3BG=null;const K3R=11;
 function k3spr(key,w,h,build){let s=K3S[key];if(s)return s;const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d'),F=[];build(F);
  F.forEach(f=>{f.q=f.P.map(IX);f.d=f.P.reduce((a,p)=>a+p[0]+p[2]+p[1]*.5,0)/f.P.length});F.sort((a,b)=>a.d-b.d);
- x.translate(w/2,h-60);x.lineJoin='round';F.forEach(f=>{x.beginPath();f.q.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.closePath();x.fillStyle=f.c;x.fill();x.strokeStyle='rgba(0,0,0,.25)';x.stroke()});
+ x.translate(w/2,h-60);x.lineJoin='round';F.forEach(f=>{x.beginPath();f.q.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.closePath();x.fillStyle=f.c;x.fill();x.strokeStyle='rgba(0,0,0,'+K3OA+')';x.stroke()});
  return K3S[key]={c,w,h,ay:h-60}}
 const k3rnd=(x,z,s)=>Math.abs(Math.sin(x*12.9898+z*78.233+s*37.7)*43758.5453)%1;
 /* smooth value noise: trees and rocks grow in clumps with open meadows between them (far fewer sprites to draw) */
@@ -911,7 +994,7 @@ const KDTC=[null,'#cbd5e1','#4ade80','#60a5fa','#fbbf24','#c084fc'],kdTier=l=>l>
 function k3glow(s,t){s.gl=s.gl||{};if(s.gl[t])return s.gl[t];const m=22,c=document.createElement('canvas');c.width=s.w+2*m;c.height=s.h+2*m;const x=c.getContext('2d');x.shadowColor=KDTC[t];x.shadowBlur=14;x.drawImage(s.c,m,m);x.drawImage(s.c,m,m);x.shadowBlur=0;x.drawImage(s.c,m,m);return s.gl[t]={c,w:c.width,h:c.height,ay:s.ay+m}}
 function kdBadge(cx,x,y,l,sc){const t=kdTier(l),tx='★'+l;cx.font='bold '+Math.max(10,sc*13)+'px sans-serif';const w=cx.measureText(tx).width+sc*12,h=sc*17;cx.fillStyle=KDTC[t];cx.beginPath();cx.roundRect(x-w/2,y-h/2,w,h,h/2);cx.fill();cx.strokeStyle=t>=2?'#222':'rgba(0,0,0,.45)';cx.lineWidth=2;cx.stroke();cx.fillStyle='#111';cx.fillText(tx,x,y+1)}
 function k3sp(b,x,z,k){let m=0;if(b.t=='wall'){const w=(a,c)=>{const o=k.p[(x+a)+','+(z+c)];return o&&o.t=='wall'};m=(w(1,0)?1:0)|(w(-1,0)?2:0)|(w(0,1)?4:0)|(w(0,-1)?8:0)}
- const tr=b.t=='wall'?Math.min(3,Math.ceil((b.l||1)/3)):1;return k3spr(b.t+m+(tr>1?'t'+tr:''),150,210,F=>{K3TIER=tr;k3b(F,b.t,0,0,(a,c)=>m&&((a==1&&c==0&&m&1)||(a==-1&&c==0&&m&2)||(a==0&&c==1&&m&4)||(a==0&&c==-1&&m&8))?{t:'wall'}:null)})}
+ const tq=k3tq(b);return k3spr(b.t+m+'q'+tq,150,210,F=>{k3set(tq);k3b(F,b.t,0,0,(a,c)=>m&&((a==1&&c==0&&m&1)||(a==-1&&c==0&&m&2)||(a==0&&c==1&&m&4)||(a==0&&c==-1&&m&8))?{t:'wall'}:null);k3set(0)})}
 let K3OV=null;
 function k3ov(){if(K3OV)return K3OV;const c=document.createElement('canvas');c.width=2400;c.height=1200;const x=c.getContext('2d');x.translate(1200,600);x.scale(.3125,.3125);x.fillStyle='#2c6a38';x.fillRect(-3900,-1950,7800,3900);
  for(let a=-KWW;a<KWW;a++)for(let b=-KWW;b<KWW;b++){const inB=a>=-KWB&&a<KWB&&b>=-KWB&&b<KWB,m=Math.max(Math.abs(a),Math.abs(b)),ix=(a-b)*32,iy=(a+b)*16;
@@ -931,15 +1014,15 @@ function k3Draw(cv,t){const k=kdInit(),cx=cv.getContext('2d'),cw=cv.width,ch=cv.
   let n=0,f=1,ob=0;if(!inB)n=k3forest(a,b);else if(!k.cl[id]&&!k.p[id]&&id!=cid&&!path&&k3ob(a,b)){ob=k3kind(a,b);if(ob=='tree'){n=1;f=.85}else L.push({d:a+b,p:T(a,0,b),s:k3spr('ob_'+ob,110,190,F=>k3obst(F,ob)),f:1,r:!!(KDG||KDSEL==id)})}
   if(inB&&((KDG&&(ob||(k.p[id]&&!dg(id))||id==cid))||(KDSEL==id&&ob))){cx.fillStyle='rgba(225,30,30,.55)';dm(p)}
   for(let i=0;i<n;i++){const x=a+(k3rnd(a,b,3+i)-.5)*.8,z=b+(k3rnd(a,b,5+i)-.5)*.8,v=f<1?1:Math.floor(k3rnd(a,b,7+i)*3);L.push({d:x+z,p:T(x,0,z),s:k3spr('ft'+v,110,190,F=>k3ftree(F,v)),f,r:!!(inB&&ob&&(KDG||KDSEL==id))})}}
- const jobU=new Set(kdHuts().filter(h=>h.job).map(h=>h.job.u));if(!dg('castle'))L.push({d:C[0]+C[1],p:T(C[0],0,C[1]),s:k3spr('castle'+k.c,300,330,F=>k3castle(F,k.c)),f:CSC,r:!!KDG,jb:jobU.has('C')});
- Object.keys(k.p).forEach(id=>{if(dg(id))return;const b=k.p[id],q=kdXZ(id),x=q[0],z=q[1];if(!lod&&(x<a0-3||x>a1+3||z<b0-3||z>b1+3))return;const lv=b.l||1,up=kdUp2(b),tr=up?kdTier(lv):0;let sp=k3sp(b,x,z,k);if(tr>=2&&!lod)sp=k3glow(sp,tr);L.push({d:x+z,p:T(x,0,z),s:sp,f:up?1+.035*(lv-1):1,r:!!KDG,jb:jobU.has(b.u)})});
+ const jobU=new Set(kdHuts().filter(h=>h.job).map(h=>h.job.u));if(!dg('castle'))L.push({d:C[0]+C[1],p:T(C[0],0,C[1]),s:k3csp(k.c),f:CSC,r:!!KDG,jb:jobU.has('C')});
+ Object.keys(k.p).forEach(id=>{if(dg(id))return;const b=k.p[id],q=kdXZ(id),x=q[0],z=q[1];if(!lod&&(x<a0-3||x>a1+3||z<b0-3||z>b1+3))return;const lv=b.l||1,up=kdUp2(b),tr=up?kdTier(lv):0;let sp=k3sp(b,x,z,k);if(tr>=2&&!lod)sp=k3glow(sp,tr);L.push({d:x+z,p:T(x,0,z),s:sp,f:up?1+.035*(lv-1):1,r:!!KDG,jb:jobU.has(b.u),dy:(b.t=='watch'||b.t=='cannon')?{t:b.t,q:k3tq(b),sd:x*7+z}:null})});
  if(!lod){Object.keys(k.p).forEach(id=>{const b=k.p[id];if(dg(id)||!kdUp2(b)||(b.l||1)<3)return;const q=kdXZ(id);cx.globalAlpha=.38;cx.fillStyle=KDTC[kdTier(b.l)];dm(T(q[0],0,q[1]));cx.globalAlpha=1});
   kdHuts().forEach(h=>{if(!h.job)return;let q=null;if(h.job.u=='C')q=C;else{const id=Object.keys(k.p).find(x=>k.p[x]&&k.p[x].u==h.job.u);if(id)q=kdXZ(id)}if(q){cx.globalAlpha=.35+.25*Math.sin(t/180);cx.fillStyle='#ff9a3c';dm(T(q[0],0,q[1]));cx.globalAlpha=1}})}
- L.sort((a,b)=>a.d-b.d);L.forEach(o=>{const f=o.f*sc;if(o.jb)cx.globalAlpha=.55;cx.drawImage(o.r?k3red(o.s):o.s.c,o.p[0]-o.s.w/2*f,o.p[1]-o.s.ay*f,o.s.w*f,o.s.h*f);cx.globalAlpha=1});
+ L.sort((a,b)=>a.d-b.d);L.forEach(o=>{const f=o.f*sc;if(o.jb)cx.globalAlpha=.55;if(o.dy)kdDyn(cx,o,sc,t,0);cx.drawImage(o.r?k3red(o.s):o.s.c,o.p[0]-o.s.w/2*f,o.p[1]-o.s.ay*f,o.s.w*f,o.s.h*f);if(o.dy)kdDyn(cx,o,sc,t,1);cx.globalAlpha=1});
  if(!lod)kdHuts().forEach(h=>{if(!h.job)return;let q=null,bt=null;const cst=h.job.u=='C';if(cst)q=C;else{const id=Object.keys(k.p).find(x=>k.p[x]&&k.p[x].u==h.job.u);if(id){q=kdXZ(id);bt=k.p[id].t}}if(!q)return;const p=T(q[0],0,q[1]);if(p[0]<-160||p[0]>cw+160||p[1]<-220||p[1]>ch+260)return;kdScaf(cx,p,sc,t,cst?50:30,cst?125:bt=='wall'?38:66,q[0]*3+q[1])});
  if(KDG&&KDG.cell){const q=kdXZ(KDG.cell),p=T(q[0],0,q[1]),ok=KDG.id=='castle'?(KDG.cell==cid||(!k.p[KDG.cell]&&!kdTree(KDG.cell))):(KDG.cell==KDG.id||kdFree(KDG.cell));
   cx.fillStyle=ok?'rgba(80,220,100,.65)':'rgba(240,70,70,.65)';dm(p);
-  const s=KDG.id=='castle'?k3spr('castle'+k.c,300,330,F=>k3castle(F,k.c)):k3sp(k.p[KDG.id],q[0],q[1],k),f=(KDG.id=='castle'?CSC:1)*sc;cx.globalAlpha=.8;cx.drawImage(ok?s.c:k3red(s),p[0]-s.w/2*f,p[1]-s.ay*f,s.w*f,s.h*f);cx.globalAlpha=1}
+  const s=KDG.id=='castle'?k3csp(k.c):k3sp(k.p[KDG.id],q[0],q[1],k),f=(KDG.id=='castle'?CSC:1)*sc;cx.globalAlpha=.8;cx.drawImage(ok?s.c:k3red(s),p[0]-s.w/2*f,p[1]-s.ay*f,s.w*f,s.h*f);cx.globalAlpha=1}
  if(!lod){Object.keys(k.p).forEach(id=>{const b=k.p[id];if(!b||dg(id)||!(kdUp2(b)||(b.t=='wall'&&KDSEL==id)))return;const q=kdXZ(id),p0=T(q[0],0,q[1]+.5);if(p0[0]<-60||p0[0]>cw+60||p0[1]<-80||p0[1]>ch+80)return;kdBadge(cx,p0[0],p0[1]+sc*9,b.l||1,sc)});
   Object.keys(k.p).forEach((id,n)=>{const b=k.p[id];if(!kdIsProd(b)||dg(id))return;const q=kdXZ(id),p0=T(q[0],0,q[1]+.5);if(p0[0]<-60||p0[0]>cw+60||p0[1]<-80||p0[1]>ch+80)return;
   const m=Math.floor(kdPend(b));if(kdFrozen(b)){const p=T(q[0],1.2,q[1]),y=p[1]+Math.sin(t/500+n)*sc*2;cx.font='bold '+sc*14+'px sans-serif';const tx='💤 Full',w2=cx.measureText(tx).width+sc*14;cx.fillStyle='rgba(235,235,245,.95)';cx.beginPath();cx.roundRect(p[0]-w2/2,y-sc*11,w2,sc*22,sc*11);cx.fill();cx.strokeStyle='#555';cx.lineWidth=2;cx.stroke();cx.fillStyle='#333';cx.fillText(tx,p[0],y)}else if(m>=1){const p=T(q[0],1.2,q[1]),y=p[1]+Math.sin(t/260+n)*sc*3,tx='+'+m;cx.font='bold '+sc*15+'px sans-serif';const w2=cx.measureText(tx).width+sc*16;
