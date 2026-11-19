@@ -545,9 +545,9 @@ const KD_B={
  mine:{n:'Gem Mine',e:'💎',k:'gem',b:6,c:250,u:250,cl:1,d:'Digs up gems.'},
  cave:{n:'Crystal Cave',e:'🔮',k:'gem',b:14,c:1200,u:700,cl:1,d:'Glowing crystals full of gems.'},
  wall:{n:'Wall',e:'🧱',k:'deco',be:1,c:20,cl:1,def:1,upg:1,u:30,d:'Sturdy stone wall. Neighbouring walls link up.'},
- watch:{n:'Watchtower',e:'🗼',k:'deco',be:2,c:60,cl:1,def:1,g:1,d:'A tall lookout that guards your kingdom.'},
- cannon:{n:'Cannon Tower',e:'💣',k:'deco',be:3,c:100,cl:1,def:1,g:1,d:'A stout tower with a big cannon.'},
- spikes:{n:'Spike Trap',e:'🪤',k:'deco',be:1,c:30,cl:1,def:1,g:1,d:'Pointy surprise for invaders.'},
+ watch:{n:'Watchtower',e:'🗼',k:'deco',be:2,c:60,cl:1,def:1,g:1,upg:1,u:90,d:'A tall lookout that guards your kingdom.'},
+ cannon:{n:'Cannon Tower',e:'💣',k:'deco',be:3,c:100,cl:1,def:1,g:1,upg:1,u:150,d:'A stout tower with a big cannon.'},
+ spikes:{n:'Spike Trap',e:'🪤',k:'deco',be:1,c:30,cl:1,def:1,g:1,upg:1,u:45,d:'Pointy surprise for invaders.'},
  gstore:{n:'Gold Storage',e:'🏦',k:'deco',be:0,c:150,u:120,cl:1,upg:1,store:'gs',d:'Holds your gold scraps. Level 1 holds 1000.'},
  sstore:{n:'Silver Storage',e:'🪙',k:'deco',be:0,c:150,u:120,cl:1,upg:1,store:'sil',d:'Holds your silver. Level 1 holds 1000.'},
  hut:{n:'Stonemason Hut',e:'⚒️',k:'deco',be:0,c:200,cl:1,hut:1,d:'Holds one stonemason who carries out upgrades. Can not be upgraded. You can have 3.'},
@@ -675,7 +675,7 @@ function kdPanel(){const k=kdInit(),i=KDSEL;
   h+='<div style="margin:4px 0">Makes <b>'+(r<10?r.toFixed(1):Math.round(r))+'</b> '+KU[d.k]+' per hour &middot; stored <b id="kdst"></b> of '+Math.floor(kdCapAmt(b))+'</div>'+(kdFrozen(b)?'<div style="margin:4px 0">💤 <b>Stopped:</b> your '+(d.k=='gs'?'gold scraps are':'silver is')+' full. Spend some or upgrade a '+(d.k=='gs'?'Gold':'Silver')+' Storage and this building starts working again.</div>':'')+'<div class="row">'
    +'<button onclick="kdCollect('+Q+')" '+(kdPend(b)>=1?'':'disabled')+'>💰 Collect</button>'
    +(u?'<span class="chip">⏳ Upgrading to Lv '+u.job.to+': <b id="kdup" data-end="'+u.job.end+'"></b></span>':b.l<kdMaxL()?'<button onclick="kdUp('+Q+')" '+(S.gs>=c&&fh?'':'disabled')+'>⬆ Upgrade to Lv '+(b.l+1)+' ('+c+' '+GSI+', '+kdFmt(kdUpTime(b.l))+')</button>'+(fh?'':'<small>No free stonemason.</small>'):b.l<KD_MAXL?'<span class="chip">🔒 Needs Castle Lv '+Math.ceil((b.l+1)/2)+'</span>':'<span class="chip">⭐ Max level</span>')}
- else if(d.upg){const fh=kdFreeHut(),c=kdUpCost(b);h+='<div style="margin:4px 0">'+(d.store?'Stores up to <b>'+kdStoreCap(b)+'</b> '+(d.store=='gs'?GSI:SILV)+' (you hold '+(d.store=='gs'?S.gs:(S.silver||0))+')':d.cap?'Houses <b>'+(10+6*(b.l-1))+'</b> troop space.':'Gives <b>+'+b.l+' beauty</b> (+'+b.l+'% production everywhere).')+'</div><div class="row">'+(u?'<span class="chip">⏳ Upgrading to Lv '+u.job.to+': <b id="kdup" data-end="'+u.job.end+'"></b></span>':b.l<kdMaxL()?'<button onclick="kdUp('+Q+')" '+(S.gs>=c&&fh?'':'disabled')+'>⬆ Upgrade to Lv '+(b.l+1)+' ('+c+' '+GSI+', '+kdFmt(kdUpTime(b.l))+')</button>'+(fh?'':'<small>No free stonemason.</small>'):b.l>=KD_MAXL?'<span class="chip">⭐ Max level</span>':'<span class="chip">🔒 Max for Castle Lv '+k.c+': upgrade your castle</span>')}
+ else if(d.upg){const fh=kdFreeHut(),c=kdUpCost(b);h+='<div style="margin:4px 0">'+(d.store?'Stores up to <b>'+kdStoreCap(b)+'</b> '+(d.store=='gs'?GSI:SILV)+' (you hold '+(d.store=='gs'?S.gs:(S.silver||0))+')':d.cap?'Houses <b>'+(10+6*(b.l-1))+'</b> troop space.':'Gives <b>+'+(d.be*b.l)+' beauty</b> (+'+(d.be*b.l)+'% production everywhere).')+'</div><div class="row">'+(u?'<span class="chip">⏳ Upgrading to Lv '+u.job.to+': <b id="kdup" data-end="'+u.job.end+'"></b></span>':b.l<kdMaxL()?'<button onclick="kdUp('+Q+')" '+(S.gs>=c&&fh?'':'disabled')+'>⬆ Upgrade to Lv '+(b.l+1)+' ('+c+' '+GSI+', '+kdFmt(kdUpTime(b.l))+')</button>'+(fh?'':'<small>No free stonemason.</small>'):b.l>=KD_MAXL?'<span class="chip">⭐ Max level</span>':'<span class="chip">🔒 Max for Castle Lv '+k.c+': upgrade your castle</span>')}
  else h+='<div style="margin:4px 0">Gives <b>+'+d.be+' beauty</b> (+'+d.be+'% production everywhere).</div><div class="row">';
  return h+'<button '+(lock?'disabled':'')+' onclick="kdStore('+Q+')">📦 Store</button><button class="b-rem" '+(lock?'disabled':'')+' onclick="kdDemo('+Q+')">'+(KDDEL==i?'Tap again to demolish'+(kdRefund(b.t).amt?' (+'+kdRefund(b.t).amt+' '+KDCI[kdRefund(b.t).cur]+')':''):'🗑 Demolish')+'</button></div>'}
 const kdTroops=()=>owned().filter(k=>{const c=CARDS[k];return c&&c.hp&&!c.bld&&!c.spell&&c.cnt});
@@ -697,7 +697,11 @@ function kdRival(i){const k=kdInit(),pr=kdBs().filter(b=>kdIsProd(b)),av=pr.leng
  KP=['Iron','Golden','Silver','Mossy','Raven','Stone','Wolf','Fox','Amber','Crimson','Misty','Thorn','Frost','Sun','Moon','Oak'],
  KS=['vale','brook','haven','hold','fall','watch','mere','reach','crest','moor','wick','ford'],
  KF=['{X}','Kingdom of {X}','{X} Keep','{X} Castle'],
- owner=(HH(58)<.6?pk(TT,57)+' ':'')+pk(FN,52)+' '+pk(SN,53),kname=pk(KF,56).replace('{X}',pk(KP,54)+pk(KS,55));
+ GF=['Emma','Liam','Olivia','Noah','Ava','Ethan','Mia','Lucas','Zoe','Jack','Lily','Ben','Chloe','Max','Ella','Sam','Ruby','Leo','Nora','Owen','Ivy','Finn','Grace','Theo','Maya','Caleb','Aria','Jonah','Nina','Eli','Harper','Dylan','Kai','Sofia','Tyler','Jade'],
+ GL=['Smith','Brown','Lee','Garcia','Miller','Davis','Wilson','Clark','Lewis','Young','King','Scott','Green','Baker','Reed','Cooper','Hall','Wood'],
+ GW=['Gamer','Plays','Pro','Ninja','Knight','Wolf','Dragon','Fox','Storm','Blaze','Shadow','Tiger','Panda','Pixel','Turbo','Frost','Rocket','Ghost'],
+ gs=Math.floor(HH(60)*5),gn=Math.floor(HH(61)*90)+10,
+ owner=gs==0?pk(GF,52)+' '+pk(GL,53).charAt(0)+'.':gs==1?pk(GF,52)+pk(['Plays','Gamer','Pro','YT','TV'],62):gs==2?pk(GF,52)+'_'+gn:gs==3?pk(GW,53)+pk(GW,63)+gn:pk(GF,52)+pk(GL,53).charAt(0)+(2005+Math.floor(HH(64)*18)),kname=pk(KF,56).replace('{X}',pk(KP,54)+pk(KS,55));
  return{sd,i,bl,sil:Math.round(60*Math.pow(rl,1.4)*(.8+k3rnd(sd,i,59)*.4)),id:sd+'-'+i,n:kname,o:owner,rl,def:Math.round(20*Math.pow(rl,1.7)*(1+.15*(bl-1))*(.85+r*.3)),loot:Math.round(100*Math.pow(rl,1.5)*(.8+k3rnd(sd,i,51)*.4))}}
 function kdRivals(){return[0,1,2].map(kdRival)}
 function kdRaidHTML(msg){const k=kdInit(),pw=Math.round(kdArmyPow()),done=k.raided||{};
