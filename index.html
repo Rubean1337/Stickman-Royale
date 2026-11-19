@@ -649,7 +649,7 @@ function kdHud(){const k=kdInit(),bt=kdBeauty(),hs=kdHuts(),fr=hs.filter(h=>!h.j
  return '<span class="chip cc" style="cursor:pointer" onclick="KDSEL=\'castle\';kdRender()" title="Tap to open your castle. Buildings store up to '+kdCapH()+' hours of goods">🏰 Lv '+k.c+'</span><span class="chip lv" title="Each beauty point adds +1% to everything your buildings make (up to +'+KD_BCAP+'%)">⭐ +'+bt+'%</span><span class="chip">⚒️ '+fr+'/'+hs.length+' free</span>'
  +'<button id="kdall" onclick="kdAll()" '+(T.gs+T.gem+T.exp+T.sil?'':'disabled')+'>💰 Collect all <span id="kdtot">'+kdTotTxt(T)+'</span></button>'
  +(cu?'<span class="chip">⏳ Castle: <b id="kdcup" data-end="'+cu.job.end+'"></b></span>':'')
- +'<button onclick="kdRaidOpen()">⚔️ Raid</button><button onclick="kdTutOpen(0)">❓</button><button onclick="kdNameOpen()">✏️ Name</button><button onclick="kdTogPub()" title="Let other players find and raid your kingdom while you are away from the Kingdom tab">'+(S.kdPub===false?'🌐 Raidable: Off':'🌐 Raidable: On')+'</button><button onclick="kdFit()">🗺 Fit</button><button onclick="kdHome()">🏰</button><button onclick="kdZoom(1.3)">➕</button><button onclick="kdZoom(.77)">➖</button>'}
+ +'<button onclick="kdRaidOpen()">⚔️ Raid</button><button onclick="kdTutOpen(0)">❓</button><button onclick="kdNameOpen()">✏️ Name</button><button onclick="kdFit()">🗺 Fit</button><button onclick="kdHome()">🏰</button><button onclick="kdZoom(1.3)">➕</button><button onclick="kdZoom(.77)">➖</button>'}
 function kdTotTxt(T){const a=[];if(T.gs)a.push('+'+T.gs+' '+GSI);if(T.gem)a.push('+'+T.gem+' '+GEM);if(T.exp)a.push('+'+T.exp+' '+EXPI);if(T.sil)a.push('+'+T.sil+' '+SILV);return a.join(' ')||'(nothing yet)'}
 function kdCastlePanel(){const k=kdInit(),cu=kdHuts().find(h=>h.job&&h.job.u=='C'),fh=kdFreeHut(),max=k.c>=KD_MAXC,c=max?0:KD_CC[k.c-1];
  let h='<b>🏰 Castle &middot; Level '+k.c+'/'+KD_MAXC+'</b><br><small>The heart of your kingdom (4 × 4 tiles). A higher castle level lets you build more of each building and upgrade them higher.</small><div style="margin:4px 0">Buildings can reach <b>Lv '+kdMaxL()+'</b> &middot; they store <b>'+kdCapH()+' hours</b> of goods &middot; 🧱 walls allowed: <b>'+kdLim('wall')+'</b></div>';
@@ -689,7 +689,7 @@ function kdArmyHTML(){const k=kdInit(),a=k.army||{},cap=kdCap(),u=kdUsed();let h
  kdTroops().forEach(t=>{const c=CARDS[t],n=a[t]||0,cost=c.c*20;h+='<button '+(u+c.c<=cap&&S.gs>=cost?'':'disabled')+' onclick="kdTrain(\''+t+'\',1)"><b>'+c.n+' x'+n+'</b><small>Train 1: '+c.c+' space, '+cost+' '+GSI+'</small></button>'+(n?'<button onclick="kdTrain(\''+t+'\',-1)"><small>Release 1 '+c.n+'</small></button>':'')});
  return h+'</div><small>Housed troops can raid other kingdoms. Higher barracks levels hold more.</small><br>'}
 function kdTrain(t,d){const k=kdInit(),c=CARDS[t];if(!c)return;k.army=k.army||{};if(d>0){if(kdUsed()+c.c>kdCap()||S.gs<c.c*20)return;S.gs-=c.c*20;k.army[t]=(k.army[t]||0)+1}else if(k.army[t]>0)k.army[t]--;save();kdChips();kdRender()}
-function kdRival(i){const k=kdInit(),pr=kdBs().filter(b=>kdIsProd(b)),av=pr.length?pr.reduce((t,b)=>t+b.l,0)/pr.length:1,sd=Math.floor(Date.now()/3600e3),o=(i%3)-1,rl=Math.max(1,Math.min(6,k.c+o)),bl=Math.max(1,Math.min(KD_MAXL,2*rl,Math.round(av)+o)),r=k3rnd(sd,i,50),
+function kdRival(i){const k=kdInit(),pr=kdBs().filter(b=>kdIsProd(b)),av=pr.length?pr.reduce((t,b)=>t+b.l,0)/pr.length:1,sd=Math.floor(Date.now()/3600e3),o=(x=>x<.7?0:x<.85?-1:1)(k3rnd(sd,i*7+3,70)),rl=Math.max(1,Math.min(6,k.c+o)),bl=Math.max(1,Math.min(KD_MAXL,2*rl,Math.round(av)+o)),r=k3rnd(sd,i,50),
  HH=n=>{let x=Math.imul(sd^0x9e3779b9,0x85ebca6b)^Math.imul(i+1,0xc2b2ae35)^Math.imul(n+1,0x27d4eb2f);x^=x>>>15;x=Math.imul(x,0x2c1b3c6d);x^=x>>>12;x=Math.imul(x,0x297a2d39);x^=x>>>15;return(x>>>0)/4294967296},
  pk=(L,n)=>L[Math.floor(HH(n)*L.length)],
  FN=['Aldric','Brenna','Cedric','Dorothea','Edmund','Freya','Gideon','Helena','Ivor','Jocelyn','Kellan','Lyra','Magnus','Nessa','Osric','Petra','Quinn','Rowan','Sybil','Tobias','Ulric','Vera','Wystan','Yara','Zane','Maeve','Bram','Elowen'],
@@ -709,16 +709,16 @@ function kdRaidHTML(msg){const k=kdInit(),pw=Math.round(kdArmyPow()),done=k.raid
  return '<div class="box" style="max-width:520px;margin:0 auto"><div class="row" style="justify-content:space-between"><b>⚔️ Raid other kingdoms</b><button onclick="$(\'kraid\').style.display=\'none\'">✖ Close</button></div>'+(msg?'<div class="box" style="margin:6px 0">'+msg+'</div>':'')
  +'<div>Your army power: <b>'+pw+'</b>'+(pw?'':' <small>(train troops in a Barracks first)</small>')+'</div><small>New kingdoms to raid appear every hour, and you can press Next Kingdom during a raid to scout another one. You choose which troops to send and where to place them. Your troops always come home safe, win or lose.</small>'
  +kdRivals().map((r,i)=>'<div class="box" style="margin-top:6px"><b>🏰 '+r.n+'</b> <small>Castle Lv '+r.rl+' &middot; Buildings Lv '+r.bl+'</small><br>Defense power: <b>'+r.def+'</b> &middot; Loot: <b>'+r.loot+'</b> '+GSI+' &middot; <b>'+r.sil+'</b> '+SILV+'<div class="row"><button onclick="kdRaidView('+i+')">'+(done[r.id]?'Already raided':'🔍 Scout &amp; attack')+'</button></div></div>').join('')+'</div>'}
-function kdRivalMap(r){if(r.map)return r.map;const m={},rl=r.rl,sd=r.sd*997+r.i,rd=(a,b,c)=>k3rnd(sd,a*131+b,c);
- for(let x=-2;x<=2;x++)for(let z=-2;z<=2;z++)if(Math.max(Math.abs(x),Math.abs(z))==2&&!(x==0&&z==2)&&rd(x,z,1)<.55+.1*rl)m[x+','+z]={t:'wall',l:r.bl};
- const TW=[[3,3],[-3,3],[3,-3],[-3,-3],[3,0],[-3,0],[0,-3]],ty=['watch','cannon','spikes'];for(let j=0;j<Math.min(7,rl+1);j++)m[TW[j].join(',')]={t:ty[j%3],l:r.bl};
- m['-1,0']={t:'gold',l:r.bl};if(rl>=2)m['1,0']={t:'barracks',l:r.bl};m['0,-1']={t:'farm',l:r.bl};if(rl>=2)m['-3,-1']={t:'mill',l:r.bl};if(rl>=4)m['3,-1']={t:'market',l:r.bl};
+function kdRivalMap(r){if(r.map)return r.map;const m={},rl=r.rl,sd=r.sd*997+r.i,rd=(a,b,c)=>k3rnd(sd,a*131+b,c),cnt={},lim=t=>{const a=KD_LIM[t];return a?a[rl-1]:999},put=(x,z,t)=>{if((cnt[t]||0)>=lim(t))return false;m[x+','+z]={t,l:r.bl};cnt[t]=(cnt[t]||0)+1;return true};
+ for(let x=-2;x<=2;x++)for(let z=-2;z<=2;z++)if(Math.max(Math.abs(x),Math.abs(z))==2&&!(x==0&&z==2)&&rd(x,z,1)<.55+.1*rl)put(x,z,'wall');
+ const TW=[[3,3],[-3,3],[3,-3],[-3,-3],[3,0],[-3,0],[0,-3]],ty=['watch','cannon','spikes'];for(let j=0;j<Math.min(7,rl+1);j++)put(TW[j][0],TW[j][1],ty[j%3]);
+ put(-1,0,'gold');if(rl>=2)put(1,0,'barracks');put(0,-1,'farm');if(rl>=2)put(-3,-1,'mill');if(rl>=4)put(3,-1,'market');
  /* the rest of the kingdom: villages and outposts spread over the full 60x60 plot, bigger for higher castle levels */
  const R=Math.min(26,6+4*rl),nc=2+rl,CC=[];for(let c=0;c<nc;c++)CC.push([Math.round((rd(c,1,21)*2-1)*R),Math.round((rd(c,2,22)*2-1)*R)]);
  const free=(x,z)=>x>=-29&&x<=28&&z>=-29&&z<=28&&!m[x+','+z]&&Math.max(Math.abs(x),Math.abs(z))>=4&&!(x==0&&z>0),
   pool=['farm','farm','mill','mill','gold','gold','gstore','sstore','tent','fountain','statue','lantern'].concat(rl>=2?['barracks']:[],rl>=4?['market','market']:[]),dfn=['watch','cannon','spikes'];
- for(let n=0,c=0,nb=6+5*rl;c<nb&&n<nb*8;n++){const q=CC[n%nc],x=q[0]+Math.round((rd(n,3,25)*2-1)*4),z=q[1]+Math.round((rd(n,4,26)*2-1)*4);if(!free(x,z))continue;m[x+','+z]={t:pool[Math.floor(rd(n,5,23)*pool.length)],l:r.bl};c++}
- for(let n=0,c=0,nd=2+2*rl;c<nd&&n<nd*8;n++){const q=CC[n%nc],x=q[0]+Math.round((rd(n+50,3,25)*2-1)*5),z=q[1]+Math.round((rd(n+50,4,26)*2-1)*5);if(!free(x,z))continue;m[x+','+z]={t:dfn[Math.floor(rd(n+50,5,27)*3)],l:r.bl};c++}
+ for(let n=0,c=0,nb=6+5*rl;c<nb&&n<nb*8;n++){const q=CC[n%nc],x=q[0]+Math.round((rd(n,3,25)*2-1)*4),z=q[1]+Math.round((rd(n,4,26)*2-1)*4);if(!free(x,z))continue;if(put(x,z,pool[Math.floor(rd(n,5,23)*pool.length)]))c++}
+ for(let n=0,c=0,nd=2+2*rl;c<nd&&n<nd*8;n++){const q=CC[n%nc],x=q[0]+Math.round((rd(n+50,3,25)*2-1)*5),z=q[1]+Math.round((rd(n+50,4,26)*2-1)*5);if(!free(x,z))continue;if(put(x,z,dfn[Math.floor(rd(n+50,5,27)*3)]))c++}
  return m}
 function kdRaidDraw(cv,r,st){const m=kdRivalMap(r),cx=cv.getContext('2d'),cw=cv.width,ch=cv.height,sc=cw/440,T=(x,y,z)=>[cw/2+(x-z)*32*sc,ch*.5+((x+z)*16-y*36)*sc],fk={p:m},dead=st=='win'||st=='done';
  cx.fillStyle='#2c6a38';cx.fillRect(0,0,cw,ch);cx.textAlign='center';cx.textBaseline='middle';
@@ -742,7 +742,7 @@ const kdRBSc=cv=>Math.min(cv.width/560,cv.height/520)*RBT.cam.zm;
 function kdRBStat(){const r=RBT.r;if(RBT.phase=='fight')return '<b>Battle!</b> '+Math.max(0,120-Math.floor(RBT.t))+'s left &middot; troops alive '+RBT.U.filter(u=>u.hp>0).length;
  const walls=RBT.S.filter(s=>s.t=='wall').length,tw=RBT.S.filter(s=>s.t!='castle'&&s.t!='wall'&&KD_B[s.t]&&KD_B[s.t].def).length;return 'Castle Lv '+r.rl+' &middot; Buildings Lv '+r.bl+' &middot; 🧱 '+walls+' walls &middot; 🗼 '+tw+' defenses'}
 function kdRBUI(){const k=kdInit();k.army=k.army||{};const r=RBT.r,fight=RBT.phase=='fight',pl=RBT.phase=='place',ts=Object.keys(k.army).filter(t=>CARDS[t]&&k.army[t]>0),top=$('krtop'),bot=$('krbot');if(!top||!bot)return;RBT.sst=null;
- top.innerHTML='<div class="krrow"><button id="krb" '+(fight?'disabled':'')+' onclick="kdRaidClose()">⬅ Back</button><span class="chip">'+GSI+' '+r.loot+' &nbsp;'+SILV+' '+r.sil+'</span></div><div class="krname"><b>🏰 '+esc(r.n)+'</b>'+(r.real?' <span class="chip">🌐 Real player</span>':'')+' <small>👑 '+esc(r.o)+'</small></div>'+kdRBBar()+'<div id="krs" class="krsm">'+kdRBStat()+'</div><div class="krrow" style="justify-content:flex-start;margin-top:4px"><button '+(fight?'disabled':'')+' onclick="kdRBNext()">Next Kingdom ➡</button><button onclick="kdRBFit()">🗺 Fit</button><button onclick="kdRBHome()">🏰 Castle</button></div>';
+ top.innerHTML='<div class="krrow"><button id="krb" '+(fight?'disabled':'')+' onclick="kdRaidClose()">⬅ Back</button><span class="chip">'+GSI+' '+r.loot+' &nbsp;'+SILV+' '+r.sil+'</span></div><div class="krname"><b>🏰 '+esc(r.n)+'</b> <small>👑 '+esc(r.o)+'</small></div>'+kdRBBar()+'<div id="krs" class="krsm">'+kdRBStat()+'</div><div class="krrow" style="justify-content:flex-start;margin-top:4px"><button '+(fight?'disabled':'')+' onclick="kdRBNext()">Next Kingdom ➡</button><button onclick="kdRBFit()">🗺 Fit</button><button onclick="kdRBHome()">🏰 Castle</button></div>';
  bot.innerHTML=(RBT.msg?'<div class="krmsg">'+RBT.msg+'<div class="row"><button onclick="kdRBNext()">Next Kingdom ➡</button><button onclick="kdRaidClose()">⬅ Back to my kingdom</button></div></div>':'')
   +(pl||fight?'<small>'+(pl?'Pick a troop, then tap the ground to place it. Drag to look around, pinch or scroll to zoom (🗺 Fit shows the whole kingdom). The 2 minute battle starts when you place your first troop.':'Keep placing troops to reinforce your attack!')+'</small><div class="krtray">'+(ts.length?ts.map(t=>'<button style="'+(RBT.sel==t?'outline:3px solid #ffd54a':'')+'" '+(kdRBAvail(t)>0?'':'disabled')+' onclick="RBT.sel=\''+t+'\';kdRBUI()">'+CARDS[t].n+' &times;'+kdRBAvail(t)+'</button>').join(''):'<small>You have no troops. Train some in a Barracks first.</small>')+'</div>':'')
   +(RBT.phase=='done'&&!RBT.msg?'<small>You already raided this kingdom. Press Next Kingdom to find another one!</small>':'');
@@ -848,7 +848,7 @@ function kdSanSnap(d){if(!d||typeof d!='object'||typeof d.id!='string'||d.id.len
  return{id:d.id,n,o,rl,bl,map}}
 function kdRealRival(sn){const rl=sn.rl,bl=sn.bl,sd=Math.floor(Date.now()/3600e3);return{sd,i:-1,real:1,map:sn.map,bl,rl,sil:Math.round(60*Math.pow(rl,1.4)),id:'p-'+sn.id+'-'+sd,n:sn.n,o:sn.o,def:Math.round(20*Math.pow(rl,1.7)*(1+.15*(bl-1))),loot:Math.round(100*Math.pow(rl,1.5))}}
 /* a player can only be found while they are away from the Kingdom tab (and not in a battle) */
-function kdPresWant(){const m=$('menu');return !!(RM&&S.kd&&S.kdPub!==false&&mpOK()&&!KM&&!G&&!MP&&!QM&&m&&m.style.display!='none')}
+function kdPresWant(){const m=$('menu');return !!(RM&&S.kd&&mpOK()&&!KM&&!G&&!MP&&!QM&&m&&m.style.display!='none')}
 async function kdPresTick(){const want=kdPresWant();
  if(want&&!KP.room&&!KP.busy){KP.busy=1;try{const r=await(RM===PJ?PJ.hub('kall'):RM.join('tck-all'));if(!kdPresWant()){try{r.leave()}catch(e){}}else{KP.room=r;r.on('ksearch',m=>{const d=m.data;if(m.sameTab||!d||typeof d.id!='string'||d.id==KP.id||!kdPresWant())return;const t=Date.now();if(KP.rep[d.id]&&t-KP.rep[d.id]<2500)return;KP.rep[d.id]=t;try{r.emit('koffer',{to:d.id,from:KP.id,snap:kdSnap()}).catch(()=>{})}catch(e){}})}}catch(e){}KP.busy=0}
  else if(!want&&KP.room){try{KP.room.leave()}catch(e){}KP.room=null}}
@@ -864,7 +864,6 @@ async function kdFindReal(done){if(KS)return;if(!RM||!mpOK()){done(null);return}
   const tick=()=>{if(M.fin)return;try{r.emit('ksearch',{id:M.id}).catch(()=>{})}catch(e){}};M.iv=setInterval(tick,1500);tick()}catch(e){fin(null)}}
 function kdSeekCancel(){if(KS){const M=KS;M.done=()=>{};M.finish(null)}}
 function kdRaidGo(j){kdFindReal(rr=>kdRaidView(j,0,'',rr||null))}
-function kdTogPub(){S.kdPub=(S.kdPub===false);save();kdRender()}
 function kdRaidOpen(){const o=$('kfull');if(!o)return;let r=$('kraid');if(!r){r=document.createElement('div');r.id='kraid';o.appendChild(r)}const k=kdInit();let j=0;while(j<300&&(k.raided||{})[kdRival(j).id])j++;kdRaidGo(j)}
 function kdRaidClose(){const r=$('kraid');if(r){r.style.display='none';r.innerHTML='';r.className=''}}
 const KDT=[
