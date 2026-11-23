@@ -367,11 +367,75 @@ canvas{border-radius:0;border:4px solid #000;box-shadow:6px 6px 0 #000}
 .cid{margin:4px 0 6px;font-size:22px}
 .cist{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}.cist .chip{font-family:'VT323',monospace;font-size:19px;border-width:3px;box-shadow:none}
 .cibox h2{margin:8px 0 6px}
-#cdc{display:block;width:100%;height:auto;aspect-ratio:360/150;image-rendering:pixelated;border:4px solid #000;box-shadow:none;border-radius:0}
+#cdc{display:block;width:100%;height:auto;aspect-ratio:720/400;image-rendering:pixelated;border:4px solid #000;box-shadow:none;border-radius:0}
 .cdcap{margin:6px 0;padding:4px 8px;border:3px solid #000;font-size:21px;line-height:1.1}
 .cdcap.good{background:#b8f5c4}.cdcap.bad{background:#ffc4c4}
 .cisw{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}.cisw ul{margin:2px 0 0;padding-left:20px}.cisw li{font-size:19px;line-height:1.05;margin-bottom:3px}
 @media (max-width:520px){.cisw{grid-template-columns:1fr}}
+.cdtabs{margin:4px 0}.cdtab.on{outline:3px solid #f5b800}
+.cirel{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}.cirow{display:flex;flex-wrap:wrap;gap:6px;margin-top:3px}.cirel i{font-size:18px;opacity:.7}
+.cirb{display:flex;flex-direction:column;align-items:center;padding:3px 6px;font-size:16px;line-height:1}.cirb .ci{height:46px}
+@media (max-width:520px){.cirel{grid-template-columns:1fr}}
+
+/* ===== Kingdom screen: clean full-map layout ===== */
+#kfull #kd{position:absolute;inset:0}
+#kfull #khud{position:absolute;inset:0;display:block;background:none;border:0;box-shadow:none;padding:0;overflow:visible;pointer-events:none}
+#kfull #khud>*{pointer-events:auto}
+#kcast{position:absolute;left:12px;top:30px;max-width:min(60vw,360px);padding:0;margin:0;border:0;background:none;box-shadow:none;text-align:left}
+#kcast:hover:not(:disabled){filter:brightness(1.1)}
+#kcast:active:not(:disabled){transform:none;box-shadow:none}
+#kcast .mer{display:flex;justify-content:space-between;gap:12%;margin:0 0 -4px;height:20px}
+#kcast .mer i{flex:0 0 24%;background:#808080;border:4px solid #4a4a4a;border-bottom:0}
+#kcast .nm{display:block;padding:10px 16px;background:#808080;border:4px solid #4a4a4a;font-size:26px;line-height:1;color:#fff;text-shadow:2px 0 #000,-2px 0 #000,0 2px #000,0 -2px #000,2px 2px #000,-2px -2px #000,2px -2px #000,-2px 2px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#kcj{position:absolute;left:12px;top:112px;padding:2px 8px;background:#fff;border:3px solid #000;font-size:19px;color:#000}
+#kdall{position:absolute;left:12px;top:150px;padding:2px 10px;font-size:20px;color:#000;background:#fff200}
+#kdall:disabled{display:none}
+#kfull #khud #kdall,#kfull #khud #kdall *{color:#000}
+#kbars{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.kbar2{position:relative;width:min(250px,44vw);height:34px;border:4px solid #000;overflow:hidden;box-sizing:border-box}
+.kbar2 i{position:absolute;left:0;top:0;bottom:0}
+.kbar2 span{position:relative;display:flex;align-items:center;justify-content:center;gap:6px;height:100%;font-size:21px;line-height:1;color:#fff;text-shadow:2px 0 #000,-2px 0 #000,0 2px #000,0 -2px #000}
+.kbar2 img{height:20px;width:auto}
+.kbar2.sil{background:#7a7a7a;border-color:#4a4a4a}.kbar2.sil i{background:#c8c8c8}
+.kbar2.gold{background:#7c6a00;border-color:#c99a00}.kbar2.gold i{background:#fff200}
+.kbg{padding:0 8px;background:#fff;border:3px solid #000;font-size:19px;color:#000;display:flex;align-items:center;gap:4px}.kbg img{height:18px;width:auto}
+#kraidb{position:absolute;left:14px;bottom:76px;width:124px;height:100px;padding:0;margin:0;border:0;background:#ed1c24;color:#000;font-family:'Press Start 2P','Courier New',monospace;font-size:16px;box-shadow:0 -4px 0 #8b0e12,0 4px 0 #8b0e12,-4px 0 0 #8b0e12,4px 0 0 #8b0e12,inset -6px -6px 0 rgba(0,0,0,.25),inset 6px 6px 0 rgba(255,255,255,.3)}
+#kfull #khud #kraidb{color:#000}
+#kraidb:active:not(:disabled){transform:translateY(3px);box-shadow:0 -4px 0 #8b0e12,0 4px 0 #8b0e12,-4px 0 0 #8b0e12,4px 0 0 #8b0e12,inset 6px 6px 0 rgba(0,0,0,.25)}
+@media (min-width:1100px){#kraidb{bottom:16px}}
+#kinvw{position:absolute;right:0;top:50%;transform:translate(calc(100% - 46px),-50%);display:flex;align-items:center;z-index:6;transition:transform .25s steps(6)}
+#kinvw.open{transform:translate(0,-50%)}
+#kfull #kinvtab{position:relative;flex:none;width:46px;height:136px;padding:0;background:#b87a54;color:#000;border:4px solid #000;border-right:0;border-radius:0;font-family:'Press Start 2P','Courier New',monospace;font-size:12px;box-shadow:inset 4px 4px 0 rgba(255,255,255,.25),inset -4px -4px 0 rgba(0,0,0,.2)}
+#kfull #kinvtab:active:not(:disabled){transform:none}
+#kfull #kinvtab .dot{top:-8px;left:-8px;right:auto}
+#kinvc{width:min(330px,74vw);max-height:72vh;overflow:auto;margin:0;border-radius:0;border-right:0;background:#c9975a;color:#000}
+#kfull #kinvc,#kfull #kinvc *:not(button):not(button *){color:#000}
+#kfull #kinvc button{background:#e0b98a;color:#000;border-color:#000}
+#kfull #kinvc button small,#kfull #kinvc button b{color:#000}
+#kfull .tabs{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 16px);padding:0;margin:0;background:none;border:0;z-index:5}
+#kfull .tabs button{font-size:clamp(7px,.95vw,11px);padding:clamp(8px,1.2vw,12px) 2px;margin:4px;color:#000}
+#kfull .kdpanel{bottom:70px;left:8px;right:56px;max-height:40%}
+@media (min-width:1100px){#kfull .kdpanel{left:160px;bottom:66px}}
+
+#kfull #kcast{background:none;border:0;box-shadow:none;padding:0;color:#fff}
+#kfull #kraidb{background:#ed1c24;color:#000;border:0;box-shadow:0 -4px 0 #8b0e12,0 4px 0 #8b0e12,-4px 0 0 #8b0e12,4px 0 0 #8b0e12,inset -6px -6px 0 rgba(0,0,0,.25),inset 6px 6px 0 rgba(255,255,255,.3)}
+#kfull #kdall{background:#fff200;color:#000;border-color:#000}
+#kfull .tabs button{flex:0 0 clamp(78px,13vw,150px)}
+.tile.locked{filter:grayscale(1);opacity:.85;background:#cfcfcf}
+.tile.locked .ci{filter:brightness(.85)}
+.lockbar{margin-top:6px;padding:2px 6px;border:3px solid #000;background:#8a8a8a;color:#fff;font-size:17px;line-height:1.1;text-shadow:1px 1px 0 #000}
+
+#kcm{position:absolute;left:12px;top:124px;z-index:7;width:min(430px,calc(100% - 24px));max-height:calc(100% - 210px);overflow:auto;margin:0;padding:10px 12px;border-radius:0;background:#c9975a;color:#000}
+#kfull #kcm,#kfull #kcm *:not(button):not(button *){color:#000}
+#kfull #kcm button{background:#e0b98a;color:#000;border-color:#000}
+#kfull #kcm button small,#kfull #kcm button b{color:#000}
+#kcm .cix{position:absolute;right:8px;top:8px;padding:0 9px;font-size:20px}
+#kcm input{font:inherit;font-size:22px;flex:1;min-width:0;padding:2px 8px;border:4px solid #000;border-radius:0;background:#fff;color:#000}
+.kcnm{min-height:20px;font-size:18px}
+.kstg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}
+.kst{background:#f3dcb8;border:3px solid #000;padding:3px 8px;line-height:1.05}.kst small{display:block;font-size:16px}.kst b{font-size:20px}.kst.wide{margin-bottom:8px}
+.kst img{height:18px;width:auto;vertical-align:-3px}
+@media (max-width:480px){.kstg{grid-template-columns:1fr}}
 </style></head><body><div id="app">
 <div id="hud"><span id="tm">3:00</span><div id="bar"><div id="fill"></div></div><b id="el">5 / 10 coins</b><button id="emb" onclick="toggleEm()">😀 Emote</button></div>
 <div id="emrow" class="row" hidden><button onclick="pe('mad')">😠 Mad</button><button onclick="pe('sad')">😢 Sad</button><button onclick="pe('support')">👍 Supportive</button><button onclick="pe('laugh')">😂 Laughing</button></div>
@@ -405,8 +469,8 @@ macero:{n:'Macero',wt:2,c:4,hp:700,dmg:150,sp:36,rg:0,cnt:1,sc:1.3,cd:1.5,t:'Spi
 dartboy:{n:'Dart Boy',c:3,hp:100,dmg:50,sp:50,rg:100,cnt:1,sc:.9,cd:.6,air:1,ha:1,t:'Flying: only princess towers, the king tower, Archers and other Dart Boys can hit him. Throws darts very fast'},
 nomad:{n:'Nomad',c:3,hp:200,dmg:77,sp:44,rg:130,cnt:3,sc:.9,cd:1.2,ha:1,t:'3 spear throwers. Each Nomad hurls one spear at a time and can hit air troops'},
 viking:{n:'Viking',wt:2,c:4,hp:200,helm:300,wcyc:7,chg:200,dmg:110,sp:40,rg:0,cnt:1,sc:1.2,cd:1.1,t:'After 3 walk cycles with his helmet on he CHARGES: smashes a building for 200 damage with a smoke burst and loses the helmet. Then he fights troops.'},
-priest:{n:'Priest',c:4,hp:425,dmg:88,sp:40,rg:140,cnt:1,sc:1,cd:1.2,ha:1,t:'Throws his crucifix: it flies straight and pierces through every troop in its path until his range ends. Can hit air troops'},
-crusader:{n:'Crusader',wt:2,c:4,hp:700,shield:300,dmg:60,sp:38,rg:0,cnt:1,sc:1.35,cd:1.1,t:'A knight with a shield: the shield soaks 300 damage before his armor is touched. When it breaks he drops it and keeps fighting with the same health as a Warrior.'}};
+priest:{n:'Priest',c:4,hp:425,dmg:88,sp:40,rg:140,cnt:1,sc:1.2,cd:1.2,ha:1,t:'Throws his crucifix: it flies straight and pierces through every troop in its path until his range ends. Can hit air troops'},
+crusader:{n:'Crusader',wt:2,c:4,hp:550,shield:250,dmg:60,sp:38,rg:0,cnt:1,sc:1.35,cd:1.1,t:'A knight with a shield: the shield tanks 250 damage and nothing leaks through to his armor. When it breaks he drops it and keeps fighting with his full 550 health.'}};
 const STARTERS=['recruits','warrior','triplets','archer','distraction','mauler','bees','meteor'],ORDER=[...STARTERS,...Object.keys(CARDS).filter(k=>!STARTERS.includes(k))];
 const DIFF=[
 {k:'Baby',off:-2,rate:.5,gap:7,smart:0,rw:.5},
@@ -562,7 +626,7 @@ function tutTick(dt){const t=G.tut;if(!t||G.done)return;t.age+=dt;const s=TUT[t.
 function praise(m){const t=G&&G.tut;if(!t||t.pc>performance.now())return;t.pc=performance.now()+2600;$('pkt').textContent=m;$('praise').hidden=false;clearTimeout(PZ);PZ=setTimeout(()=>{$('praise').hidden=true},1900)}
 function endTut(w){if(G.done)return;const t=G.tut,n=t.n,ok=n==3||w==1;G.done=1;if(w==1)praise('Way to go!');
  if(ok){S.tut=Math.max(S.tut||0,n);save()}
- const msg=ok?(n==3?'<b>Tutorial complete!</b> You are ready for real matches. Win matches to earn trophies and mini chests. Where to next? Try a Practice match on the ⚔️ Battle tab, upgrade your cards in the 🃏 Cards tab, collect daily rewards in the 🛒 Shop, and build your 🏰 Kingdom. Tap 🧭 Menu tour on the Battle tab for a guided look.':'<b>Lesson '+n+' complete!</b> On to lesson '+(n+1)+'. Press Continue, then tap ▶ Start lesson '+(n+1)+' on the ⚔️ Battle tab.'):'<b>Lesson not finished.</b> Try this lesson again.';
+ const msg=ok?(n==3?'<b>Tutorial complete!</b> You are ready for real matches. Win matches to earn trophies and mini chests. Next I will show you around the menu, and then it is off to your 🏰 Kingdom!':'<b>Lesson '+n+' complete!</b> On to lesson '+(n+1)+'. Press Continue, then tap ▶ Start lesson '+(n+1)+' on the ⚔️ Battle tab.'):'<b>Lesson not finished.</b> Try this lesson again.';
  showResult(msg,'Continue')}
 function tutHL(){const t=G.tut,s=TUT[t.n-1][t.i];if(!s||!s.hl)return;const hl=s.hl();if(!hl)return;const a=.35+.25*Math.sin(performance.now()/180);cx.save();cx.globalAlpha=a;cx.fillStyle='#ffe14d';cx.strokeStyle='#fff';cx.lineWidth=3;let px,py;
  if(hl.cells){for(const [c,r] of hl.cells){cx.fillRect(c*GC,r*GC,GC,GC);cx.strokeRect(c*GC+1,r*GC+1,GC-2,GC-2)}px=(hl.cells[0][0]+.5)*GC;py=hl.cells[0][1]*GC}
@@ -578,19 +642,19 @@ const MTS=[
  {t:'⚔️ Battle: your lessons and practice matches live here, plus the mini chests, pouches and pockets you have earned.',s:'.tabs button[data-t="battle"]',p:0},
  {t:'🃏 Collection: choose the 8 cards in your deck, upgrade them with Supplies and EXP, and browse your whole Collection.',s:'.tabs button[data-t="collection"]',p:1},
  {t:'🛒 Shop: collect daily rewards, spend gems, and unlock new cards from your arena.',s:'.tabs button[data-t="shop"]',p:2},
- {t:'🏰 Kingdom: build your own kingdom, collect gold and silver, train troops and raid rivals. Tap it to go in. Inside, the ❓ button shows the guide again.',s:'.tabs button[data-t="kingdom"]',p:0},
  {t:'👤 Tap your name here to change it, or to export and import your save.',s:'.prof summary',p:0},
- {t:'That is the whole screen! Back on the Battle tab, press the glowing button to carry on. You can tap 🧭 Menu tour any time to see this again.',s:'#go,#pmb',p:0,fin:1}];
+ {t:'🏰 Your arena lessons are done, so now go and check out your Kingdom! Build it, collect gold and silver, train troops and raid rivals. Tap the glowing 🏰 Kingdom tab and I will give you the Kingdom tutorial. (You can replay this tour any time with 🧭 Menu tour on the Battle tab.)',s:'.tabs button[data-t="kingdom"]',p:0,fin:1}];
 let MT=-1;
 function mtStart(){if(G)return;MT=0;mtShow()}
 function mtEnd(){MT=-1;const o=$('mtour');if(o)o.remove();document.querySelectorAll('.mthl').forEach(e=>e.classList.remove('mthl'))}
+function mtKingdom(){mtEnd();kdSlideIn()}
 function mtGo(i){if(i>=MTS.length){mtEnd();return}MT=Math.max(0,i);mtShow()}
 function mtApply(){if(MT<0)return;if(G){mtEnd();return}mtShow(1)}
 function mtShow(keep){if(MT<0)return;const st=MTS[MT],last=MT==MTS.length-1;document.querySelectorAll('.mthl').forEach(e=>e.classList.remove('mthl'));
  if(st.p!=null&&!keep)slide(st.p);
  const el=st.s&&document.querySelector(st.s);if(el){el.classList.add('mthl');if(!keep)try{el.scrollIntoView({block:'center',inline:'nearest',behavior:'smooth'})}catch(e){}}
  let o=$('mtour');if(!o){o=document.createElement('div');o.id='mtour';document.body.appendChild(o)}
- o.innerHTML='<div class="box ktk"><img src="'+(last?KLI:KRI)+'" alt="King"><div><b>🧭 Menu tour</b> <small>('+(MT+1)+'/'+MTS.length+')</small><div class="mtx">'+st.t+'</div><div class="row">'+(MT?'<button onclick="mtGo('+(MT-1)+')">⬅ Back</button>':'')+'<button onclick="mtGo('+(MT+1)+')">'+(last?'Got it!':'Next ➜')+'</button>'+(last?'':'<button onclick="mtGo(99)">Skip</button>')+'</div></div></div>'}
+ o.innerHTML='<div class="box ktk"><img src="'+(last?KLI:KRI)+'" alt="King"><div><b>🧭 Menu tour</b> <small>('+(MT+1)+'/'+MTS.length+')</small><div class="mtx">'+st.t+'</div><div class="row">'+(MT?'<button onclick="mtGo('+(MT-1)+')">⬅ Back</button>':'')+(last&&!S.kt?'<button onclick="mtKingdom()">🏰 Go to Kingdom</button>':'<button onclick="mtGo('+(MT+1)+')">'+(last?'Got it!':'Next ➜')+'</button>')+(last?'':'<button onclick="mtGo(99)">Skip</button>')+'</div></div></div>'}
 function tutBox(){const n=(S.tut||0)+1;if(n>3)return '<div class="row"><button onclick="S.tut=0;save();menu()">Replay tutorial</button><button onclick="mtStart()">🧭 Menu tour</button></div>';
  return `<div class="box" style="margin:6px 0;border-color:#f5b800"><b>🎓 Learn to play</b> &middot; lesson ${n} of 3<br>${TUT_INFO[n-1]}<div class="row"><button id="go" onclick="start(${n})">▶ Start lesson ${n}</button><button onclick="mtStart()">🧭 Menu tour</button></div></div>`}
 
@@ -629,7 +693,7 @@ function rbadge(k){const r=rarOf(k);return `<span class="rar ${r}">${RARITIES[r]
 let cview='deck';
 function allView(){let h=`<div class="box" style="margin:6px 0">${EXPI} Common EXP <b>${S.exp}</b> &nbsp; ${RAREI} Rare EXP <b>${S.expR||0}</b> &nbsp; Cards <b>${S.un}/${ORDER.length}</b> &nbsp; Emotes <b>4/4</b></div><h2 style="margin:6px 0">All cards</h2><div class="grid">`;
  ORDER.forEach((k,i)=>{const c=CARDS[k];if(i<S.un)h+=`<div class="box tile rar-${rarOf(k)}" data-k="${k}"><div class="thead">${tileHead(k,L(k))}</div>${xpBar(k,L(k))}</div>`;
-  else h+=`<div class="box lock rar-${rarOf(k)}"><b>???</b> ${rbadge(k)}<br>Not obtained yet. Find it in a mini chest.</div>`});
+  else h+=lockTile(k)});
  h+=`</div><h2 style="margin:10px 0 4px">Emotes</h2><div class="row">`;
  for(const [nm,src] of [['Mad',SAI.src],['Sad',SSI.src],['Supportive',TUI.src],['Laughing',SLI.src]])h+=`<div class="box" style="text-align:center"><img src="${src}" alt="${nm}" style="width:80px;height:56px;object-fit:contain;image-rendering:pixelated;display:block;margin:0 auto"><small>${nm}</small></div>`;
  return h+'</div>'}
@@ -716,10 +780,10 @@ function menu(msg){dropSave();if(MP&&MP.started)mpEnd();{const r=trCheck();if(r)
   for(let i=S.deck.length;i<8;i++)h+=`<div class="box lock" style="min-height:100px">Empty slot</div>`;
   h+=`</div><h2 style="margin:10px 0 4px">Other cards</h2><div class="grid">`;
   owned().filter(k=>!S.deck.includes(k)).forEach(k=>h+=tile(k,0));
-  for(let i=S.un;i<ORDER.length;i++)h+=`<div class="box lock"><b>Locked card</b><br>Find it in a mini chest</div>`;
+  for(let i=S.un;i<ORDER.length;i++)h+=lockTile(ORDER[i]);
   h+=`</div>`}
  h+=`</section><section class="pg">${shopTab()}</section></div>${navHTML(['battle','collection','shop'][page]||'battle')}</div>`;
- m.innerHTML=h;arThumb();mpRender();mtApply();if(!S.mt&&(S.tut||0)>=1&&!G){S.mt=1;save();mtStart()}const sl=$('sl');sl.scrollLeft=page*sl.clientWidth;
+ m.innerHTML=h;arThumb();mpRender();mtApply();if(!S.mt&&(S.tut||0)>=3&&!G){S.mt=1;save();mtStart()}const sl=$('sl');sl.scrollLeft=page*sl.clientWidth;
  sl.onscroll=()=>{const p=Math.round(sl.scrollLeft/sl.clientWidth);if(p!=page){page=p;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',+b.dataset.p==p))}}
 }
 /* ================= Kingdom tab: a huge 100x100 kingdom, build anywhere ================= */
@@ -807,7 +871,7 @@ const kdUpCost=b=>Math.max(10,Math.round(KD_B[b.t].u*Math.pow(b.l,1.7)/10)*10);
 const kdCount=t=>{const k=kdInit();return kdBs().filter(b=>b&&b.t==t).length+k.inv.filter(b=>b.t==t).length};
 const kdLim=t=>{const a=KD_LIM[t];return a?a[kdInit().c-1]:999},kdMaxL=()=>Math.min(KD_MAXL,KD_LVCAP[kdInit().c-1]||2);
 function kdReady(){return kdBs().some(b=>kdIsProd(b)&&kdPend(b)>=kdCapAmt(b)*.75)}
-function kdChips(){const bv=$('kbv');if(bv)bv.innerHTML=SILV+' '+(S.silver||0)+'/'+kdCapOf('sil');const bs=$('kbs'),bg=$('kbg');if(bs)bs.innerHTML=GSI+' '+S.gs+'/'+kdCapOf('gs');if(bg)bg.innerHTML=GEM+' '+S.gems;const a=document.querySelector('.chip.sup'),g=document.querySelector('.chip.gem');if(g)g.innerHTML=GEM+' '+S.gems+' <small>Gems</small>'}
+function kdChips(){const bar=(id,v,c,ic)=>{const e=$(id);if(!e)return;const sp=e.querySelector('span'),f=e.querySelector('i');if(sp)sp.innerHTML=ic+' '+v+'/'+c;if(f)f.style.width=(c?Math.min(100,v/c*100):0)+'%'};bar('kbv',S.silver||0,kdCapOf('sil'),SILV);bar('kbs',S.gs,kdCapOf('gs'),GSI);const bg=$('kbg');if(bg)bg.innerHTML=GEM+' '+S.gems;const g=document.querySelector('.chip.gem');if(g)g.innerHTML=GEM+' '+S.gems+' <small>Gems</small>'}
 function kdCollect(i,quiet){kdSync();const k=kdInit(),b=k.p[i];if(!kdIsProd(b))return 0;const p=kdPend(b),kk0=KD_B[b.t].k,n=Math.min(Math.floor(p),kk0=='gs'?kdRoom('gs'):kk0=='sil'?kdRoom('sil'):1e9);if(n<1){if(Math.floor(p)>=1&&!quiet)KDFL.push({i,t:'Storage full',s:Date.now()});return 0}
  const full=n>=Math.floor(p)&&Date.now()-b.s>=kdCapHb(b)*3600e3;b.s=full?Date.now():Date.now()-(p-n)/kdRate(b)*3600e3;
  const kk=KD_B[b.t].k;if(kk=='gs')S.gs+=n;else if(kk=='exp')S.exp+=n;else if(kk=='sil')S.silver=(S.silver||0)+n;else S.gems+=n;kdSync();save();if(!quiet){kdChips();kdRender([[i,'+'+n]])}return n}
@@ -839,13 +903,26 @@ const kdWallCost=pl=>{const k=kdInit();return pl.reduce((t,id)=>t+kdUpCost(k.p[i
 function kdWallUp(i,extra){const k=kdInit(),pl=kdWallPlan(i,extra),tot=kdWallCost(pl);KDDEL=null;if(!pl.length||S.gs<tot)return;S.gs-=tot;const fl=[];pl.forEach(id=>{const w=k.p[id];w.l=(w.l||1)+1;fl.push([id,'Lv '+w.l])});save();kdChips();kdRender(fl)}
 function kdDemo(i){const k=kdInit(),b=k.p[i];if(!b||!kdIsDeco(b.t)||kdUpg(b)||b.job||kdBLock(b))return;if(KDDEL!=i){KDDEL=i;kdRender();return}KDDEL=null;if(kdIsProd(b))kdCollect(i,1);{const r=kdRefund(b.t);kdPay(r.cur,-r.amt)}delete k.p[i];save();kdChips();kdRender()}
 function kdCastle(){const k=kdInit(),c=KD_CC[k.c-1],h=kdFreeHut();KDDEL=null;if(k.c>=KD_MAXC||S.gs<c||!h||kdMiss().length||kdHuts().some(x=>x.job&&x.job.u=='C'))return;S.gs-=c;h.job={st:Date.now(),u:'C',to:k.c+1,end:Date.now()+kdUpTime(k.c)*1000,n:'Castle'};save();kdChips();kdRender()}
-function kdHTML(){return '<canvas id="kd3" class="kd3"></canvas><div id="khud">'+kdHud()+'</div><div class="box kdpanel" id="kdpanel">'+kdPanel()+'</div>'}
-function kdHud(){const k=kdInit(),bt=kdBeauty(),hs=kdHuts(),fr=hs.filter(h=>!h.job).length,cu=hs.find(h=>h.job&&h.job.u=='C'),fh=kdFreeHut();let T={gs:0,gem:0,exp:0,sil:0};
+function kdHTML(){return '<canvas id="kd3" class="kd3"></canvas><div id="khud">'+kdHud()+'</div><div class="box kdpanel" id="kdpanel">'+kdPanel()+'</div>'+kdInvShell()}
+function kdBarsHTML(){const bar=(id,cl,ic,v,c)=>`<div class="kbar2 ${cl}" id="${id}"><i style="width:${c?Math.min(100,v/c*100):0}%"></i><span>${ic} ${v}/${c}</span></div>`;return bar('kbv','sil',SILV,S.silver||0,kdCapOf('sil'))+bar('kbs','gold',GSI,S.gs,kdCapOf('gs'))+'<div class="kbg" id="kbg">'+GEM+' '+S.gems+'</div>'}
+function kdHud(){const k=kdInit(),cu=kdHuts().find(h=>h.job&&h.job.u=='C');let T={gs:0,gem:0,exp:0,sil:0};
  kdBs().forEach(b=>{if(kdIsProd(b))T[KD_B[b.t].k]+=Math.floor(kdPend(b))});
- return '<span class="chip cc" style="cursor:pointer" onclick="KDSEL=\'castle\';kdRender()" title="Tap to open your castle. Buildings store up to '+kdCapH()+' hours of goods">🏰 Lv '+k.c+'</span><span class="chip lv" title="Each beauty point adds +1% to everything your buildings make (up to +'+KD_BCAP+'%)">⭐ +'+bt+'%</span><span class="chip">⚒️ '+fr+'/'+hs.length+' free</span>'
+ return '<button id="kcast" onclick="KDSEL=KDSEL==\'castle\'?null:\'castle\';kdRender()" title="Tap to name your castle and see its stats"><span class="mer"><i></i><i></i><i></i></span><span class="nm" id="kbn">'+esc(k.name||'Your Kingdom')+'</span></button>'
+ +(cu?'<div id="kcj">⏳ Castle: <b id="kdcup" data-end="'+cu.job.end+'"></b></div>':'')
  +'<button id="kdall" onclick="kdAll()" '+(T.gs+T.gem+T.exp+T.sil?'':'disabled')+'>💰 Collect all <span id="kdtot">'+kdTotTxt(T)+'</span></button>'
- +(cu?'<span class="chip">⏳ Castle: <b id="kdcup" data-end="'+cu.job.end+'"></b></span>':'')
- +'<button onclick="kdRaidOpen()">⚔️ Raid</button><button onclick="kdTutOpen(0)">❓</button><button onclick="kdNameOpen()">✏️ Name</button><button onclick="kdFit()">🗺 Fit</button><button onclick="kdHome()">🏰</button><button onclick="kdZoom(1.3)">➕</button><button onclick="kdZoom(.77)">➖</button>'}
+ +'<div id="kbars">'+kdBarsHTML()+'</div><button id="kraidb" onclick="kdRaidOpen()">Raid</button>'}
+let KDINV=false;
+function kdInvHTML(){const k=kdInit(),iv={};k.inv.forEach(x=>{const key=x.t+'|'+(x.l||1);iv[key]=(iv[key]||0)+1});let h='<b>📦 Inventory</b><br><small>Tap a building to place it in the middle of your view, then drag it where you want it.</small>';
+ if(k.inv.length){h+='<div class="kdbuild">';for(const key in iv){const t=key.split('|')[0],l=key.split('|')[1],d=KD_B[t];h+='<button onclick="kdInvPlace(\''+t+'\','+l+')"><span class="kde2">'+d.e+'</span><b>'+d.n+' x'+iv[key]+'</b><small>'+((d.upg||d.b>0)?'Lv '+l+' &middot; ':'')+'Place for free</small></button>'}h+='</div>'}
+ else h+='<br><small>Your inventory is empty. Buy buildings in the Kingdom Shop.</small>';
+ return h+'<div class="row"><button onclick="kdGoShop()">🛒 Kingdom Shop</button><span class="chip">🧱 Walls '+kdCount('wall')+'/'+kdLim('wall')+'</span></div>'}
+function kdInvShell(){return '<div id="kinvw" class="'+(KDINV?'open':'')+'"><button id="kinvtab" onclick="kdInvToggle()" aria-label="Building inventory"><span id="kinvl">'+(KDINV?'&gt;&gt;':'&lt;&lt;')+'</span>'+(kdInit().inv.length?'<i class="dot"></i>':'')+'</button><div id="kinvc" class="box">'+kdInvHTML()+'</div></div>'}
+function kdInvRefresh(){const w=$('kinvw');if(!w)return;w.classList.toggle('open',KDINV);const c=$('kinvc');if(c)c.innerHTML=kdInvHTML();const t=$('kinvtab');if(t)t.innerHTML='<span id="kinvl">'+(KDINV?'&gt;&gt;':'&lt;&lt;')+'</span>'+(kdInit().inv.length?'<i class="dot"></i>':'')}
+function kdInvToggle(){KDINV=!KDINV;kdInvRefresh()}
+function kdInvPlace(t,l){const k=kdInit(),n=kdSz(t),a=(KC.px/32+KC.py/16)/2,b=(KC.py/16-KC.px/32)/2,sp=kdFindSpot(k,n,Math.round(a-(n-1)/2),Math.round(b-(n-1)/2));
+ if(!sp){const c=$('kinvc');if(c&&!$('kinvno'))c.insertAdjacentHTML('afterbegin','<small id="kinvno" style="color:#7a1010">No free space near the middle of your view. Move the map and try again.</small><br>');return}
+ KDINV=false;kdPlace(sp[0]+','+sp[1],t,l);kdInvRefresh()}
+function kdMenuRow(){return '<div class="row" style="margin-top:6px"><button onclick="kdTutOpen(0)">❓ Guide</button><button onclick="kdHome()">🏰 Center</button><button onclick="kdFit()">🗺 Fit</button><button onclick="kdZoom(1.3)">➕</button><button onclick="kdZoom(.77)">➖</button></div>'}
 function kdTotTxt(T){const a=[];if(T.gs)a.push('+'+T.gs+' '+GSI);if(T.gem)a.push('+'+T.gem+' '+GEM);if(T.exp)a.push('+'+T.exp+' '+EXPI);if(T.sil)a.push('+'+T.sil+' '+SILV);return a.join(' ')||'(nothing yet)'}
 function kdCastlePanel(){const k=kdInit(),cu=kdHuts().find(h=>h.job&&h.job.u=='C'),fh=kdFreeHut(),max=k.c>=KD_MAXC,c=max?0:KD_CC[k.c-1];
  let h='<b>🏰 Castle &middot; Level '+k.c+'/'+KD_MAXC+'</b><br><small>The heart of your kingdom (4 × 4 tiles). A higher castle level lets you build more of each building and upgrade them higher.</small><div style="margin:4px 0">Buildings can reach <b>Lv '+kdMaxL()+'</b> &middot; they store <b>'+kdCapH()+' hours</b> of goods &middot; 🧱 walls allowed: <b>'+kdLim('wall')+'</b></div>';
@@ -855,10 +932,10 @@ function kdCastlePanel(){const k=kdInit(),cu=kdHuts().find(h=>h.job&&h.job.u=='C
  if(cu)h+='<span class="chip">⏳ Upgrading to Lv '+cu.job.to+': <b id="kdup" data-end="'+cu.job.end+'"></b></span>';
  else if(!max)h+=(kdMiss().length?'<div style="margin:4px 0"><small>🔒 Place all the buildings you have unlocked before upgrading: '+kdMissTxt()+'. (Walls and Stonemason Huts are optional.)</small></div>':'')+'<button onclick="kdCastle()" '+(S.gs>=c&&fh&&!kdMiss().length?'':'disabled')+'>⬆ Upgrade to Lv '+(k.c+1)+' ('+c+' '+GSI+', '+kdFmt(kdUpTime(k.c))+')</button>'+(fh?'':'<small>No free stonemason.</small>');
  else h+='<span class="chip">👑 Max castle level</span>';
- return h+'</div>'}
+ return h+'</div>'+kdMenuRow()}
 function kdPanel(){const k=kdInit(),i=KDSEL;
  if(!i)return '';if(0)return '<b>Welcome, your majesty!</b><br><small>Your whole kingdom is open: tap any tile to build, and drag any building (or the castle) to move it. Upgrades take time and need a free stonemason, so keep your Stonemason Huts staffed (max 3). Decorations give beauty, which boosts everything.</small>';
- if(i=='castle')return kdCastlePanel();
+ if(i=='castle')return '';
  const b=k.p[i],Q="'"+i+"'";
  if(!b&&kdTree(i)){const kn=kdTree(i),c=KD_CLR[kn];const cj=k.cj&&k.cj[i];return '<b>'+({tree:'🌳 Trees',rock:'🪨 Rock',mush:'🍄 Mushrooms'})[kn]+'</b><br><small>This is in the way, so you can not build here. Clear it first. It takes '+kdFmt(KD_CT[kn])+' and may give you 1 to 5 '+GEM+' gems.</small><div class="row">'+(cj?'<span class="chip">⏳ Clearing: <b id="kdup" data-end="'+cj.end+'"></b></span>':'<button '+(S.gs>=c?'':'disabled')+' onclick="kdClear('+Q+')">'+(kn=='rock'?'⛏️ Break rock':kn=='mush'?'🧹 Clear mushrooms':'🪓 Clear trees')+' ('+c+' '+GSI+', '+kdFmt(KD_CT[kn])+')</button>')+'</div>'}
  if(!b){let h='<small>Tile '+i+'</small><br><b>📦 Your inventory</b> <small>(tap a building to place it here for free)</small>';const iv={};k.inv.forEach(x=>{const key=x.t+'|'+(x.l||1);iv[key]=(iv[key]||0)+1});
@@ -1111,8 +1188,8 @@ function kdRaidOpen(){const o=$('kfull');if(!o)return;let r=$('kraid');if(!r){r=
 function kdRaidClose(){const r=$('kraid');if(r){r.style.display='none';r.innerHTML='';r.className=''}}
 const KDT=[
 ['👑 Welcome to your kingdom','Greetings, my ruler! This is your very own kingdom. Your castle sits in the middle of a big 60 by 60 plot with forests all around it. I will show you everything, step by step. You can open this guide again any time with the ❓ button.','castle'],
-['🧭 Getting around','Drag the map to look around. Pinch (or scroll the mouse wheel) to zoom. 🗺 Fit shows your whole kingdom, 🏰 jumps back to your castle, and ➕ ➖ zoom in and out. Trees, rocks and mushrooms grow in clumps, and the open meadows between them are where you can build.','castle'],
-['🔘 The top bar','Along the top of the map: ⬅ Back returns to the main menu, ⭐ is your beauty bonus, ⚒️ shows how many stonemasons are free, 💰 Collect all gathers everything that is ready, ⚔️ Raid finds a rival kingdom, ✏️ Name renames your kingdom, and ❓ opens this guide again. Your gold scraps, silver and gems are in the bar above the map.',null],
+['🧭 Getting around','Drag the map to look around. Pinch (or scroll the mouse wheel) to zoom. In your castle menu (tap the castle name, top left), 🗺 Fit shows your whole kingdom, 🏰 Center jumps back to your castle, and ➕ ➖ zoom in and out. Trees, rocks and mushrooms grow in clumps, and the open meadows between them are where you can build.','castle'],
+['🔘 The top bar','The castle banner (top left) opens your castle menu: upgrades, ✏️ Rename, ❓ Guide, beauty ⭐ and free stonemasons ⚒️. The two bars (top right) show your silver and gold scraps against the most you can store. 💰 Collect all pops up under the banner when goods are ready, ⚔️ Raid is bottom left, and the brown << tab on the right opens your building inventory.',null],
 ['⛏️ Your starter buildings','You begin with a Gold Mine that digs up gold scraps, a Silver Mine that digs up silver, and a Stonemason Hut that carries out your upgrades. Farms, Barracks, Army Camps (extra room for your army) and more unlock as your castle levels up. Tap any building to see what it does and what you can do with it.','gold'],
 ['💰 Your resources','Gold scraps come from Gold Mines and pay for upgrades and for clearing land. Silver comes from Farms, Lumber Mills and Markets and buys new buildings. Gems are rare, come from Gem Mines and Crystal Caves, and pay for things like extra Stonemason Huts. The chips at the top show what you hold out of your maximum.',null],
 [()=>'🧺 Collecting','Buildings keep working while you are away and show a +number bubble when goods are ready. Tap a building to collect, or press 💰 Collect all. Each building only stores about '+kdCapH()+' hours of goods at your castle level (gem buildings store 3 days), so check back often and upgrade your castle to store more.','gold'],
@@ -1152,7 +1229,23 @@ function kdTutCheck(){if(KTI<0||!KDTA||!$('ktut'))return;if(KDTA[KTI]&&KDTA[KTI]
 function kdNameOpen(msg,val){const o=$('kfull');if(!o)return;let n=$('kname');if(!n){n=document.createElement('div');n.id='kname';o.appendChild(n)}const k=kdInit();
  n.innerHTML='<div class="box" style="max-width:420px;margin:30px auto"><b>✏️ Name your kingdom</b><br><small>Your name goes on it too: <b>'+esc(S.name||'Player')+'</b> (change it in your profile)</small><div class="row" style="margin-top:8px"><input id="kni" maxlength="18" value="'+esc(val!=null?val:(k.name||''))+'" placeholder="Kingdom name" style="font:inherit;padding:6px 8px;border:2px solid var(--ln);border-radius:8px;flex:1;min-width:0"><button onclick="kdNameSave()">Save</button></div><div style="color:#b00;margin-top:6px">'+(msg||'')+'</div>'+(k.name?'<div class="row"><button onclick="$(\'kname\').remove()">Cancel</button></div>':'')+'</div>'}
 function kdNameSave(){const v=($('kni').value||'').trim().replace(/\s+/g,' ').slice(0,18);if(!v){kdNameOpen('Please type a name.','');return}if(badName(v)){kdNameOpen('That name is not allowed. Please pick another.',v);return}kdInit().name=v;save();$('kname').remove();const b=$('kbn');if(b)b.textContent='🏰 '+v}
-function kdRender(fl){const el=$('kd');if(!el)return;if(!$('kd3'))el.innerHTML=kdHTML();else{$('khud').innerHTML=kdHud();$('kdpanel').innerHTML=kdPanel()}kdTick();(fl||[]).forEach(([i,t])=>{KDFL.push({i,t,s:Date.now()});if(/^Lv /.test(t))KDFX.push({i,s:Date.now()})})}
+
+/* ---- castle window: name + stats ---- */
+function kdStatsHTML(){const k=kdInit(),bs=kdBs(),P={gs:0,sil:0,exp:0,gem:0},hs=kdHuts(),fr=hs.filter(h=>!h.job).length,bt=kdBeauty();
+ bs.forEach(b=>{if(kdIsProd(b))P[KD_B[b.t].k]+=kdRate(b)});
+ const cell=(a,b)=>'<div class="kst"><small>'+a+'</small><b>'+b+'</b></div>',f=v=>v<10?v.toFixed(1):Math.round(v),
+  prod=(P.gs?'+'+f(P.gs)+' '+GSI+' ':'')+(P.sil?'+'+f(P.sil)+' '+SILV+' ':'')+(P.exp?'+'+f(P.exp)+' '+EXPI+' ':'')+(P.gem?'+'+(P.gem*24).toFixed(1)+' '+GEM+'/day':'');
+ return '<div class="kstg">'+cell('🏰 Castle level',k.c+' / '+KD_MAXC)+cell('👑 Ruler',esc(S.name||'Player'))+cell('⭐ Beauty','+'+bt+'%')+cell('⚒️ Stonemasons free',fr+' / '+hs.length)
+  +cell('🏗️ Buildings',bs.filter(b=>b.t!='wall').length+' &middot; 🧱 '+kdCount('wall')+'/'+kdLim('wall'))+cell('⚔️ Troop space',kdUsed()+' / '+kdCap())
+  +cell('📦 Gold storage',S.gs+' / '+kdCapOf('gs'))+cell('📦 Silver storage',(S.silver||0)+' / '+kdCapOf('sil'))
+  +cell('🔨 Max building level','Lv '+kdMaxL())+cell('⏱ Goods stored for',kdCapH()+' hours')+'</div>'
+  +'<div class="kst wide"><small>📈 Making per hour</small><b>'+(prod||'nothing yet')+'</b></div>'}
+function kdCastleRename(){const v=($('kcn').value||'').trim().replace(/\s+/g,' ').slice(0,18),m=$('kcnm');if(!v){m.style.color='#b00';m.textContent='Please type a name.';return}if(badName(v)){m.style.color='#b00';m.textContent='That name is not allowed. Please pick another.';return}kdInit().name=v;save();m.style.color='#0a6b1e';m.textContent='Saved!';const b=$('kbn');if(b)b.textContent=v}
+function kdCastleClose(){KDSEL=null;kdRender()}
+function kdCastleModal(){const open=KDSEL=='castle',m=$('kcm'),kd=$('kd');if(!kd)return;if(!open){if(m)m.remove();return}
+ if(!m){const d=document.createElement('div');d.id='kcm';d.className='box';d.innerHTML='<button class="cix" onclick="kdCastleClose()" aria-label="Close">✕</button><b>✏️ Castle name</b><div class="row" style="margin-top:6px"><input id="kcn" maxlength="18" value="'+esc(kdInit().name||'')+'" placeholder="Name your castle" onkeydown="if(event.key==\'Enter\')kdCastleRename()"><button onclick="kdCastleRename()">Save</button></div><div id="kcnm" class="kcnm"></div><div id="kcms"></div>';kd.appendChild(d)}
+ $('kcms').innerHTML=kdStatsHTML()+kdCastlePanel()}
+function kdRender(fl){const el=$('kd');if(!el)return;if(!$('kd3'))el.innerHTML=kdHTML();else{$('khud').innerHTML=kdHud();$('kdpanel').innerHTML=kdPanel();kdInvRefresh()}kdCastleModal();kdTick();(fl||[]).forEach(([i,t])=>{KDFL.push({i,t,s:Date.now()});if(/^Lv /.test(t))KDFX.push({i,s:Date.now()})})}
 function kdTick(){kdDone();kdSync();if(!$('kd3'))return;const k=kdInit();let T={gs:0,gem:0,exp:0,sil:0};
  kdBs().forEach(b=>{if(kdIsProd(b))T[KD_B[b.t].k]+=Math.floor(kdPend(b))});
  const tt=$('kdtot');if(tt)tt.innerHTML=kdTotTxt(T);const ab=$('kdall');if(ab)ab.disabled=!(T.gs+T.gem+T.exp+T.sil);
@@ -1161,9 +1254,9 @@ function kdTick(){kdDone();kdSync();if(!$('kd3'))return;const k=kdInit();let T={
 setInterval(kdTick,1000);
 let KM=false;
 function kingdomTab(){return '<div class="box" style="text-align:center;margin-top:10px"><div style="font-size:44px">🏰</div><b>Your Kingdom</b><br><small>Enter your kingdom to build, upgrade and collect.</small><div class="row" style="justify-content:center"><button onclick="kdEnter()">Enter kingdom</button></div></div>'}
-function kdBar(){return '<div id="kbar"><button onclick="kdSlideOut()">⬅ Back</button><b id="kbn">🏰 '+esc(kdInit().name||'Kingdom')+'</b><span class="chip"><span id="kbs">'+GSI+' '+S.gs+'/'+kdCapOf('gs')+'</span></span><span class="chip"><span id="kbv">'+SILV+' '+(S.silver||0)+'/'+kdCapOf('sil')+'</span></span><span class="chip"><span id="kbg">'+GEM+' '+S.gems+'</span></span></div>'}
-function kdEnter(){mtEnd();KM=true;KDSEL=null;KDDEL=null;KDG=null;let o=$('kfull');if(!o){o=document.createElement('div');o.id='kfull';document.body.appendChild(o)}
- o.style.display='flex';o.innerHTML=kdBar()+'<div id="kd">'+kdHTML()+'</div>'+navHTML('kingdom');document.body.style.overflow='hidden';kdHome();if(!S.kt)kdTutOpen(0);else if(!kdInit().name)kdNameOpen()}
+function kdBar(){return '';return '<div id="kbar"><button onclick="kdSlideOut()">⬅ Back</button><b id="kbn">🏰 '+esc(kdInit().name||'Kingdom')+'</b><span class="chip"><span id="kbs">'+GSI+' '+S.gs+'/'+kdCapOf('gs')+'</span></span><span class="chip"><span id="kbv">'+SILV+' '+(S.silver||0)+'/'+kdCapOf('sil')+'</span></span><span class="chip"><span id="kbg">'+GEM+' '+S.gems+'</span></span></div>'}
+function kdEnter(){mtEnd();KM=true;KDINV=false;KDSEL=null;KDDEL=null;KDG=null;let o=$('kfull');if(!o){o=document.createElement('div');o.id='kfull';document.body.appendChild(o)}
+ o.style.display='flex';o.innerHTML=kdBar()+'<div id="kd">'+kdHTML()+'</div>'+navHTML('kingdom');document.body.style.overflow='hidden';mtEnd();kdHome();if(!S.kt)kdTutOpen(0);else if(!kdInit().name)kdNameOpen()}
 function kdSlideIn(){if(KM)return;kdEnter();const o=$('kfull');if(o){o.classList.add('kin');setTimeout(()=>o.classList.remove('kin'),400)}}
 function kdSlideOut(p){const o=$('kfull');if(!o||o._x)return;o._x=1;if(p!=null)page=p;o.classList.add('kout');setTimeout(kdExit,240)}
 (function(){let sx=0,sy=0,t0=0,on=false;
@@ -1456,6 +1549,7 @@ requestAnimationFrame(k3Loop);
 const EXP_COST=[5,20,50,100,250,500,1000,1500,3000,5000,10000,15000,30000,40000,50000];
 function upNeed(l,m,t){const mm=m||1,cs=Math.max(1,Math.round(5*Math.pow(1.75,l-1)*mm)),ce=EXP_COST[Math.max(0,Math.min(EXP_COST.length-1,l-1))],have=t=='rexp'?(S.expR||0):S.exp,g=Math.ceil(Math.max(0,cs-S.sup)/20)+Math.ceil(Math.max(0,ce-have)/(t=='rexp'?10:16)),mx=l>=MAXL;return{cs,ce,g,t,ok:!mx&&g==0,okG:!mx&&g>0&&S.gems>=g}}
 function pay(n,g){if(g)S.gems-=n.g;S.sup-=Math.min(S.sup,n.cs);if(n.t=='rexp')S.expR=(S.expR||0)-Math.min(S.expR||0,n.ce);else S.exp-=Math.min(S.exp,n.ce)}
+function lockTile(k){return `<div class="box tile locked rar-${rarOf(k)}" data-k="${k}"><div class="thead">${tileHead(k,1)}</div><div class="lockbar">🔒 Locked: find it in a mini chest</div></div>`}
 function xpBar(k,l){const mx=l>=MAXL,t=expType(k),have=t=='rexp'?(S.expR||0):S.exp,need=EXP_COST[Math.max(0,Math.min(EXP_COST.length-1,l-1))],pc=mx?100:Math.min(100,Math.round(have/need*100));return `<div class="xpbar${have>=need&&!mx?' rdy':''}" title="Training EXP: you have ${have}, ${mx?'max level':'you need '+need+' to level up'}"><i style="width:${pc}%"></i><span>${mx?'MAX':have.toLocaleString()+' / '+need.toLocaleString()}</span></div>`}
 function tileHead(k,l){const c=CARDS[k];return `<button class="ciface" title="${c.n}: tap for info" aria-label="Info about ${c.n}" onclick="cardInfo('${k}')">${ci(k)}<span class="ib">i</span></button><div class="tmeta">${rbadge(k)}<div class="chips2"><span class="chip lv">Lv ${l}</span><span class="chip cc" title="Coin cost">🪙 ${c.c}</span></div></div>`}
 function upBtns(l,fn,k){const n=upNeed(l,rmul(k),expType(k));if(l>=MAXL)return '<button disabled>⭐ Max level</button>';
@@ -1589,7 +1683,7 @@ function step(u,t,dt){u.mv=.15;u.ph=(u.ph||0)+dt*9;let gx=t.x,gy=t.y;const su=si
  u.x=nx;u.y=Math.max(10,Math.min(H-10,ny))}
 const MRING=52,AIRH=20;
 function stepAir(u,t,dt){u.mv=.15;u.ph=(u.ph||0)+dt*9;const dx=t.x-u.x,dy=t.y-u.y,d=Math.hypot(dx,dy)||1,v=Math.min(u.sp*dt,d);if(Math.abs(dx)>.3)u.fx=dx<0?-1:1;u.x+=dx/d*v;u.y=Math.max(10,Math.min(H-10,u.y+dy/d*v))}
-function dmgTo(t,d){if(t.shd>0){const a=Math.min(t.shd,d);t.shd-=a;d-=a;if(t.shd<=0){t.shd=0;popShield(t)}}if(t.helm>0){const a=Math.min(t.helm,d);t.helm-=a;d-=a;if(t.helm<=0)popHelm(t)}t.hp-=d;if(t.kind=='king')t.act=1}
+function dmgTo(t,d){if(t.shd>0){t.shd-=d;d=0;if(t.shd<=0){t.shd=0;popShield(t)}}if(t.helm>0){const a=Math.min(t.helm,d);t.helm-=a;d-=a;if(t.helm<=0)popHelm(t)}t.hp-=d;if(t.kind=='king')t.act=1}
 function smokePuff(x,y,n,R){for(let i=0;i<n;i++){const an=Math.random()*6.283,sp=rnd(30,95),l=rnd(.45,.8);G.fx.push({sm:1,x:x+rnd(-6,6),y:y+rnd(-4,4),vx:Math.cos(an)*sp,vy:Math.sin(an)*sp*.6-18,r:R*rnd(.7,1.2),l,l0:l,c:['#d0d3d9','#b8bcc4','#e4e6ea'][i%3]})}}
 function vkWalk(e,dt){e.wk=(e.wk||0)+dt*9;if(!e.chg&&e.wk>=3*CARDS.viking.wcyc){e.chg=1;e.bsp=e.sp;e.sp=e.bsp*2.4;smokePuff(e.x,e.y+16,4,8)}if(e.chg&&Math.random()<dt*16)smokePuff(e.x-(e.fx||(e.team?-1:1))*10,e.y+18,1,6)}
 function shdStep(f,dt){if(f.on)return;f.x+=f.vx*dt;f.y+=f.vy*dt;f.vy+=520*dt;f.rot+=(f.rest-f.rot)*Math.min(1,dt*9);
@@ -1600,7 +1694,7 @@ function popShield(t){const dr=t.fx||(t.team?-1:1);G.fx.push({shd:1,x:t.x+dr*9,y
 function popHelm(t){if(t.chg){t.chg=0;t.sp=t.bsp}t.wk=0;t.helm=0;t.bo=0;G.fx.push({ring:1,x:t.x,y:t.y-8,rr:30,l:.35,l0:.35,c:'190,195,205',w:3})}
 function hit(a,t){
  if(a.k=='triplets'||a.k=='recruits'||a.k=='warrior'||a.k=='mauler'||a.k=='smith'||a.k=='macero'||a.k=='viking'||a.k=='crusader'){a.pd=a.k=='triplets'?.42:a.k=='macero'?.8:a.k=='viking'?.6:a.k=='crusader'?.7:(a.k=='mauler'||a.k=='smith')?.7:.5;a.pt=a.pd;a.pend={t,left:a.chg&&a.helm>0&&t.bld?.06:a.k=='viking'?a.pd*.75:a.k=='crusader'?a.pd*.58:a.pd*.5};return}
- if(a.k=='priest'){const dr=a.fx||(a.team?-1:1),ox=a.x+dr*14,oy=a.y-10,ty=t.y-(t.air?AIRH:t.bld?0:8);G.pr.push({team:a.team,x:ox,y:oy,a:Math.atan2(ty-oy,t.x-ox),sp:CROSS_SP,dmg:a.dmg,cross:1,lim:a.rg+6,dist:0,hit:[]});return}
+ if(a.k=='priest'){const dr=a.fx||(a.team?-1:1),ox=a.x+dr*17,oy=a.y-13,ty=t.y-(t.air?AIRH:t.bld?0:8);G.pr.push({team:a.team,x:ox,y:oy,a:Math.atan2(ty-oy,t.x-ox),sp:CROSS_SP,dmg:a.dmg,cross:1,lim:a.rg+6,dist:0,hit:[]});return}
  if(a.k=='nomad'){const dr=a.fx||(a.team?-1:1);G.pr.push({team:a.team,x:a.x+dr*16,y:a.y-2,t,dmg:a.dmg,sp:480,spear:1,lx:t.x,ly:t.y,a:0});return}
  if(a.k=='dartboy'){const dr=a.fx||(a.team?-1:1);G.pr.push({team:a.team,x:a.x+dr*16,y:a.y-10,t,dmg:a.dmg,sp:520,dart:1,lx:t.x,ly:t.y,a:0});return}
  if(a.kind=='king'||a.kind=='p'||a.k=='archer'){const dir=a.team?-1:1,kg=a.kind=='king',ar=a.k=='archer';
@@ -1946,7 +2040,7 @@ function vkDrawFB(e){const x=Math.round(e.x),y=Math.round(e.y),fl=(e.fx||(e.team
  cx.fillStyle='#000';cx.fillRect(3,-17,2,2);cx.restore();
  const by=y-(hel?46:40);if(hel){cx.fillStyle='#000';cx.fillRect(x-14,by-8,28,7);cx.fillStyle='#c4ccd8';cx.fillRect(x-13,by-7,26*Math.max(0,e.helm/(e.mhelm||1)),5)}
  cx.fillStyle='#000';cx.fillRect(x-14,by,28,7);cx.fillStyle=col;cx.fillRect(x-13,by+1,26*Math.max(0,e.hp/e.mhp),5);lvTag(x-20,by+3,e)}
-function fig(e){if(e.k=='viking'){vkDraw(e);return}if(e.k=='crusader'&&CR1R&&CR2R){crDraw(e);return}if(e.k=='priest'&&PRR){qsprite(e,PRI,PRW,PRA,1.05,12,0);return}if(e.k=='nomad'&&NMR){qsprite(e,NMC[e.team],NMW,NMA,1.25,10,0);return}if(e.k=='dartboy'&&DBR){dbDraw(e);return}if(e.k=='macero'&&MXR){qsprite(e,MXC[e.team],MXW,MXA,1.45,16,0,MXD);return}if(e.k=='smith'){if(SBR)qsprite(e,SBC[e.team],BWK,BAT,1.4,16,0);else smithDraw(e);return}if(e.kind=='f'){fortDraw(e);return}if(e.k=='archer'&&ARR){qsprite(e,ARI,AWK,AAT,1.2,12,0);return}if(e.k=='mauler'&&SMR){qsprite(e,SMC[e.team],MWK,MAT,1.7,20,0);return}if(e.k=='warrior'&&SWR){qsprite(e,SWC[e.team],WWK,WAT,1.35,15,0);return}if(e.k=='recruits'&&SRR){qsprite(e,SRI,RWK,RAT,1.2,13,6);return}if(e.k=='triplets'&&STR){qsprite(e,STI,TWK,TPN,1.3,7,6);return}if(e.kind=='d'&&SDR){dsprite(e);return}if(e.kind=='king'&&SKR){ksprite(e);return}if(e.kind=='p'&&SPR){sprite(e);return}const s=e.sc,col=e.team?'#ed1c24':'#00a2e8',x=e.x,y=e.y;
+function fig(e){if(e.k=='viking'){vkDraw(e);return}if(e.k=='crusader'&&CR1R&&CR2R){crDraw(e);return}if(e.k=='priest'&&PRR){qsprite(e,PRI,PRW,PRA,1.3,14,0);return}if(e.k=='nomad'&&NMR){qsprite(e,NMC[e.team],NMW,NMA,1.25,10,0);return}if(e.k=='dartboy'&&DBR){dbDraw(e);return}if(e.k=='macero'&&MXR){qsprite(e,MXC[e.team],MXW,MXA,1.45,16,0,MXD);return}if(e.k=='smith'){if(SBR)qsprite(e,SBC[e.team],BWK,BAT,1.4,16,0);else smithDraw(e);return}if(e.kind=='f'){fortDraw(e);return}if(e.k=='archer'&&ARR){qsprite(e,ARI,AWK,AAT,1.2,12,0);return}if(e.k=='mauler'&&SMR){qsprite(e,SMC[e.team],MWK,MAT,1.7,20,0);return}if(e.k=='warrior'&&SWR){qsprite(e,SWC[e.team],WWK,WAT,1.35,15,0);return}if(e.k=='recruits'&&SRR){qsprite(e,SRI,RWK,RAT,1.2,13,6);return}if(e.k=='triplets'&&STR){qsprite(e,STI,TWK,TPN,1.3,7,6);return}if(e.kind=='d'&&SDR){dsprite(e);return}if(e.kind=='king'&&SKR){ksprite(e);return}if(e.kind=='p'&&SPR){sprite(e);return}const s=e.sc,col=e.team?'#ed1c24':'#00a2e8',x=e.x,y=e.y;
  cx.lineWidth=2;cx.strokeStyle='#000';
  if(e.life){cx.globalAlpha=.55+.45*(e.hp/e.mhp)}
  cx.fillStyle='#808080';cx.fillRect(x-9*s,y-6*s,18*s,26*s);cx.strokeRect(x-9*s,y-6*s,18*s,26*s);
@@ -1962,14 +2056,8 @@ function depClock(e){const f=Math.max(0,Math.min(1,e.dep/(e.dm||DEPLOY))),sc=e.s
  cx.save();cx.lineWidth=2;cx.strokeStyle='#000';cx.fillStyle='#fff';cx.beginPath();cx.arc(x,y,R,0,7);cx.fill();
  cx.fillStyle=e.team?'#ed1c24':'#00a2e8';cx.beginPath();cx.moveTo(x,y);cx.arc(x,y,R-2,-Math.PI/2,-Math.PI/2+Math.PI*2*f);cx.closePath();cx.fill();
  cx.beginPath();cx.arc(x,y,R,0,7);cx.stroke();cx.lineWidth=1.5;cx.beginPath();cx.moveTo(x,y);cx.lineTo(x,y-R+3);cx.stroke();cx.restore()}
-function draw(){
- cx.imageSmoothingEnabled=false;cx.drawImage(arena().g,0,0);ripples(performance.now()/1000);cx.drawImage(arena().b,0,0);
- if(!G)return;
- if(sel&&mouse){const c=CARDS[sel],sn=snap(mouse.x,mouse.y);
-  if(c.spell){cx.strokeStyle='#fff';cx.lineWidth=2;cx.beginPath();cx.arc(sn.x,sn.y,c.rad,0,7);cx.stroke()}
-  else{cx.strokeStyle='rgba(255,255,255,.3)';cx.lineWidth=1;cx.beginPath();const okc=[];for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(terr(0,{c,r,x:c*GC+GC/2,y:GO+r*GC+GC/2})){cx.rect(c*GC,GO+r*GC,GC,GC);if(c>17)okc.push([c,r])}cx.stroke();
-   cx.fillStyle='rgba(0,162,232,.2)';for(const [c,r] of okc)cx.fillRect(c*GC,GO+r*GC,GC,GC);
-   cx.fillStyle=canPlace(0,sel,mouse.x,mouse.y)?'rgba(80,255,80,.45)':'rgba(255,60,60,.45)';cx.fillRect(sn.x-GC/2,sn.y-GC/2,GC,GC)}}
+/* everything that lives on the arena floor: ruins, troops, spells, projectiles and effects (shared by the real match and the card-info demo) */
+function drawWorld(){
  if(SPR)G.ruins.forEach(ruin);
  for(const f of G.fx)if(f.shd&&f.on)drawShd(f);{const U=[...G.E].sort((a,b)=>a.y-b.y);for(const e of U)if(!e.air)fig(e);for(const e of U)if(e.air)fig(e);for(const e of U)if(e.dep>0&&e.hp>0&&!e.bld&&!e.kind)depClock(e)}
  for(const s of G.sp){const col=s.team?'237,28,36':'0,162,232';
@@ -1988,13 +2076,23 @@ function draw(){
    if(BER){const f=BEF[fr],w=f[2]*BEK,h=f[3]*BEK;cx.save();cx.imageSmoothingEnabled=false;cx.translate(Math.round(bx),Math.round(by));if(fl)cx.scale(-1,1);cx.drawImage(BEI,f[0],f[1],f[2],f[3],-w/2,7.5*BEK-h,w,h);cx.restore()}
    else{cx.fillStyle='#fff';cx.fillRect(bx-3,by-5+fr*2,6,3);cx.fillStyle='#ffd400';cx.fillRect(bx-3,by-2,6,4);cx.fillStyle='#000';cx.fillRect(bx-1,by-2,2,4)}}}}
  for(const p of G.pr){if(p.ball){if(CBR){cx.imageSmoothingEnabled=false;cx.drawImage(CBI,p.x-11,p.y-11,22,22)}else{cx.fillStyle='#222';cx.beginPath();cx.arc(p.x,p.y,7,0,7);cx.fill()}}
- else if(p.cross&&PRR){cx.save();cx.imageSmoothingEnabled=false;cx.translate(p.x,p.y);cx.rotate(performance.now()/55);cx.drawImage(PRI,121,164,8,6,-12,-9,24,18);cx.restore()}
+ else if(p.cross&&PRR){cx.save();cx.imageSmoothingEnabled=false;cx.translate(p.x,p.y);cx.rotate(performance.now()/55);cx.drawImage(PRI,121,164,8,6,-6,-4.5,12,9);cx.restore()}
   else if(p.spear&&NMR){cx.save();cx.imageSmoothingEnabled=false;cx.translate(p.x,p.y);cx.rotate(p.a-Math.PI/2);cx.drawImage(NMI,101,61,4,17,-3,-13,6,26);cx.restore()}
   else if(p.dart&&DBR){cx.save();cx.imageSmoothingEnabled=false;cx.translate(p.x,p.y);cx.rotate(p.a-.93);cx.drawImage(DBI,96,92,4,5,-7,-8.75,14,17.5);cx.restore()}
   else{cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.strokeStyle='#8b5a2b';cx.lineWidth=2;cx.beginPath();cx.moveTo(-12,0);cx.lineTo(6,0);cx.stroke();
   cx.fillStyle='#ddd';cx.beginPath();cx.moveTo(11,0);cx.lineTo(4,-3);cx.lineTo(4,3);cx.fill();
   cx.strokeStyle=p.team?'#ed1c24':'#00a2e8';cx.beginPath();cx.moveTo(-12,0);cx.lineTo(-16,-3);cx.moveTo(-12,0);cx.lineTo(-16,3);cx.stroke();cx.restore()}}
  for(const f of G.fx){if(f.shd){if(!f.on)drawShd(f);continue}if(f.sm){const q=1-f.l/f.l0;cx.save();cx.globalAlpha=.75*(1-q);cx.fillStyle=f.c;cx.beginPath();cx.arc(f.x,f.y,f.r*(.55+.95*q),0,7);cx.fill();cx.restore();continue}if(f.ring){const q=1-f.l/f.l0;cx.save();cx.globalAlpha=Math.max(0,f.l/f.l0);cx.strokeStyle='rgb('+f.c+')';cx.fillStyle='rgba('+f.c+',.22)';cx.lineWidth=f.w;cx.beginPath();cx.arc(f.x,f.y,f.rr*(.55+.45*q),0,7);cx.fill();cx.stroke();cx.restore();continue}cx.strokeStyle=f.c;cx.lineWidth=f.w;cx.beginPath();cx.moveTo(f.x1,f.y1);cx.lineTo(f.x2,f.y2);cx.stroke()}
+}
+function draw(){
+ cx.imageSmoothingEnabled=false;cx.drawImage(arena().g,0,0);ripples(performance.now()/1000);cx.drawImage(arena().b,0,0);
+ if(!G)return;
+ if(sel&&mouse){const c=CARDS[sel],sn=snap(mouse.x,mouse.y);
+  if(c.spell){cx.strokeStyle='#fff';cx.lineWidth=2;cx.beginPath();cx.arc(sn.x,sn.y,c.rad,0,7);cx.stroke()}
+  else{cx.strokeStyle='rgba(255,255,255,.3)';cx.lineWidth=1;cx.beginPath();const okc=[];for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(terr(0,{c,r,x:c*GC+GC/2,y:GO+r*GC+GC/2})){cx.rect(c*GC,GO+r*GC,GC,GC);if(c>17)okc.push([c,r])}cx.stroke();
+   cx.fillStyle='rgba(0,162,232,.2)';for(const [c,r] of okc)cx.fillRect(c*GC,GO+r*GC,GC,GC);
+   cx.fillStyle=canPlace(0,sel,mouse.x,mouse.y)?'rgba(80,255,80,.45)':'rgba(255,60,60,.45)';cx.fillRect(sn.x-GC/2,sn.y-GC/2,GC,GC)}}
+ drawWorld();
  const t=Math.max(0,Math.ceil(G.t));$('tm').textContent=G.mode==2?'SUDDEN DEATH':(G.mode==1?'ULTIMATE DEATH ':'')+Math.floor(t/60)+':'+String(t%60).padStart(2,'0');
  {const st=coinStage();if(G.stg===undefined)G.stg=st;else if(st>G.stg&&!G.done){G.rb={u:performance.now()+3200,st}}G.stg=st;$('tm').style.background=st==2?'#b3261e':(st==1?'#b8860b':'')}
  $('fill').style.width=G.el[0]*10+'%';$('el').textContent='🪙 '+Math.floor(G.el[0])+' / 10 coins';affordUI();
@@ -2268,103 +2366,67 @@ if(!resume()){if((S.tut||0)<3)start((S.tut||0)+1);else menu(RESMSG)}requestAnima
 /* ================= Card info + little demo "video" ================= */
 const CD_SC={
  recruits:[['Two cheap bodies gang up on a lone Archer',1,['recruits'],['archer']],['Splash like the Macero wipes out both at once',0,['recruits'],['macero']]],
- warrior:[['Tanky: shrugs off Recruits while he swings',1,['warrior'],['recruits']],['A Blacksmith hammer drops him in two hits',0,['warrior'],['smith']]],
- triplets:[['A fast swarm overwhelms a slow Blacksmith',1,['triplets'],['smith']],['One-shot by splash: Bees erase all three',0,['triplets'],['bees']]],
- distraction:[['Lures enemies in while your Archer shoots them',1,['distraction','archer'],['recruits']],['Never attacks and crumbles, so it only buys time',0,['distraction'],['warrior']]],
- archer:[['Shoots from range and can hit air troops',1,['archer'],['dartboy']],['Fragile: fast Triplets reach him and finish him',0,['archer'],['triplets']]],
+ warrior:[['Tanky: shrugs off arrows and wins with most of his health',1,['warrior'],['archer']],['A Blacksmith hammer drops him in two hits',0,['warrior'],['smith']]],
+ triplets:[['A fast swarm takes down a lone Viking without losing a fighter',1,['triplets'],['viking']],['One-shot by splash: Bees erase all three',0,['triplets'],['bees']]],
+ distraction:[['Lures enemies in while your Nomad spears them',1,['distraction','nomad'],['warrior']],['Never attacks and crumbles, so it only buys time',0,['distraction'],['warrior']]],
+ archer:[['With a Warrior in front, he shoots flying Dart Boys out of the sky',1,['warrior','archer'],['dartboy']],['Fragile: one Blacksmith hammer swing flattens him',0,['archer'],['smith']]],
  mauler:[['Smashes towers and buildings with splash damage',1,['mauler'],['tower']],['Ignores troops, so Triplets chew him up',0,['mauler'],['triplets','tower']]],
- bees:[['Wipes out clumps of weak troops',1,['bees'],['recruits','triplets']],['Only a small dent in towers',0,['bees'],['tower']]],
+ bees:[['Zaps a clump of Recruits while your Warrior holds them in place',1,['bees','warrior'],['recruits']],['Barely scratches a tower',0,['bees'],['tower']]],
  meteor:[['Huge blast crushes and shoves back groups',1,['meteor'],['warrior','recruits']],['Slow to land: fast troops run out of the blast',0,['meteor'],['triplets','triplets']]],
  smith:[['600 damage hammer breaks tanks',1,['smith'],['warrior']],['Slow swings: Triplets swarm him',0,['smith'],['triplets','triplets']]],
  fort:[['Keeps spawning Triplets to overwhelm',1,['fort'],['warrior']],['Made of wood: a Meteor destroys it',0,['fort'],['meteor']]],
  macero:[['Every swing hits the whole ring around him',1,['macero'],['recruits','recruits']],['Cannot hit flying troops',0,['macero'],['dartboy']]],
- dartboy:[['Flying: Warriors cannot touch him',1,['dartboy'],['warrior']],['Archers shoot him out of the sky',0,['dartboy'],['archer']]],
- nomad:[['Three spears from range take down a Warrior',1,['nomad'],['warrior']],['Low health: splash wipes out the trio',0,['nomad'],['macero']]],
+ dartboy:[['Flying: Warriors cannot touch him',1,['dartboy'],['warrior']],['A pair of Archers shoot him out of the sky',0,['dartboy'],['archer','archer']]],
+ nomad:[['Three spears from range take down a Warrior',1,['nomad'],['warrior']],['Low health: a Meteor wipes out the whole trio',0,['nomad'],['meteor']]],
  viking:[['His charge smashes a tower for 200 damage',1,['viking'],['tower']],['Fragile once the helmet is gone: Triplets nibble him',0,['viking'],['triplets','triplets']]],
- priest:[['His crucifix pierces a whole line of troops',1,['priest'],['recruits','recruits']],['Fast Triplets rush him before he can throw',0,['priest'],['triplets','triplets']]],
- crusader:[['The shield soaks 300 damage from Archers',1,['crusader'],['archer','archer']],['A Blacksmith pops the shield in one hit',0,['crusader'],['smith']]]};
-const CD_TW={n:'Tower',hp:600,dmg:25,rg:130,cd:1,bld:1,ha:1,sc:1,sp:0},cdCard=k=>k=='tower'?CD_TW:CARDS[k];
+ priest:[['His crucifix pierces a whole line of troops',1,['priest'],['recruits','recruits']],['A Blacksmith hammer ends him before he can throw much',0,['priest'],['smith']]],
+ crusader:[['The shield soaks arrows: an Archer cannot hurt him',1,['crusader'],['archer']],['A Blacksmith pops the shield in one hit',0,['crusader'],['smith']]]};
 let CDS=null,CDT=0,CDL=0;
-function cdMk(team,k,x,n){const c=cdCard(k),cn=n||c.cnt||1,o=[];for(let j=0;j<cn;j++)o.push({team,k,x:x+(team?1:-1)*j*13*(c.bld?0:1),y:c.air?-34:0,hp:(c.hp||1)+(c.helm||0),mhp:(c.hp||1)+(c.helm||0),shd:c.shield||0,dmg:c.dmg||0,sp:c.sp||0,rg:c.rg||0,cd:c.cd||1,cdT:.2+j*.15,sc:c.sc||1,bld:!!c.bld,air:!!c.air,bo:!!c.bo,ha:!!c.ha,al:true,ph:Math.random()*6,fl:0,at:0,wk:0,chg:c.chg||0,lure:k=='distraction'});return o}
-function cdStart(k,pi){const L2=CD_SC[k];if(!L2)return;const sc=L2[pi%L2.length];CDS={k,pi:pi%L2.length,t:0,hold:0,u:[],p:[],fx:[],sp:[],over:0};let hx=40,fx=240;
- const add=(team,spec)=>spec.forEach(s=>{const c=cdCard(s);if(c.spell){CDS.sp.push({team,k:s,c,t:.5,fired:0,done:0});return}let x;if(s=='tower')x=312;else if(c.bld)x=team?250:125;else if(team){x=fx;fx+=24}else{x=hx;hx+=24}CDS.u.push(...cdMk(team,s,x))});
- add(0,sc[2]);add(1,sc[3]);const cp=$('cdcap');if(cp){cp.className='cdcap '+(sc[1]?'good':'bad');cp.textContent=(sc[1]?'Strength: ':'Weakness: ')+sc[0]}}
-function cdHit(e,d){if(!e.al)return;if(e.shd>0){const a=Math.min(e.shd,d);e.shd-=a;d-=a}e.hp-=d;e.fl=.15;if(e.hp<=0){e.al=false;CDS.fx.push({t:0,x:e.x,y:e.y-8,type:'poof'});if(e.k=='fort')CDS.u.push(...cdMk(e.team,'triplets',e.x))}}
-function cdAtk(u,tg){const S=CDS,dir=tg.x>=u.x?1:-1;u.at=.25;u.dir=dir;
- if(u.k=='priest'){S.fx.push({t:0,x:u.x,y:-16,type:'cross',dir,len:u.rg});S.u.forEach(e=>{if(e.al&&e.team!=u.team&&(e.x-u.x)*dir>0&&Math.abs(e.x-u.x)<=u.rg+10)cdHit(e,u.dmg)});return}
- if(u.rg>0){S.p.push({x:u.x,y:u.y-14,tg,dmg:u.dmg,sp:260,kind:u.k=='nomad'?'spear':u.k=='dartboy'?'dart':'arrow',dir});return}
- let d=u.dmg;if(u.chg&&tg.bld){d=u.chg;u.chg=0;S.fx.push({t:0,x:tg.x,y:-8,type:'smoke'})}
- cdHit(tg,d);
- if(u.k=='macero'){S.u.forEach(e=>{if(e!==tg&&e.al&&e.team!=u.team&&!e.air&&Math.abs(e.x-u.x)<46)cdHit(e,u.dmg)});S.fx.push({t:0,x:u.x,y:-10,type:'ring'})}
- if(u.k=='mauler'){S.u.forEach(e=>{if(e!==tg&&e.al&&e.team!=u.team&&!e.air&&Math.abs(e.x-tg.x)<34)cdHit(e,u.dmg)});S.fx.push({t:0,x:tg.x,y:-6,type:'boom',r:30})}}
-function cdSideDone(t){const S=CDS;return !S.u.some(u=>u.team==t&&u.al&&(u.dmg>0||u.k=='fort'||u.k=='distraction'))&&S.sp.every(s=>s.team!=t||s.done)}
-function cdStep(dt){const S=CDS;S.t+=dt;
- S.sp.forEach(s=>{if(!s.fired&&S.t>=s.t){s.fired=1;const en=S.u.filter(u=>u.al&&u.team!=s.team),x=en.length?en.reduce((a,u)=>a+u.x,0)/en.length:(s.team?125:250);s.x=x;s.c0=S.t;s.dur=s.c.spell=='m'?2.2:1.1}
-  if(s.fired&&!s.done){const el=S.t-s.c0;
-   if(s.c.spell=='m'){if(el>=s.dur){s.done=1;S.fx.push({t:0,x:s.x,y:-6,type:'boom',r:s.c.rad});S.u.forEach(u=>{if(u.al&&u.team!=s.team&&!u.air&&Math.abs(u.x-s.x)<=s.c.rad){cdHit(u,u.k=='tower'?s.c.ctd:s.c.dmg);if(!u.bld)u.x+=(u.x>=s.x?1:-1)*30}})}}
-   else{s.acc=(s.acc||0)+dt;while(s.acc>=.1&&el<s.dur){s.acc-=.1;S.u.forEach(u=>{if(u.al&&u.team!=s.team&&!u.air&&Math.abs(u.x-s.x)<=s.c.rad)cdHit(u,(u.k=='tower'?s.c.ctd:s.c.dmg)/11)})}if(el>=s.dur)s.done=1}}});
- S.u.forEach(u=>{if(!u.al)return;u.cdT-=dt;u.fl=Math.max(0,u.fl-dt);u.at=Math.max(0,u.at-dt);
-  if(u.k=='fort'){u.sa=(u.sa||0)+dt;if(u.sa>=1.6){u.sa=0;S.u.push(...cdMk(u.team,'triplets',u.x+(u.team?-18:18),2))}return}
-  if(!u.dmg)return;
-  let tg=null,bd=1e9;S.u.forEach(e=>{if(!e.al||e.team==u.team||(u.bo&&!e.bld)||(e.air&&!u.ha))return;const d=Math.abs(e.x-u.x)-(e.lure?100:0);if(d<bd){bd=d;tg=e}});
-  const dir=u.team?-1:1;
-  if(!tg){if(!u.bld){u.x+=dir*u.sp*.6*dt;u.wk+=dt}return}
-  const dist=Math.abs(tg.x-u.x),rng=(u.rg||14*u.sc)+(tg.bld?14:0);u.dir=tg.x>=u.x?1:-1;
-  if(dist>rng){if(!u.bld){u.x+=u.dir*u.sp*dt;u.wk+=dt}}else if(u.cdT<=0){u.cdT=u.cd;cdAtk(u,tg)}});
- S.p=S.p.filter(p=>{const dx=p.tg.x-p.x;p.x+=Math.sign(dx||1)*p.sp*dt;p.dir=Math.sign(dx||1);if(!p.tg.al||Math.abs(p.tg.x-p.x)<6){if(p.tg.al)cdHit(p.tg,p.dmg);return false}return true});
- S.fx.forEach(f=>f.t+=dt);S.fx=S.fx.filter(f=>f.t<.6);
- if(!S.over&&S.t>1&&(cdSideDone(0)||cdSideDone(1)||S.t>12)){S.over=1;S.hold=0}}
-function cdStick(c,x,y,u,t){const s=u.sc,col=u.team?'#ed1c24':'#00a2e8',K='#111',R=Math.round,d=u.team?-1:1,bob=u.wk>0?(Math.floor(t*9+u.ph)%2):0,H=R(24*s),px=R(x),py=R(y);
- const body=u.fl>0?'#fff':K,fr=(a,b,w,h,cc)=>{c.fillStyle=cc;c.fillRect(a,b,w,h)};
- if(u.air){fr(px-6,R(y)+34-2,12,3,'rgba(0,0,0,.25)')}
- fr(px-1,py-H+R(9*s),2,R(10*s),body);                       // body
- const lg=bob?3:-3;fr(px-1+lg*.3,py-R(9*s)+R(9*s),2,R(9*s)-0,body);fr(px-1-lg,py-R(5*s),2,R(5*s),body);  // legs
- fr(px-R(5*s),py-H+R(12*s),R(10*s),2,body);                  // arms
- const hs=R(9*s),hx=px-R(hs/2),hy=py-H;fr(hx-1,hy-1,hs+2,hs+2,K);fr(hx,hy,hs,hs,u.fl>0?'#ffd':'#fff');fr(hx,hy,hs,2,col);fr(px+d*R(hs/4)-1,hy+R(hs/2),2,2,K);
- const sw=u.at>0?1:0,wx=px+d*R(7*s);
- if(u.k=='warrior'||u.k=='recruits'||u.k=='crusader'||u.k=='viking'){fr(wx+(sw?d*6:0)-1,py-H+R(4*s)-(sw?0:4),2,R(14*s),'#cfd6e0')}
- if(u.k=='archer'){fr(wx,py-H+R(6*s),2,R(14*s),'#7a4a21');fr(wx-d*1,py-H+R(6*s),1,R(14*s),'#ddd')}
- if(u.k=='mauler'||u.k=='macero'){fr(wx,py-H+R(3*s)-(sw?0:3),3,R(16*s),'#6b4423');fr(wx-2,py-H-(sw?0:3),R(8*s),R(6*s),'#8d939b')}
- if(u.k=='smith'){fr(wx,py-H+R(4*s),3,R(15*s),'#6b4423');fr(wx-3+(sw?d*5:0),py-H+R(2*s),R(10*s),R(6*s),'#555')}
- if(u.k=='nomad'||u.k=='dartboy'){fr(wx,py-H+R(8*s),R(14*s),1,'#b58b4c')}
- if(u.k=='priest'){fr(wx,py-H+R(4*s),2,R(10*s),'#ffd23f');fr(wx-3,py-H+R(7*s),8,2,'#ffd23f')}
- if(u.k=='viking'&&u.chg>0)fr(hx-1,hy-3,hs+2,4,'#9aa3ad');
- if(u.k=='crusader'&&u.shd>0)fr(px+d*R(6*s)-2,py-H+R(10*s),5,R(11*s),'#aab4c2');
- if(u.k=='dartboy'){fr(px-R(8*s),py-H+R(8*s),R(5*s),2,'#fff');fr(px+R(3*s),py-H+R(8*s),R(5*s),2,'#fff')}}
-function cdDraw(cv){const c=cv.getContext('2d'),S=CDS,GY=118,t=S.t;c.imageSmoothingEnabled=false;
- c.fillStyle='#86d2f5';c.fillRect(0,0,360,150);c.fillStyle='#a9e0f8';c.fillRect(0,0,360,40);c.fillStyle='#6fbf5a';for(let i=0;i<9;i++)c.fillRect(i*45,GY-20+((i*7)%3)*4,45,24);
- c.fillStyle='#4caf50';c.fillRect(0,GY,360,32);c.fillStyle='#3a8f40';for(let i=0;i<30;i++)c.fillRect((i*37)%360,GY+6+((i*13)%20),8,2);
- S.sp.forEach(s=>{if(!s.fired||s.done&&S.t-s.c0>s.dur+.4)return;const el=S.t-s.c0;
-  if(s.c.spell=='m'){const p=Math.min(1,el/s.dur);if(!s.done){c.strokeStyle='rgba(255,60,40,.8)';c.lineWidth=2;c.strokeRect(s.x-s.c.rad,GY-6,s.c.rad*2,10);const mx=s.x+(1-p)*90,my=GY-6-(1-p)*130;c.fillStyle='#ff8a1a';c.fillRect(mx-6,my-6,12,12);c.fillStyle='#ffe14d';c.fillRect(mx-3,my-3,6,6);c.fillStyle='rgba(255,138,26,.5)';c.fillRect(mx+4,my-10,8,8);c.fillRect(mx+12,my-18,5,5)}}
-  else if(!s.done){c.fillStyle='rgba(255,230,60,.25)';c.fillRect(s.x-s.c.rad,GY-50,s.c.rad*2,56);for(let i=0;i<26;i++){const a=i*2.4+t*9,r=((i*37)%s.c.rad);c.fillStyle=i%2?'#ffd23f':'#222';c.fillRect(s.x+Math.cos(a)*r-1,GY-26+Math.sin(a*1.3)*22,3,3)}}});
- const us=S.u.filter(u=>u.al).sort((a,b)=>a.y-b.y);
- us.forEach(u=>{const x=u.x,y=GY+u.y;
-  if(u.k=='tower'){c.fillStyle='#000';c.fillRect(x-14,y-46,28,48);c.fillStyle='#8d939b';c.fillRect(x-12,y-44,24,44);c.fillStyle='#a8aeb6';for(let i=0;i<3;i++)c.fillRect(x-12+i*9,y-50,6,6);c.fillStyle='#2b2b30';c.fillRect(x-3,y-26,6,10);c.fillStyle='#ed1c24';c.fillRect(x-12,y-44,24,4)}
-  else if(u.k=='fort'){c.fillStyle='#000';c.fillRect(x-16,y-28,32,30);c.fillStyle='#9b6a36';c.fillRect(x-14,y-26,28,26);c.fillStyle='#7a5226';for(let i=0;i<4;i++)c.fillRect(x-14+i*7,y-26,2,26);c.fillStyle='#2a1a10';c.fillRect(x-4,y-12,8,12);c.fillStyle='#00a2e8';c.fillRect(x-1,y-40,12,7);c.fillStyle='#6b4423';c.fillRect(x-2,y-42,2,16)}
-  else if(u.k=='distraction'){c.fillStyle='#6b4423';c.fillRect(x-2,y-34,4,36);c.fillRect(x-12,y-24,24,3);c.fillStyle='#fff';c.fillRect(x-6,y-40,12,12);c.fillStyle='#ed1c24';c.fillRect(x-4,y-38,8,8);c.fillStyle='#fff';c.fillRect(x-2,y-36,4,4)}
-  else cdStick(c,x,y,u,t);
-  if(u.fl>0&&u.bld&&u.k!='distraction'){c.fillStyle='rgba(255,255,255,.5)';c.fillRect(x-12,y-44,24,44)}
-  const hh=(u.k=='tower'?58:u.k=='fort'?46:u.k=='distraction'?46:R2(24*u.sc)+12),bw=Math.max(16,R2(14*u.sc));c.fillStyle='#000';c.fillRect(x-bw/2-1,y-hh-1+u.y*0,bw+2,6);c.fillStyle=u.team?'#f87171':'#4ade80';c.fillRect(x-bw/2,y-hh,bw*Math.max(0,u.hp/u.mhp),4);if(u.shd>0){c.fillStyle='#b7c4d8';c.fillRect(x-bw/2,y-hh-3,bw*u.shd/300,2)}});
- S.p.forEach(p=>{const y=GY+p.y;c.fillStyle=p.kind=='spear'?'#b58b4c':p.kind=='dart'?'#ffd23f':'#f1e6d0';c.fillRect(p.x-(p.dir>0?8:0),y,8,2);c.fillStyle='#555';c.fillRect(p.x+(p.dir>0?0:-10),y-1,3,4)});
- S.fx.forEach(f=>{const k=f.t/.6,x=f.x,y=GY+f.y;
-  if(f.type=='poof'){c.fillStyle='rgba(230,230,230,'+(1-k)+')';const r=4+k*10;c.fillRect(x-r,y-r/2,r*.7,r*.7);c.fillRect(x+r/3,y-r,r*.7,r*.7);c.fillRect(x-r/4,y,r*.7,r*.7)}
-  else if(f.type=='boom'){c.strokeStyle='rgba(255,150,30,'+(1-k)+')';c.lineWidth=4;c.beginPath();c.arc(x,y,f.r*Math.min(1,k*2.2),0,6.3);c.stroke();c.fillStyle='rgba(255,220,80,'+(1-k)*.5+')';c.fillRect(x-f.r*.6,y-8,f.r*1.2,10)}
-  else if(f.type=='ring'){c.strokeStyle='rgba(255,255,255,'+(1-k)+')';c.lineWidth=3;c.beginPath();c.ellipse(x,y+10,46*Math.min(1,k*3),12,0,0,6.3);c.stroke()}
-  else if(f.type=='smoke'){c.fillStyle='rgba(180,180,180,'+(1-k)+')';for(let i=0;i<5;i++)c.fillRect(x-14+i*7,y-6-k*16-(i%2)*6,7,7)}
-  else if(f.type=='cross'){c.fillStyle='rgba(255,210,60,'+(1-k)+')';const l=f.len*Math.min(1,k*4);c.fillRect(f.dir>0?x:x-l,y,l,3);c.fillRect(f.dir>0?x+l-4:x-l,y-3,3,9)}});
- }
-function R2(v){return Math.round(v)}
-function cdLoop(ts){const cv=$('cdc');if(!cv||!CDS){CDL=0;return}const dt=Math.min(.05,(ts-(CDT||ts))/1000);CDT=ts;
- if(CDS.over){CDS.hold+=dt;CDS.t+=0;if(CDS.hold>1.5)cdStart(CDS.k,CDS.pi+1)}else cdStep(dt*1.6);
+/* The demo runs the game's OWN battle engine (spawn/update) on a private battle state and draws it with the game's own arena and sprite sheets,
+   so a card behaves in the demo exactly the way it does in a real match. */
+function cdWith(fn){const g=G,c=cx;G=CDS.G;try{return fn()}finally{G=g;cx=c}}
+function cdSpec(sp){return(sp||[]).filter(x=>x!='tower')}
+function cdStart(k,pi,man){const L2=CD_SC[k];if(!L2)return;pi=((pi%L2.length)+L2.length)%L2.length;const sc=L2[pi],l=L(k),pt=S.pt||1;
+ const D={E:[],hand:[],q:[],bh:[],bq:[],el:[10,10],t:999,arena:arenaOf(S.tr||0),mode:0,ban:0,em:[],ecd:0,pl:l,bl:l,fx:[],sp:[],pr:[],ruins:[],bot:1e9,done:0};
+ const tw=sc[2].includes('tower')||sc[3].includes('tower');
+ CDS={k,pi,sc,G:D,t:0,hold:0,over:0,man:!!man,cam:null,late:[],tw,l};
+ cdWith(()=>{D.E.push(tower(0,'p',240,BR[0],pt),tower(0,'p',240,BR[1],pt),tower(0,'king',140,260,pt),tower(1,'p',1280,BR[0],pt),tower(1,'p',1280,BR[1],pt),tower(1,'king',1380,260,pt));
+    const place=(team,list)=>{let n=0;cdSpec(list).forEach(s=>{const c=CARDS[s];if(c.spell){CDS.late.push({team,k:s,t:team==0?(sc[1]?.8:1.2):1});return}
+    const x=tw?(team?1180:1090):(team?900:540);spawn(team,s,x+(team?1:-1)*n*46,BR[0],l);n++})};
+  place(0,sc[2]);place(1,sc[3])});
+ const cp=$('cdcap');if(cp){cp.className='cdcap '+(sc[1]?'good':'bad');cp.textContent=(sc[1]?'👍 Strength: ':'👎 Weakness: ')+sc[0]}
+ document.querySelectorAll('.cdtab').forEach(b=>b.classList.toggle('on',+b.dataset.i==pi))}
+const cdMobile=e=>!e.kind||e.kind=='f'||e.kind=='d';
+function cdSideDone(t){const D=CDS.G;return !D.E.some(e=>e.team==t&&e.hp>0&&cdMobile(e))&&!D.sp.some(s=>s.team==t)&&!CDS.late.some(s=>s.team==t)}
+function cdStep(dt){const S=CDS,D=S.G;S.t+=dt;
+ S.late=S.late.filter(q=>{if(S.t<q.t)return true;const en=D.E.filter(e=>e.team!=q.team&&e.hp>0&&cdMobile(e)),n=en.length||1,x=en.length?en.reduce((a,e)=>a+e.x,0)/n:(q.team?500:1000),y=en.length?en.reduce((a,e)=>a+e.y,0)/n:BR[0];cdWith(()=>spawn(q.team,q.k,x,y,S.l));return false});
+ cdWith(()=>{D.E.forEach(e=>{if((e.kind=='p'||e.kind=='king')&&e.hp<e.mhp*.3)e.hp=e.mhp*.3});D.t=999;update(dt)});
+ if(!S.over&&S.t>1.2&&(S.tw?(S.t>14||(S.t>3&&cdSideDone(0))):(cdSideDone(0)||cdSideDone(1)||S.t>16))){S.over=1;S.hold=0}}
+function cdDraw(cv){const S=CDS,D=S.G,c=cv.getContext('2d'),w=cv.width,h=cv.height,VW=S.tw?400:440,sc=w/VW,VH=h/sc;
+ const act=D.E.filter(e=>e.hp>0&&cdMobile(e)),tg=act.length?{x:act.reduce((a,e)=>a+e.x,0)/act.length,y:act.reduce((a,e)=>a+e.y,0)/act.length}:(S.cam||{x:720,y:150});
+ if(!S.cam)S.cam={x:tg.x,y:tg.y};S.cam.x+=(tg.x-S.cam.x)*.08;S.cam.y+=(tg.y-S.cam.y)*.08;
+ const cxp=Math.max(VW/2,Math.min(W-VW/2,S.cam.x)),cyp=Math.max(VH/2,Math.min(H-VH/2,S.cam.y));
+ cdWith(()=>{cx=c;c.save();c.imageSmoothingEnabled=false;c.fillStyle='#000';c.fillRect(0,0,w,h);c.scale(sc,sc);c.translate(-(cxp-VW/2),-(cyp-VH/2));
+  c.drawImage(arena().g,0,0);ripples(performance.now()/1000);c.drawImage(arena().b,0,0);drawWorld();
+  const gr={};D.E.forEach(e=>{if(e.hp<=0)return;const kk=e.k||(e.kind=='f'?'fort':e.kind=='d'?'distraction':e.kind=='king'?'~King':'~Tower'),id=e.team+kk;(gr[id]=gr[id]||{team:e.team,kk,n:0,x:0,y:0,top:1e9}).n++;const g=gr[id];g.x+=e.x;g.y+=e.y;g.top=Math.min(g.top,e.y-(e.bld?(e.r||30)+22:30*(e.sc||1)+16))});
+  const fs=Math.round(24/sc);c.font='bold '+fs+'px "Patrick Hand",sans-serif';c.textAlign='center';c.textBaseline='middle';c.lineWidth=Math.max(2,fs/4);c.lineJoin='round';
+  Object.values(gr).forEach(g=>{const nm=g.kk[0]=='~'?g.kk.slice(1):CARDS[g.kk].n,tx=g.x/g.n,ty=g.top-fs*.4;c.strokeStyle='#000';c.fillStyle=g.team?'#ff8f8f':'#8fd8ff';c.strokeText(nm,tx,ty);c.fillText(nm,tx,ty)});
+  c.restore()})}
+function cdLoop(ts){const cv=$('cdc');if(!cv||!CDS){CDL=0;return}const dt=Math.min(.1,(ts-(CDT||ts))/1000);CDT=ts;
+ if(CDS.over){CDS.hold+=dt;if(CDS.hold>1.6)cdStart(CDS.k,CDS.man?CDS.pi:CDS.pi+1,CDS.man)}else{let r=dt;while(r>0&&!CDS.over){const d=Math.min(.025,r);cdStep(d);r-=d}}
  cdDraw(cv);requestAnimationFrame(cdLoop)}
+function cdRel(k){const sc=CD_SC[k]||[],f=w=>[...new Set(sc.filter(x=>!!x[1]==w).flatMap(x=>cdSpec(x[3])))].filter(x=>CARDS[x]&&x!=k),
+ tw=w=>sc.some(x=>!!x[1]==w&&x[3].includes('tower'))?'<span class="chip">🏰 Towers</span>':'',
+ row=(a,w)=>a.length||tw(w)?tw(w)+a.map(x=>`<button class="cirb" onclick="cardInfo('${x}')" title="${CARDS[x].n}">${ci(x)}<span>${CARDS[x].n}</span></button>`).join(''):'<i>nothing in particular</i>';
+ return `<div class="cirel"><div><b>👎 Weak to</b><div class="cirow">${row(f(0),0)}</div></div><div><b>👍 Strong against</b><div class="cirow">${row(f(1),1)}</div></div></div>`}
 function cardInfoClose(){const o=$('cinfo');if(o)o.remove();CDS=null;document.body.style.overflow=''}
-function cardInfo(k){const c=CARDS[k];if(!c)return;cardInfoClose();const l=L(k),m=M(l),sc=CD_SC[k]||[],spd=c.sp>=60?'Very fast':c.sp>=44?'Fast':c.sp>=36?'Medium':c.sp?'Slow':'',ch=[];
+function cardInfo(k){const c=CARDS[k];if(!c)return;cardInfoClose();const lk=ORDER.indexOf(k)>=S.un,l=lk?1:L(k),m=M(l),sc=CD_SC[k]||[],spd=c.sp>=60?'Very fast':c.sp>=44?'Fast':c.sp>=36?'Medium':c.sp?'Slow':'',ch=[];
  const chip=(a,b)=>ch.push('<span class="chip"><b>'+a+'</b> '+b+'</span>');
  if(c.hp)chip('❤️ Health',Math.round(c.hp*m));if(c.shield)chip('🛡️ Shield',Math.round(c.shield*m));if(c.dmg)chip(c.spell?'💥 Damage':'⚔️ Damage',Math.round(c.dmg*m));if(c.ctd)chip('🏰 Tower damage',Math.round(c.ctd*m));
  if(c.spell)chip('⭕ Radius',c.rad);if(spd)chip('👟 Speed',spd);if(!c.spell&&!c.bld)chip('🎯 Range',c.rg?'Ranged':'Melee');if(c.cnt>1)chip('👥 Troops',c.cnt);
  if(!c.spell&&!c.bld)chip('🎯 Hits',c.bo?'Buildings only':c.ha?'Ground and air':'Ground only');if(c.air)chip('🕊️ Type','Flying');
  const o=document.createElement('div');o.id='cinfo';o.onclick=e=>{if(e.target===o)cardInfoClose()};
- o.innerHTML=`<div class="box cibox rar-${rarOf(k)}"><button class="cix" onclick="cardInfoClose()" aria-label="Close">✕</button><div class="cih">${ci(k)}<div><b class="cin">${c.n}</b> ${rbadge(k)}<div class="chips2"><span class="chip lv">Lv ${l}</span><span class="chip cc">🪙 ${c.c}</span></div></div></div><p class="cid">${c.t}.</p><div class="cist">${ch.join('')}</div>${sc.length?`<h2>How it works</h2><canvas id="cdc" width="360" height="150"></canvas><div id="cdcap" class="cdcap"></div><div class="cisw"><div><b>👍 Strengths</b><ul>${sc.filter(x=>x[1]).map(x=>'<li>'+x[0]+'</li>').join('')}</ul></div><div><b>👎 Weaknesses</b><ul>${sc.filter(x=>!x[1]).map(x=>'<li>'+x[0]+'</li>').join('')}</ul></div></div>`:''}</div>`;
+ o.innerHTML=`<div class="box cibox rar-${rarOf(k)}"><button class="cix" onclick="cardInfoClose()" aria-label="Close">✕</button><div class="cih">${ci(k)}<div><b class="cin">${c.n}</b> ${rbadge(k)}<div class="chips2"><span class="chip lv">Lv ${l}</span><span class="chip cc">🪙 ${c.c}</span></div></div></div>${lk?'<div class="cdcap bad">🔒 You have not found this card yet. These are its Level 1 stats.</div>':''}<p class="cid">${c.t}.</p><div class="cist">${ch.join('')}</div>${sc.length?`<h2>How it works</h2><canvas id="cdc" width="720" height="400"></canvas><div id="cdcap" class="cdcap"></div><div class="row cdtabs">${sc.map((x,i)=>`<button class="cdtab" data-i="${i}" onclick="cdStart('${k}',${i},1)">${x[1]?'👍 Strength':'👎 Weakness'}</button>`).join('')}</div>${cdRel(k)}<div class="cisw"><div><b>👍 Strengths</b><ul>${sc.filter(x=>x[1]).map(x=>'<li>'+x[0]+'</li>').join('')}</ul></div><div><b>👎 Weaknesses</b><ul>${sc.filter(x=>!x[1]).map(x=>'<li>'+x[0]+'</li>').join('')}</ul></div></div>`:''}</div>`;
  document.body.appendChild(o);document.body.style.overflow='hidden';if(sc.length){cdStart(k,0);CDT=0;if(!CDL){CDL=1;requestAnimationFrame(cdLoop)}}}
 document.addEventListener('keydown',e=>{if(e.key=='Escape')cardInfoClose()});
 /* tapping anywhere on a card tile (not its buttons) opens the card info */
