@@ -274,7 +274,7 @@ canvas.arthumb{display:block;width:100%;max-width:none;height:auto;aspect-ratio:
 .slider::-webkit-scrollbar{display:none}
 .slider>section{height:100%;overflow-y:auto;overflow-x:hidden;padding:4px 8px 14px}
 .slider>section.home{padding:0}
-.hero{display:grid;grid-template-columns:minmax(200px,25%) 1fr minmax(180px,25%);gap:16px;height:100%;min-height:430px;padding:4px 8px 6px}
+.hero{display:grid;grid-template-columns:minmax(200px,25%) 1fr minmax(300px,32%);gap:16px;height:100%;min-height:430px;padding:4px 8px 6px}
 .crownside{min-height:0;display:flex;flex-direction:column}
 .crownside>.box{flex:1;min-height:0;display:flex;flex-direction:column;padding:8px 10px}
 .crownside .ph{font-family:'Press Start 2P','Courier New',monospace;font-size:clamp(9px,1.05vw,13px);line-height:1.5;font-weight:normal}
@@ -287,7 +287,15 @@ canvas.arthumb{display:block;width:100%;max-width:none;height:auto;aspect-ratio:
 .homebtm{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%}
 .homebtm small{font-size:18px;text-shadow:1px 1px 0 rgba(255,255,255,.4)}
 .homebtm .box{text-align:left;max-width:440px}
-.homer{display:flex;flex-direction:column;align-items:flex-end;text-align:right;min-width:0}
+.homer{display:flex;flex-direction:column;align-items:flex-end;gap:12px;text-align:right;min-width:0}
+.hrow{display:flex;align-items:flex-start;justify-content:flex-end;gap:14px;max-width:100%}
+.homer>#pmb{font-size:22px;padding:4px 14px}
+.homer>.box{width:100%;max-width:300px;margin:0!important;text-align:left;padding:6px 10px}
+.homer .box small{display:none}
+.homer .box .row{margin:4px 0 0}
+details.prof{position:relative;border:0;background:none;padding:0;margin:0}
+details.prof>summary{font-family:'Press Start 2P','Courier New',monospace;font-size:clamp(9px,1.1vw,13px);line-height:1.5;color:#fff;text-shadow:2px 0 #000,-2px 0 #000,0 2px #000,0 -2px #000;cursor:pointer;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pdrop{position:absolute;right:0;top:100%;z-index:8;width:290px;margin-top:6px;padding:8px;background:#fff;border:4px solid #000;box-shadow:4px 4px 0 #000;text-align:left}
 .fb{display:flex;flex-direction:column;align-items:flex-end;gap:10px;max-width:100%}
 .fbt{font-family:'Press Start 2P','Courier New',monospace;font-weight:normal;font-size:clamp(9px,1.15vw,14px);line-height:1.5;color:#fff;text-shadow:2px 0 #000,-2px 0 #000,0 2px #000,0 -2px #000}
 .fb .jn{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
@@ -320,12 +328,21 @@ canvas{border-radius:0;border:4px solid #000;box-shadow:6px 6px 0 #000}
 /* small screens */
 @media (max-width:760px){
  .hero{display:flex;flex-direction:column;height:auto;min-height:0}
- .homec{order:1}.homer{order:2;align-items:center;text-align:center}.fb{align-items:center}.crownside{order:3;max-height:460px}
+ .homec{order:1}.homer{order:2;align-items:center;text-align:center}.hrow{flex-direction:column;align-items:center}.pdrop{right:auto;left:50%;transform:translateX(-50%)}.fb{align-items:center}.crownside{order:3;max-height:460px}
  .tabs button{font-size:7px}
 }
 @media (orientation:landscape) and (max-height:560px){
  #menu{padding:6px}.hero{min-height:330px;gap:10px}.homec{gap:6px}#menu h1{font-size:20px}.tabs{padding:10px 6px 4px}
 }
+
+/* ===== 8-bit kingdom ===== */
+.kd3,#kfull .kd3{image-rendering:pixelated;image-rendering:crisp-edges;image-rendering:pixelated}
+#kbar{background:#8b5a2b;border-bottom:4px solid #000}
+#kbar b{font-family:'Press Start 2P','Courier New',monospace;font-size:12px;color:#fff;text-shadow:2px 2px 0 #000}
+#khud{background:#8b5a2b;border:4px solid #000;border-radius:0;box-shadow:4px 4px 0 #000}
+#kfull .kdpanel{background:#c9975a;border:4px solid #000;border-radius:0;box-shadow:4px 4px 0 #000}
+#kfull .kdbuild button,#kfull #khud button{border-radius:0}
+.kdt{box-shadow:none}
 </style></head><body><div id="app">
 <div id="hud"><span id="tm">3:00</span><div id="bar"><div id="fill"></div></div><b id="el">5 / 10 coins</b><button id="emb" onclick="toggleEm()">😀 Emote</button></div>
 <div id="emrow" class="row" hidden><button onclick="pe('mad')">😠 Mad</button><button onclick="pe('sad')">😢 Sad</button><button onclick="pe('support')">👍 Supportive</button><button onclick="pe('laugh')">😂 Laughing</button></div>
@@ -644,19 +661,18 @@ function menu(msg){dropSave();if(MP&&MP.started)mpEnd();{const r=trCheck();if(r)
  const ar0=arenaOf(S.tr||0),pct=ar0>=ARENAS.length-1?100:Math.max(0,Math.min(100,((S.tr||0)-ar0*360)/360*100)),nk=ORDER[S.un],uu=nk&&unlockInfo(nk),
   dotC=!ok||owned().some(k=>L(k)<MAXL&&upNeed(L(k),rmul(k),expType(k)).ok),dotS=!!(nk&&(S.tr||0)>=uu[2]&&S.gems>=uu[1]);
  NAVD={c:dotC,s:dotS,k:kdReady()};
- const tb=tutBox(),newbie=(S.tut||0)<3,nl=(S.tut||0)+1,lessonH=newbie?`<button id="go" onclick="start(${nl})">Lesson ${nl}</button><small>${TUT_INFO[nl-1]}</small>`:'',tbx=newbie?'<div class="row"><button onclick="mtStart()">🧭 Menu tour</button></div>':tb;
+ const profH=`<details class="prof"><summary>👤 ${esc(S.name||'Player')}</summary><div class="pdrop"><div class="row"><label>Your name <input id="pname" maxlength="14" value="${esc(S.name||'Player')}" onchange="setName(this)"></label> <span id="pnote" style="color:#c0392b;font-size:15px"></span></div><small>${S.named?'Changing your name costs '+NAME_COST+' gems.':'Your first name is free. After that, changing it costs '+NAME_COST+' gems.'}</small><br><small>Trophy level ${trophyLv()} &middot; Deck level average ${avgL()}</small><div class="row" style="margin-top:6px"><button onclick="svExport()">📤 Export save</button><button onclick="svImport()">📥 Import save</button></div><div id="svbox"></div></div></details>`,tb=tutBox(),newbie=(S.tut||0)<3,nl=(S.tut||0)+1,lessonH=newbie?`<button id="go" onclick="start(${nl})">Lesson ${nl}</button><small>${TUT_INFO[nl-1]}</small>`:'',tbx=newbie?'<div class="row"><button onclick="mtStart()">🧭 Menu tour</button></div>':tb;
  let h=`<div class="shell">${msg?`<div class="box msgb">${msg}</div>`:''}<div id="sl" class="slider"><section class="home"><div class="hero">
  <aside class="crownside">${crownPanel()}</aside>
  <div class="homec">
   <div><h1><span class="crown">${CRN}</span> <span class="ttl">Stickman Royale</span></h1>
   <div class="chips"><span class="chip sup" title="Spend on card upgrades">${SUP} ${S.sup} <small>Supplies</small></span><span class="chip gem" title="Spend on unlocking cards and in the Shop">${GEM} ${S.gems} <small>Gems</small></span><span class="chip tr" title="Trophy level ${trophyLv()}">${TRO} ${S.tr||0} <small>Trophies</small></span></div></div>
   <button class="arena" onclick="trRoad()"><canvas class="arthumb" id="arth" width="380" height="140"></canvas><span class="arn">Arena ${ar0+1}: ${ARENAS[ar0].n}</span><span class="pb" style="--w:${pct}%"><i></i></span><small>${ar0<ARENAS.length-1?((ar0+1)*360-(S.tr||0))+' trophies to Arena '+(ar0+2)+' · tap for rewards':'Top arena reached!'}</small></button>
-  <div class="homebtm"><div id="qmb"></div>${lessonH}${ok?'':'<button class="b-warn" onclick="slide(1)">⚠ Deck not full. Tap to fix!</button>'}<button class="more" onclick="document.getElementById('extras').scrollIntoView({behavior:'smooth',block:'start'})">▼ Chests, profile &amp; more${(S.cl||0)>0?'<i class="dot"></i>':''}</button></div>
+  <div class="homebtm"><div id="qmb"></div>${lessonH}${ok?'':'<button class="b-warn" onclick="slide(1)">⚠ Deck not full. Tap to fix!</button>'}<button class="more" onclick="document.getElementById('extras').scrollIntoView({behavior:'smooth',block:'start'})">▼ Help &amp; tour</button></div>
  </div>
- <div class="homer"><div id="mpb"></div></div>
+ <div class="homer"><div class="hrow">${profH}<div id="mpb"></div></div>${(S.tut||0)<3?'':`<button id="pmb" ${ok?'':'disabled'} onclick="practiceMenu()">Practice matches</button>`}${(S.tut||0)<3?'':chestBox()+itemBox()}</div>
  </div>
- <div class="extras" id="extras">${tbx}${chestBox()}${itemBox()}${deckPick()}${(S.tut||0)<3?'':`<button id="pmb" ${ok?'':'disabled'} onclick="practiceMenu()" style="width:100%">Practice matches</button>`}${trNext()}
- <details class="prof"><summary>👤 ${esc(S.name||'Player')} <small>(tap to edit profile)</small></summary><div class="row"><label>Your name <input id="pname" maxlength="14" value="${esc(S.name||'Player')}" onchange="setName(this)"></label> <span id="pnote" style="color:#c0392b;font-size:15px"></span> <small>${S.named?'Changing your name costs '+NAME_COST+' gems.':'Your first name is free. After that, changing it costs '+NAME_COST+' gems.'}</small></div><small>Trophy level ${trophyLv()} &middot; Deck level average ${avgL()}</small><div class="row" style="margin-top:6px"><button onclick="svExport()">📤 Export save</button><button onclick="svImport()">📥 Import save</button></div><div id="svbox"></div></details>
+ <div class="extras" id="extras">${tbx}
  <details class="help" ${(S.wins||0)<3?'open':''}><summary>❓ How to play</summary><ol class="steps"><li><b>1</b><span>Tap a card in your hand.</span></li><li><b>2</b><span>Tap the <u>blue area</u> of the field to drop it. Coins refill over time!</span></li><li><b>3</b><span>Destroy the enemy towers before they destroy yours.</span></li></ol><small>New cards come from mini chests (${S.un}/${ORDER.length} found). Upgrade cards in the Collection tab.</small></details>
  </div></section><section class="pg"><div class="row"><button class="${cview=='deck'?'on':''}" onclick="cview='deck';menu()">Deck</button><button class="${cview=='all'?'on':''}" onclick="cview='all';menu()">Collection</button></div>`;
  if(cview=='all')h+=allView();
@@ -1123,7 +1139,7 @@ const k3c=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.sli
 function k3c2(col){let c=k3c(col);if(K3W>0){const g=(c[0]+c[1]+c[2])/3,m=.5*K3W;c=[c[0]*(1-m)+(g*.9+6)*m,c[1]*(1-m)+(g*.88+3)*m,c[2]*(1-m)+g*.8*m]}else if(K3HI>0){const m=.12*K3HI;c=c.map(v=>v+(255-v)*m)}return c}
 function k3f(F,P,col,o){if(K3LEAN){P=P.map(p=>[p[0]+p[1]*K3LEAN,p[1],p[2]]);o=[o[0]+o[1]*K3LEAN,o[1],o[2]]}if(K3J)P=P.map(p=>[p[0]+(k3h(p[0],p[1],p[2])-.5)*K3J,p[1]>.001?p[1]+(k3h(p[2],p[0],p[1])-.5)*K3J*.6:p[1],p[2]+(k3h(p[1],p[2],p[0])-.5)*K3J]);const[a,b,c]=P,u=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],v=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];let n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];
  const f=[0,1,2].map(i=>P.reduce((s,p)=>s+p[i],0)/P.length);if(n[0]*(f[0]-o[0])+n[1]*(f[1]-o[1])+n[2]*(f[2]-o[2])<0)n=n.map(q=>-q);
- const m=Math.hypot(n[0],n[1],n[2])||1,br=(.5+.55*Math.max(0,(n[0]*-.4+n[1]*.8+n[2]*.45)/m))*(1+(k3h(f[0]*9.1,f[1]*9.1,f[2]*9.1)-.5)*K3V);F.push({P,c:'rgb('+k3c2(col).map(q=>Math.min(255,q*br|0))+')'})}
+ const m=Math.hypot(n[0],n[1],n[2])||1,br=(.5+.55*Math.max(0,(n[0]*-.4+n[1]*.8+n[2]*.45)/m))*(1+(k3h(f[0]*9.1,f[1]*9.1,f[2]*9.1)-.5)*K3V);F.push({P,c:'rgb('+k3c2(col).map(q=>Math.min(255,Math.round(q*br/42)*42))+')'})}
 function k3box(F,x,y,z,w,h,d,col){const X=w/2,Z=d/2,p=[[x-X,y,z-Z],[x+X,y,z-Z],[x+X,y,z+Z],[x-X,y,z+Z],[x-X,y+h,z-Z],[x+X,y+h,z-Z],[x+X,y+h,z+Z],[x-X,y+h,z+Z]],o=[x,y+h/2,z];
  [[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7],[4,5,6,7]].forEach(q=>k3f(F,q.map(i=>p[i]),col,o))}
 function k3pri(F,x,y,z,r,h,col,n,r2){n=n||8;r2=r2==null?r:r2;const o=[x,y+h/2,z],A=[],B=[];for(let i=0;i<n;i++){const a=i/n*6.2832;A.push([x+Math.cos(a)*r,y,z+Math.sin(a)*r]);B.push([x+Math.cos(a)*r2,y+h,z+Math.sin(a)*r2])}
@@ -1246,7 +1262,7 @@ function k3b(F,t,x,z,at){const Q=K3Q,pk=(...a)=>a[Math.min(a.length,Q)-1],nb=(a,
 const K3S={},IX=p=>[(p[0]-p[2])*32,(p[0]+p[2])*16-p[1]*36];let K3BG=null;const K3R=11;
 function k3spr(key,w,h,build,n){let s=K3S[key];if(s)return s;n=n||1;const c=document.createElement('canvas');c.width=Math.round(w*n);c.height=Math.round(h*n);const x=c.getContext('2d'),F=[];K3N=n;try{build(F)}finally{K3N=1}
  F.forEach(f=>{f.q=f.P.map(p=>{const q=IX(p);return[q[0]*n,q[1]*n]});f.d=f.P.reduce((a,p)=>a+p[0]+p[2]+p[1]*.5,0)/f.P.length});F.sort((a,b)=>a.d-b.d);
- x.translate(c.width/2,(h-60)*n);x.lineJoin='round';x.lineWidth=Math.max(1,n*.9);F.forEach(f=>{x.beginPath();f.q.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.closePath();x.fillStyle=f.c;x.fill();x.strokeStyle='rgba(0,0,0,'+K3OA+')';x.stroke()});
+ x.translate(c.width/2,(h-60)*n);x.lineJoin='round';x.lineWidth=Math.max(1.6,n*1.8);F.forEach(f=>{x.beginPath();f.q.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.closePath();x.fillStyle=f.c;x.fill();x.strokeStyle='rgba(10,8,20,.7)';x.stroke()});
  return K3S[key]={c,w:c.width,h:c.height,ay:(h-60)*n,n}}
 const k3rnd=(x,z,s)=>Math.abs(Math.sin(x*12.9898+z*78.233+s*37.7)*43758.5453)%1;
 /* smooth value noise: trees and rocks grow in clumps with open meadows between them (far fewer sprites to draw) */
@@ -1328,7 +1344,7 @@ function k3fc(A,B,r){const key=A+','+B+','+r;let c=KFC.get(key);if(c){KFC.delete
 function k3Draw(cv,t){const k=kdInit(),cx=cv.getContext('2d'),cw=cv.width,ch=cv.height,sc=cw/620*KC.zm,ox=cw/2-KC.px*sc,oy=ch*.52-KC.py*sc,C=kdCs(),cid=kdCsId(),lod=sc<.2,occ=kdOccOf(k),sel=(o=>{if(KDSEL&&(KDSEL=='castle'||k.p[KDSEL])){const n=KDSEL=='castle'?4:kdSz(k.p[KDSEL].t),q=KDSEL=='castle'?kdCs():kdAnc(KDSEL);for(let i=0;i<n;i++)for(let j=0;j<n;j++)o[(q[0]+i)+','+(q[1]+j)]=1}else if(KDSEL)o[KDSEL]=1;return o})({});
  const T=(x,y,z)=>[ox+(x-z)*32*sc,oy+((x+z)*16-y*36)*sc],inv=(px,py)=>{const ix=(px-ox)/sc/32,iy=(py-oy)/sc/16;return[(ix+iy)/2,(iy-ix)/2]};
  cx.fillStyle='#2c6a38';cx.fillRect(0,0,cw,ch);cx.textAlign='center';cx.textBaseline='middle';
- const cs=[inv(0,0),inv(cw,0),inv(0,ch+150*sc),inv(cw,ch+150*sc)],a0=Math.max(-KWW,Math.floor(Math.min(...cs.map(c=>c[0]))-1)),a1=Math.min(KWW-1,Math.ceil(Math.max(...cs.map(c=>c[0]))+1)),b0=Math.max(-KWW,Math.floor(Math.min(...cs.map(c=>c[1]))-1)),b1=Math.min(KWW-1,Math.ceil(Math.max(...cs.map(c=>c[1]))+1));
+ cx.imageSmoothingEnabled=false;const cs=[inv(0,0),inv(cw,0),inv(0,ch+150*sc),inv(cw,ch+150*sc)],a0=Math.max(-KWW,Math.floor(Math.min(...cs.map(c=>c[0]))-1)),a1=Math.min(KWW-1,Math.ceil(Math.max(...cs.map(c=>c[0]))+1)),b0=Math.max(-KWW,Math.floor(Math.min(...cs.map(c=>c[1]))-1)),b1=Math.min(KWW-1,Math.ceil(Math.max(...cs.map(c=>c[1]))+1));
  const L=[],dg=id=>KDG&&KDG.id==id,dm=(p)=>{cx.beginPath();cx.moveTo(p[0],p[1]-16*sc);cx.lineTo(p[0]+32*sc,p[1]);cx.lineTo(p[0],p[1]+16*sc);cx.lineTo(p[0]-32*sc,p[1]);cx.fill()},
  dfp=(q,n)=>{const a=T(q[0]-n/2,0,q[1]-n/2),b=T(q[0]+n/2,0,q[1]-n/2),c=T(q[0]+n/2,0,q[1]+n/2),d=T(q[0]-n/2,0,q[1]+n/2);cx.beginPath();cx.moveTo(a[0],a[1]);cx.lineTo(b[0],b[1]);cx.lineTo(c[0],c[1]);cx.lineTo(d[0],d[1]);cx.fill()};
  if(lod){cx.drawImage(k3ov(),ox-3900*sc,oy-1950*sc,7800*sc,3900*sc)}
@@ -1381,7 +1397,7 @@ function k3Bind(cv){if(cv._b)return;cv._b=1;let d=null,pin=null;const P={},pt=e=
   if(was&&was.m<=6){const q=pt(e),i=k3Hit(q[0],q[1],cv);if(!i){KDSEL=null;kdRender()}else if(i=='castle'){KDDEL=null;KDSEL='castle';kdRender()}else kdTap(i)}};
  cv.onwheel=e=>{e.preventDefault();kdZoom(e.deltaY<0?1.1:.9)}}
 function k3Loop(t){requestAnimationFrame(k3Loop);const cv=$('kd3');if(!cv||!KM||document.hidden||t-K3T<40)return;const w=cv.clientWidth,hh=cv.clientHeight;if(!w||!hh)return;K3T=t;k3Bind(cv);
- const dpr=Math.min(2,window.devicePixelRatio||1),W2=Math.round(w*dpr),H2=Math.round(hh*dpr);if(cv.width!=W2||cv.height!=H2){cv.width=W2;cv.height=H2}k3Draw(cv,t)}
+ const dpr=1/(w<700?2:3),W2=Math.round(w*dpr),H2=Math.round(hh*dpr);if(cv.width!=W2||cv.height!=H2){cv.width=W2;cv.height=H2}k3Draw(cv,t)}
 requestAnimationFrame(k3Loop);
 const EXP_COST=[5,20,50,100,250,500,1000,1500,3000,5000,10000,15000,30000,40000,50000];
 function upNeed(l,m,t){const mm=m||1,cs=Math.max(1,Math.round(5*Math.pow(1.75,l-1)*mm)),ce=EXP_COST[Math.max(0,Math.min(EXP_COST.length-1,l-1))],have=t=='rexp'?(S.expR||0):S.exp,g=Math.ceil(Math.max(0,cs-S.sup)/20)+Math.ceil(Math.max(0,ce-have)/(t=='rexp'?10:16)),mx=l>=MAXL;return{cs,ce,g,t,ok:!mx&&g==0,okG:!mx&&g>0&&S.gems>=g}}
