@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Stickman Royale</title>
-<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f3f6ee;--fg:#1c2a1c;--pn:#fff;--ln:#1c2a1c;--blue:#00a2e8;--red:#ed1c24}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15201a;--fg:#e8f0e4;--pn:#22332a;--ln:#e8f0e4}}
@@ -226,6 +226,106 @@ canvas{--ui:110px;border-width:2px}
 #tut{top:40px;padding:4px 8px}#tut img,#praise img{height:48px}#tkt{font-size:15px}
 #tobj{top:40px;font-size:14px}#praise{bottom:64px;font-size:20px}
 }
+
+/* ===================== 8-BIT THEME ===================== */
+:root,:root:not([data-theme="light"]),:root[data-theme="dark"]{--bg:#22b14c;--fg:#000;--pn:#fff;--ln:#000;--g1:#22b14c;--g2:#22b14c;--blue:#00a2e8;--sh:4px 4px 0 #000;--acc:#000}
+@keyframes glowY{0%,100%{filter:drop-shadow(0 0 4px #fff200)}50%{filter:drop-shadow(0 0 14px #fff200)}}
+body{font-family:'VT323','Courier New',monospace;font-size:22px;color:#000;animation:none;background-color:#22b14c;background-image:conic-gradient(#25b850 25%,#22b14c 0 50%,#25b850 0 75%,#22b14c 0);background-size:32px 32px;background-attachment:fixed}
+#app{min-height:100dvh}
+button{font-family:'VT323','Courier New',monospace;font-size:20px;font-weight:normal;border:4px solid #000;border-radius:0;background:#fff;color:#000;padding:2px 10px;transition:none;box-shadow:inset -4px -4px 0 rgba(0,0,0,.2),inset 4px 4px 0 rgba(255,255,255,.55),4px 4px 0 #000}
+button:hover:not(:disabled){transform:none;filter:brightness(1.1)}
+button:active:not(:disabled){transform:translate(3px,3px);border-bottom-width:4px;box-shadow:inset 4px 4px 0 rgba(0,0,0,.2),1px 1px 0 #000}
+button:focus-visible{outline:4px solid #fff200;outline-offset:2px}
+.b-add{background:#4ade80}.b-rem{background:#fdba74}.b-up{background:#c084fc}.b-gap{background:#fde047}.b-warn{background:#fca5a5;animation:none;color:#000}
+.box{border:4px solid #000;border-radius:0;background:#fff;box-shadow:4px 4px 0 #000}
+.lock{background:#b4b4b4!important;color:#555}
+.chip{border-radius:0;border-width:3px;box-shadow:3px 3px 0 #000;font-family:'Press Start 2P','Courier New',monospace;font-size:10px;padding:5px 9px}
+.chip small{font-family:'VT323',monospace;font-size:17px;opacity:.8}
+.chip.gem{height:auto;width:auto;vertical-align:baseline}
+.row button.on{background:#fff200;color:#000}
+.chips2 .chip{font-size:9px;padding:2px 6px;box-shadow:none;border-width:2px}
+details.prof,details.help{border:4px solid #000;border-radius:0;background:#fff}
+details.help{background:#fff6a0}
+#menu{background-color:#22b14c;background-image:conic-gradient(#25b850 25%,#22b14c 0 50%,#25b850 0 75%,#22b14c 0);background-size:32px 32px;animation:none;padding:12px;overflow:auto}
+#menu h1{font-family:'Press Start 2P','Courier New',monospace;font-weight:normal;font-size:clamp(18px,3vw,40px);line-height:1.3;color:#fff;filter:none;text-shadow:3px 0 #000,-3px 0 #000,0 3px #000,0 -3px #000,3px 3px #000,-3px 3px #000,3px -3px #000,-3px -3px #000}
+#menu h2{text-shadow:none;font-family:'Press Start 2P','Courier New',monospace;font-weight:normal;font-size:13px;line-height:1.5;border-left:8px solid #000;border-radius:0}
+.ttl{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:#fff;-webkit-text-fill-color:#fff;animation:none}
+.crown{animation:none}.crown .crn,h1 .crn{height:1em;vertical-align:-.1em;margin-right:.2em}
+.tname{font-family:'Press Start 2P','Courier New',monospace;font-size:12px}
+.pb{border-radius:0;background:#000;height:14px}.pb i{border-radius:0;background:#fff200;animation:none}
+.arena{display:block;width:min(100%,480px);margin:0 auto;padding:8px;text-align:center;color:#000;background:#fff;text-shadow:none;animation:none;font-size:20px}
+.arena small{color:#000;opacity:1;font-size:19px}
+.arena .arn{display:block;font-family:'Press Start 2P','Courier New',monospace;font-size:clamp(9px,1.1vw,13px);line-height:1.5}
+canvas.arthumb{display:block;width:100%;max-width:none;height:auto;aspect-ratio:380/140;border:4px solid #000;border-radius:0;box-shadow:none;margin:0 0 6px;image-rendering:pixelated;background:#3dbb5a}
+/* nav */
+.tabs{position:relative;top:auto;bottom:auto;flex:none;z-index:3;display:flex;flex-wrap:nowrap;justify-content:center;gap:clamp(10px,2.2vw,26px);padding:16px 8px 8px;margin:0;background:none;border:0;border-radius:0;box-shadow:none;backdrop-filter:none}
+.tabs button{position:relative;flex:0 1 clamp(80px,15vw,170px);font-family:'Press Start 2P','Courier New',monospace;font-size:clamp(7px,1.05vw,13px);line-height:1.3;padding:clamp(10px,1.8vw,18px) 2px;margin:4px;border:0;border-radius:0;background:#808080;color:#000;text-shadow:none;box-shadow:0 -4px 0 0 #000,0 4px 0 0 #000,-4px 0 0 0 #000,4px 0 0 0 #000,inset -4px -4px 0 0 rgba(0,0,0,.28),inset 4px 4px 0 0 rgba(255,255,255,.3)}
+.tabs button:hover:not(:disabled){filter:brightness(1.12)}
+.tabs button:active:not(:disabled){transform:translateY(3px);box-shadow:0 -4px 0 0 #000,0 4px 0 0 #000,-4px 0 0 0 #000,4px 0 0 0 #000,inset 4px 4px 0 0 rgba(0,0,0,.28)}
+.tabs button.on{background:#fff200;color:#000;text-shadow:none;animation:glowY 1.2s steps(3) infinite;box-shadow:0 -4px 0 0 #000,0 4px 0 0 #000,-4px 0 0 0 #000,4px 0 0 0 #000,inset -4px -4px 0 0 rgba(0,0,0,.18),inset 4px 4px 0 0 rgba(255,255,255,.65),0 0 0 8px rgba(255,242,0,.5),0 0 24px 10px rgba(255,242,0,.85)}
+.dot{border-radius:0;width:14px;height:14px;top:-10px;right:-10px;background:#ed1c24;border:3px solid #000;animation:none}
+#kfull .tabs{background:#22b14c;border-top:4px solid #000;padding:14px 8px 10px}
+#kfull .tabs button{background:#808080;color:#000;border:0}
+#kfull .tabs button.on{background:#fff200}
+/* layout */
+.shell{display:flex;flex-direction:column;height:100%;min-height:0}
+.msgb{flex:none;max-height:28%;overflow:auto;margin:0 6px 10px}
+.slider{flex:1;min-height:0;align-items:stretch;scrollbar-width:none}
+.slider::-webkit-scrollbar{display:none}
+.slider>section{height:100%;overflow-y:auto;overflow-x:hidden;padding:4px 8px 14px}
+.slider>section.home{padding:0}
+.hero{display:grid;grid-template-columns:minmax(200px,25%) 1fr minmax(180px,25%);gap:16px;height:100%;min-height:430px;padding:4px 8px 6px}
+.crownside{min-height:0;display:flex;flex-direction:column}
+.crownside>.box{flex:1;min-height:0;display:flex;flex-direction:column;padding:8px 10px}
+.crownside .ph{font-family:'Press Start 2P','Courier New',monospace;font-size:clamp(9px,1.05vw,13px);line-height:1.5;font-weight:normal}
+.crownside .crl{flex:1;min-height:0;max-height:none;overflow-y:auto}
+.crownside .crw{border-radius:0;border:2px solid #000;font-size:18px}
+.crownside .crw.ready{border-color:#000;background:#fff200}
+.crownside small{font-size:16px;line-height:1.05}.crownside .crw{font-size:16px;padding:2px 5px}.crownside .crw span:last-child{font-size:15px}
+.homec{display:flex;flex-direction:column;align-items:center;justify-content:space-around;gap:14px;min-width:0;padding:6px 0 10px;text-align:center}
+.homec .chips{justify-content:center;margin:12px 0 0}
+.homebtm{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%}
+.homebtm small{font-size:18px;text-shadow:1px 1px 0 rgba(255,255,255,.4)}
+.homebtm .box{text-align:left;max-width:440px}
+.homer{display:flex;flex-direction:column;align-items:flex-end;text-align:right;min-width:0}
+.fb{display:flex;flex-direction:column;align-items:flex-end;gap:10px;max-width:100%}
+.fbt{font-family:'Press Start 2P','Courier New',monospace;font-weight:normal;font-size:clamp(9px,1.15vw,14px);line-height:1.5;color:#fff;text-shadow:2px 0 #000,-2px 0 #000,0 2px #000,0 -2px #000}
+.fb .jn{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.fb input{font:inherit;font-size:22px;width:96px;padding:2px 6px;border:4px solid #000;border-radius:0;background:#fff;color:#000;text-transform:uppercase}
+.fb small,.fb .fbs{background:#fff;border:3px solid #000;padding:2px 6px;font-size:18px;line-height:1.1;text-align:left;color:#000}
+.fb .row{margin:0;justify-content:flex-end}
+.more{font-size:17px;padding:0 10px}
+.extras{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;padding:18px 8px 20px;border-top:4px solid #000;background:rgba(0,0,0,.12)}
+.extras .box{margin:0!important}
+#go{background:#ed1c24;color:#000;font-family:'Press Start 2P','Courier New',monospace;font-size:clamp(14px,2vw,24px);line-height:1.2;padding:clamp(16px,2.4vw,28px) clamp(36px,5vw,72px);margin:6px;border:0;border-radius:0;text-shadow:none;animation:none;box-shadow:0 -4px 0 0 #8b0e12,0 4px 0 0 #8b0e12,-4px 0 0 0 #8b0e12,4px 0 0 0 #8b0e12,inset -6px -6px 0 0 rgba(0,0,0,.25),inset 6px 6px 0 0 rgba(255,255,255,.3),0 10px 0 0 rgba(0,0,0,.35)}
+#go:hover:not(:disabled){filter:brightness(1.1)}
+#go:active:not(:disabled){transform:translateY(4px)}
+#go:disabled{animation:none;filter:grayscale(.7) brightness(.9)}
+#qmb .row,#qmb{display:flex;justify-content:center;margin:0}#qmb>small{display:none}
+/* battle UI */
+canvas{border-radius:0;border:4px solid #000;box-shadow:6px 6px 0 #000}
+.rb canvas{border:0;box-shadow:none;border-radius:50%}
+#hud{border:4px solid #000;border-radius:0;background:#fff;box-shadow:4px 4px 0 #000}
+#tm{border-radius:0;background:#000;font-family:'Press Start 2P','Courier New',monospace;font-size:12px;padding:6px 10px}
+#bar{border:3px solid #000;border-radius:0;background:#333;height:20px}
+#fill{background:#fff200;animation:none}
+#el{border-radius:0;border:3px solid #000;background:#fff200;color:#000}
+.card{border-radius:0;border-width:4px;background:#fff;box-shadow:4px 4px 0 #000;transition:none}
+.card:hover{transform:translateY(-3px)}
+.card.sel{background:#fff200;color:#000;transform:translateY(-8px);animation:glowY 1s steps(3) infinite;box-shadow:4px 4px 0 #000,0 0 0 4px #fff,0 0 20px 8px rgba(255,242,0,.85)}
+.cost{border-radius:0;background:#fff200;box-shadow:none;font-family:'Press Start 2P','Courier New',monospace;font-size:10px;line-height:20px;width:28px;height:26px}
+#hint{border-radius:0;box-shadow:4px 4px 0 #000}#tobj{border-radius:0;border-width:4px}
+.acard,.tile .ci,.kdt{border-radius:0}
+.rar{border-radius:0}
+/* small screens */
+@media (max-width:760px){
+ .hero{display:flex;flex-direction:column;height:auto;min-height:0}
+ .homec{order:1}.homer{order:2;align-items:center;text-align:center}.fb{align-items:center}.crownside{order:3;max-height:460px}
+ .tabs button{font-size:7px}
+}
+@media (orientation:landscape) and (max-height:560px){
+ #menu{padding:6px}.hero{min-height:330px;gap:10px}.homec{gap:6px}#menu h1{font-size:20px}.tabs{padding:10px 6px 4px}
+}
 </style></head><body><div id="app">
 <div id="hud"><span id="tm">3:00</span><div id="bar"><div id="fill"></div></div><b id="el">5 / 10 coins</b><button id="emb" onclick="toggleEm()">😀 Emote</button></div>
 <div id="emrow" class="row" hidden><button onclick="pe('mad')">😠 Mad</button><button onclick="pe('sad')">😢 Sad</button><button onclick="pe('support')">👍 Supportive</button><button onclick="pe('laugh')">😂 Laughing</button></div>
@@ -300,7 +400,12 @@ function deckPanel(){let h='<h2 style="margin:6px 0 4px">Your decks ('+S.decks.l
  h+='<small>'+(S.decks.length>=MAXD?'You have the maximum of '+MAXD+' decks. ':'')+'A new deck starts as a copy of the one you are using, and the deck you pick here is the one you play with.</small>';return h}
 function deckPick(){if((S.tut||0)<3)return '';return '<div class="box" style="margin-bottom:8px"><small>Deck</small> <select aria-label="Choose deck" onchange="setDeck(+this.value)" style="font:inherit;max-width:60%">'+S.decks.map((d,i)=>'<option value="'+i+'"'+(i==S.di?' selected':'')+'>'+esc(d.n)+'</option>').join('')+'</select> <small>🪙 avg cost '+deckAvg(S.deck).toFixed(1)+'</small></div>'}
 let page=0;
-function slide(i){page=i;const sl=$('sl');sl.scrollTo({left:i*sl.clientWidth,behavior:'smooth'});document.querySelectorAll('.tabs button').forEach((b,j)=>b.classList.toggle('on',j==i))}
+let NAVD={c:0,s:0,k:0};
+function navHTML(act){const inK=act=='kingdom',go=p=>inK?'page='+p+';kdExit()':'slide('+p+')',
+ B=(t,p,lb,dot,fn)=>`<button data-t="${t}" data-p="${p}" class="${act==t?'on':''}" onclick="${fn}">${lb}${dot?'<i class="dot"></i>':''}</button>`;
+ return `<nav class="row tabs" aria-label="Main menu">`+B('kingdom',-1,'Kingdom',NAVD.k,inK?'void 0':'kdEnter()')+B('battle',0,'Battle',0,go(0))+B('collection',1,'Collection',NAVD.c,go(1))+B('shop',2,'Shop',NAVD.s,go(2))+`</nav>`}
+function arThumb(){const c=$('arth');if(!c)return;try{const a=arena(),x=c.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(a.g,0,0,c.width,c.height);x.drawImage(a.b,0,0,c.width,c.height)}catch(e){c.remove()}}
+function slide(i){page=i;const sl=$('sl');sl.scrollTo({left:i*sl.clientWidth,behavior:'smooth'});document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',+b.dataset.p==i))}
 const cv=$('cv');let cx=cv.getContext('2d');
 let G=null,sel=null,mouse=null,last=0;
 const SP=new Image();let SPR=null;
@@ -424,10 +529,10 @@ const MTS=[
  {t:'These counters show what you own. Supplies and EXP upgrade your cards, Gems are rare and unlock cards and extras, and Trophies grow when you win battles.',s:'.chips',p:0},
  {t:'Tap the Arena bar to see every arena, the rewards waiting at each trophy level, and which cards you unlock there.',s:'.arena',p:0},
  {t:'These four tabs are the main places in the game. Tap one any time to switch. A red dot on a tab means something is ready for you.',s:'.tabs',p:0},
- {t:'⚔️ Battle: your lessons and practice matches live here, plus the mini chests, pouches and pockets you have earned.',s:'.tabs button:nth-child(1)',p:0},
- {t:'🃏 Cards: choose the 8 cards in your deck, upgrade them with Supplies and EXP, and browse your whole Collection.',s:'.tabs button:nth-child(2)',p:1},
- {t:'🛒 Shop: collect daily rewards, spend gems, and unlock new cards from your arena.',s:'.tabs button:nth-child(3)',p:2},
- {t:'🏰 Kingdom: build your own kingdom, collect gold and silver, train troops and raid rivals. Tap it to go in. Inside, the ❓ button shows the guide again.',s:'.tabs button:nth-child(4)',p:0},
+ {t:'⚔️ Battle: your lessons and practice matches live here, plus the mini chests, pouches and pockets you have earned.',s:'.tabs button[data-t="battle"]',p:0},
+ {t:'🃏 Collection: choose the 8 cards in your deck, upgrade them with Supplies and EXP, and browse your whole Collection.',s:'.tabs button[data-t="collection"]',p:1},
+ {t:'🛒 Shop: collect daily rewards, spend gems, and unlock new cards from your arena.',s:'.tabs button[data-t="shop"]',p:2},
+ {t:'🏰 Kingdom: build your own kingdom, collect gold and silver, train troops and raid rivals. Tap it to go in. Inside, the ❓ button shows the guide again.',s:'.tabs button[data-t="kingdom"]',p:0},
  {t:'👤 Tap your name here to change it, or to export and import your save.',s:'.prof summary',p:0},
  {t:'That is the whole screen! Back on the Battle tab, press the glowing button to carry on. You can tap 🧭 Menu tour any time to see this again.',s:'#go,#pmb',p:0,fin:1}];
 let MT=-1;
@@ -463,7 +568,7 @@ function claimOne(out){const n=(S.rc||0)+1;if(n>crUnlocked())return false;const 
 function claimCr(all){const out=[];while(claimOne(out)){if(!all)break}if(out.length){save();menu('<b>Rewards claimed!</b><br>'+out.join('<br>'))}}
 function crProg(i){const p=Math.max(0,Math.min(10,(S.cr||0)-(i-1)*10));return '<span style="display:inline-block;width:56px;height:8px;border:1px solid var(--ln);border-radius:4px;overflow:hidden;vertical-align:middle;background:var(--pn)"><span style="display:block;height:100%;width:'+p*10+'%;background:#f5b800"></span></span> '+p+'/10'}
 function crownPanel(){const cr=S.cr||0,u=crUnlocked(),rc=S.rc||0,pr=Math.min(100,(cr%10)*10);
- let h=`<div class="box"><b>${CRN} Crown rewards</b><br>${cr} crowns &middot; ${rc} of 100 claimed<br><small>A win gives 10 crowns, a loss gives 1 to 3. Every 10 crowns unlocks the next reward. You won't know what it is until you claim it!</small>
+ let h=`<div class="box"><b class="ph">Crown Rewards</b><br>${cr} crowns &middot; ${rc} of 100 claimed<br><small>A win gives 10 crowns, a loss gives 1 to 3. Every 10 crowns unlocks the next reward. You won't know what it is until you claim it!</small>
  <div style="height:12px;border:2px solid var(--ln);border-radius:6px;overflow:hidden;margin:6px 0"><div style="height:100%;width:${u>=100?100:pr}%;background:#f5b800"></div></div>
  <div class="row"><button ${u>rc?'':'disabled'} onclick="claimCr(true)">Claim all ready (${u-rc})</button></div><div class="crl">`;
  for(let i=1;i<=100;i++){const claimed=i<=rc,t=claimed&&S.rlog?S.rlog[i]:null,st=claimed?'done':i<=u?'ready':'',ic=t?crIcon(t):'<b style="font-size:20px">?</b>',lb=t?crLabel(t):(claimed?'Reward':'Mystery reward');
@@ -538,16 +643,22 @@ function menu(msg){dropSave();if(MP&&MP.started)mpEnd();{const r=trCheck();if(r)
  const need=Math.min(8,S.un),ok=S.deck.length==need;
  const ar0=arenaOf(S.tr||0),pct=ar0>=ARENAS.length-1?100:Math.max(0,Math.min(100,((S.tr||0)-ar0*360)/360*100)),nk=ORDER[S.un],uu=nk&&unlockInfo(nk),
   dotC=!ok||owned().some(k=>L(k)<MAXL&&upNeed(L(k),rmul(k),expType(k)).ok),dotS=!!(nk&&(S.tr||0)>=uu[2]&&S.gems>=uu[1]);
- let h=`<h1><span class="crown">👑</span> <span class="ttl">Stickman Royale</span></h1>${msg?`<div class="box" style="margin:8px 0">${msg}</div>`:''}
- <div class="chips"><span class="chip sup" title="Spend on card upgrades">${SUP} ${S.sup} <small>Supplies</small></span><span class="chip gem" title="Spend on unlocking cards and in the Shop">${GEM} ${S.gems} <small>Gems</small></span><span class="chip tr" title="Trophy level ${trophyLv()}">${TRO} ${S.tr||0} <small>Trophies</small></span></div>
- <button class="arena" onclick="trRoad()">🏟 Arena ${ar0+1}: ${ARENAS[ar0].n} ▾<span class="pb" style="--w:${pct}%"><i></i></span><small>${ar0<ARENAS.length-1?((ar0+1)*360-(S.tr||0))+' trophies to Arena '+(ar0+2)+' · tap to see rewards and cards':'Top arena reached!'}</small></button>
+ NAVD={c:dotC,s:dotS,k:kdReady()};
+ const tb=tutBox(),newbie=(S.tut||0)<3,nl=(S.tut||0)+1,lessonH=newbie?`<button id="go" onclick="start(${nl})">Lesson ${nl}</button><small>${TUT_INFO[nl-1]}</small>`:'',tbx=newbie?'<div class="row"><button onclick="mtStart()">🧭 Menu tour</button></div>':tb;
+ let h=`<div class="shell">${msg?`<div class="box msgb">${msg}</div>`:''}<div id="sl" class="slider"><section class="home"><div class="hero">
+ <aside class="crownside">${crownPanel()}</aside>
+ <div class="homec">
+  <div><h1><span class="crown">${CRN}</span> <span class="ttl">Stickman Royale</span></h1>
+  <div class="chips"><span class="chip sup" title="Spend on card upgrades">${SUP} ${S.sup} <small>Supplies</small></span><span class="chip gem" title="Spend on unlocking cards and in the Shop">${GEM} ${S.gems} <small>Gems</small></span><span class="chip tr" title="Trophy level ${trophyLv()}">${TRO} ${S.tr||0} <small>Trophies</small></span></div></div>
+  <button class="arena" onclick="trRoad()"><canvas class="arthumb" id="arth" width="380" height="140"></canvas><span class="arn">Arena ${ar0+1}: ${ARENAS[ar0].n}</span><span class="pb" style="--w:${pct}%"><i></i></span><small>${ar0<ARENAS.length-1?((ar0+1)*360-(S.tr||0))+' trophies to Arena '+(ar0+2)+' · tap for rewards':'Top arena reached!'}</small></button>
+  <div class="homebtm"><div id="qmb"></div>${lessonH}${ok?'':'<button class="b-warn" onclick="slide(1)">⚠ Deck not full. Tap to fix!</button>'}<button class="more" onclick="document.getElementById('extras').scrollIntoView({behavior:'smooth',block:'start'})">▼ Chests, profile &amp; more${(S.cl||0)>0?'<i class="dot"></i>':''}</button></div>
+ </div>
+ <div class="homer"><div id="mpb"></div></div>
+ </div>
+ <div class="extras" id="extras">${tbx}${chestBox()}${itemBox()}${deckPick()}${(S.tut||0)<3?'':`<button id="pmb" ${ok?'':'disabled'} onclick="practiceMenu()" style="width:100%">Practice matches</button>`}${trNext()}
  <details class="prof"><summary>👤 ${esc(S.name||'Player')} <small>(tap to edit profile)</small></summary><div class="row"><label>Your name <input id="pname" maxlength="14" value="${esc(S.name||'Player')}" onchange="setName(this)"></label> <span id="pnote" style="color:#c0392b;font-size:15px"></span> <small>${S.named?'Changing your name costs '+NAME_COST+' gems.':'Your first name is free. After that, changing it costs '+NAME_COST+' gems.'}</small></div><small>Trophy level ${trophyLv()} &middot; Deck level average ${avgL()}</small><div class="row" style="margin-top:6px"><button onclick="svExport()">📤 Export save</button><button onclick="svImport()">📥 Import save</button></div><div id="svbox"></div></details>
- <div class="row tabs"><button class="${page==0?'on':''}" onclick="slide(0)"><span class="ti">⚔️</span> Battle</button><button class="${page==1?'on':''}" onclick="slide(1)"><span class="ti">🃏</span> Cards ${S.deck.length}/${need}${dotC?'<i class="dot"></i>':''}</button><button class="${page==2?'on':''}" onclick="slide(2)"><span class="ti">🛒</span> Shop${dotS?'<i class="dot"></i>':''}</button><button class="${page==3?'on':''}" onclick="kdEnter()"><span class="ti">🏰</span> Kingdom${kdReady()?'<i class="dot"></i>':''}</button></div>
- <div id="sl" class="slider"><section><div class="bt"><div class="btl">
- <div id="qmb"></div>${tutBox()}<div id="mpb"></div>${chestBox()}${itemBox()}`;
- h+=`<div class="row">${ok?'':'<button class="b-warn" onclick="slide(1)">⚠️ Your deck is not full. Tap to fix it!</button>'}</div>
- <details class="help" ${(S.wins||0)<3?'open':''}><summary>❓ How to play</summary><ol class="steps"><li><b>1</b><span>Tap a card in your hand.</span></li><li><b>2</b><span>Tap the <u>blue area</u> of the field to drop it. Coins refill over time!</span></li><li><b>3</b><span>Destroy the enemy towers before they destroy yours.</span></li></ol><small>New cards come from mini chests (${S.un}/${ORDER.length} found). Upgrade cards in the Cards tab.</small></details>
- </div><div class="btr">${deckPick()}${(S.tut||0)<3?'':`<button id="pmb" ${ok?'':'disabled'} onclick="practiceMenu()" style="width:100%;margin-bottom:8px">Practice matches</button>`}${trNext()}${crownPanel()}</div></div></section><section><div class="row"><button class="${cview=='deck'?'on':''}" onclick="cview='deck';menu()">Deck</button><button class="${cview=='all'?'on':''}" onclick="cview='all';menu()">Collection</button></div>`;
+ <details class="help" ${(S.wins||0)<3?'open':''}><summary>❓ How to play</summary><ol class="steps"><li><b>1</b><span>Tap a card in your hand.</span></li><li><b>2</b><span>Tap the <u>blue area</u> of the field to drop it. Coins refill over time!</span></li><li><b>3</b><span>Destroy the enemy towers before they destroy yours.</span></li></ol><small>New cards come from mini chests (${S.un}/${ORDER.length} found). Upgrade cards in the Collection tab.</small></details>
+ </div></section><section class="pg"><div class="row"><button class="${cview=='deck'?'on':''}" onclick="cview='deck';menu()">Deck</button><button class="${cview=='all'?'on':''}" onclick="cview='all';menu()">Collection</button></div>`;
  if(cview=='all')h+=allView();
  else{h+=`<div class="chips"><span class="chip xp" title="Upgrade Common cards">${EXPI} ${S.exp} <small>Common EXP</small></span><span class="chip xp" title="Upgrade Rare cards">${RAREI} ${S.expR||0} <small>Rare EXP</small></span></div>${deckPanel()}<h2 style="margin:8px 0 2px">Your deck (${S.deck.length}/8)</h2><div class="chips2"><span class="chip cc" title="Average coin cost of the cards in this deck">🪙 Average cost ${deckAvg(S.deck).toFixed(1)}</span></div>
  <small>Your hand holds 4 cards from this deck and cycles through the rest.</small><details class="help" style="border-color:#7c3aed"><summary>⬆ How upgrades work</summary><small>Upgrades cost supplies ${SUP} and EXP (${EXPI} Common / ${RAREI} Rare). EXP cost per level: 5, 20, 50, 100, 250, 500, 1,000, 1,500, 3,000, 5,000, 10,000, 15,000, 30,000, 40,000 (max Lv 15). Common and Rare cards use the same amounts. Short on something? <b>Cover gap</b> pays only the missing part with gems.</small></details>`;
@@ -562,14 +673,14 @@ function menu(msg){dropSave();if(MP&&MP.started)mpEnd();{const r=trCheck();if(r)
   owned().filter(k=>!S.deck.includes(k)).forEach(k=>h+=tile(k,0));
   for(let i=S.un;i<ORDER.length;i++)h+=`<div class="box lock"><b>Locked card</b><br>Find it in a mini chest</div>`;
   h+=`</div>`}
- h+=`</section><section>${shopTab()}</section><section>${kingdomTab()}</section></div>`;
- m.innerHTML=h;mpRender();mtApply();if(!S.mt&&(S.tut||0)>=1&&!G){S.mt=1;save();mtStart()}const sl=$('sl');sl.scrollLeft=page*sl.clientWidth;
- sl.onscroll=()=>{const p=Math.round(sl.scrollLeft/sl.clientWidth);if(p!=page){page=p;document.querySelectorAll('.tabs button').forEach((b,j)=>b.classList.toggle('on',j==p))}}
+ h+=`</section><section class="pg">${shopTab()}</section></div>${navHTML(['battle','collection','shop'][page]||'battle')}</div>`;
+ m.innerHTML=h;arThumb();mpRender();mtApply();if(!S.mt&&(S.tut||0)>=1&&!G){S.mt=1;save();mtStart()}const sl=$('sl');sl.scrollLeft=page*sl.clientWidth;
+ sl.onscroll=()=>{const p=Math.round(sl.scrollLeft/sl.clientWidth);if(p!=page){page=p;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',+b.dataset.p==p))}}
 }
 /* ================= Kingdom tab: a huge 100x100 kingdom, build anywhere ================= */
 const KD_XY=(()=>{const a=[];for(let x=-3;x<=3;x++)for(let z=-3;z<=3;z++)if(Math.abs(x)>1||Math.abs(z)>1)a.push([x,z]);
  const an=p=>Math.round((Math.atan2(p[1],p[0])+7)*1e3);return a.sort((p,q)=>(p[0]*p[0]+p[1]*p[1])-(q[0]*q[0]+q[1]*q[1])||an(p)-an(q))})();
-const KD_CC=[150,500,1500,4000,10000],KD_MAXC=6,KD_MAXL=10,KD_BCAP=50,KD_LIM={farm:[0,2,3,4,6,8],mill:[0,1,2,3,4,5],market:[0,0,1,2,3,4],gold:[1,2,3,4,6,8],smine:[1,1,2,2,3,4],barracks:[0,1,1,2,2,3],camp:[0,1,1,2,3,4],mine:[0,1,1,2,2,3],cave:[0,0,1,1,2,3],hut:[1,1,2,2,3,3],wall:[15,30,50,80,120,200],gstore:[1,1,2,2,3,3],sstore:[1,1,2,2,3,3],watch:[1,2,3,4,6,8],cannon:[1,1,2,3,4,6],spikes:[0,4,8,12,20,30]};
+const KD_CC=[150,500,1500,4000,10000],KD_MAXC=6,KD_MAXL=10,KD_BCAP=50,KD_LIM={farm:[0,0,0,0,0,8],mill:[0,1,2,3,4,5],market:[0,0,1,2,3,4],gold:[1,2,3,4,6,8],smine:[1,1,2,2,3,4],barracks:[0,1,1,2,2,3],camp:[0,1,1,2,3,4],mine:[0,1,1,2,2,3],cave:[0,0,1,1,2,3],hut:[1,1,2,2,3,3],wall:[15,30,50,80,120,200],gstore:[1,1,2,2,3,3],sstore:[1,1,2,2,3,3],watch:[1,2,3,4,6,8],cannon:[1,1,2,3,4,6],spikes:[0,4,8,12,20,30]};
 const KD_B={
  farm:{n:'Farm',e:'🌾',k:'sil',cur:'sil',b:45,c:30,u:25,cl:1,d:'Grows supplies.'},
  mill:{n:'Lumber Mill',e:'🪵',k:'sil',cur:'sil',b:75,c:100,u:60,cl:1,d:'Chops lots of supplies.'},
@@ -578,8 +689,8 @@ const KD_B={
  smine:{n:'Silver Mine',e:'🪙',k:'sil',b:100,c:350,u:170,cl:1,d:'Digs up silver. Costs gold scraps to build.'},
  barracks:{n:'Barracks',e:'🛡️',k:'deco',be:0,upg:1,cap:1,cur:'sil',c:400,u:260,cl:1,d:'Houses and trains your troops for raids. Higher levels hold more.'},
  camp:{n:'Army Camp',e:'⛺',k:'deco',be:0,upg:1,cap:1,cur:'sil',c:500,u:300,cl:1,d:'A big camp with lots of extra room for your army. Higher levels hold more.'},
- mine:{n:'Gem Mine',e:'💎',k:'gem',b:6,c:250,u:250,cl:1,d:'Digs up gems.'},
- cave:{n:'Crystal Cave',e:'🔮',k:'gem',b:14,c:1200,u:700,cl:1,d:'Glowing crystals full of gems.'},
+ mine:{n:'Gem Mine',e:'💎',k:'gem',b:2/24,c:250,u:250,cl:1,d:'Digs up gems.'},
+ cave:{n:'Crystal Cave',e:'🔮',k:'gem',b:5/24,c:1200,u:700,cl:1,d:'Glowing crystals full of gems.'},
  wall:{n:'Wall',e:'🧱',k:'deco',be:1,c:20,cl:1,def:1,upg:1,u:30,d:'Sturdy stone wall. Neighbouring walls link up.'},
  watch:{n:'Watchtower',e:'🗼',k:'deco',be:2,c:60,cl:1,def:1,g:1,upg:1,u:90,d:'A tall lookout that guards your kingdom.'},
  cannon:{n:'Cannon Tower',e:'💣',k:'deco',be:3,c:100,cl:1,def:1,g:1,upg:1,u:150,d:'A stout tower with a big cannon.'},
@@ -638,21 +749,21 @@ const kdIsProd=b=>!!b&&KD_B[b.t]&&KD_B[b.t].b>0;
 const kdHuts=()=>Object.values(kdInit().p).filter(b=>b&&b.t=='hut'),kdFreeHut=()=>kdHuts().find(h=>!h.job),kdUpg=b=>kdHuts().find(h=>h.job&&h.job.u==b.u)||null,kdUpTime=l=>Math.round(15*Math.pow(2,l-1)/5)*5,
  kdFmt=s=>s<60?s+'s':s<3600?Math.floor(s/60)+'m '+s%60+'s':Math.floor(s/3600)+'h '+Math.floor(s%3600/60)+'m';
 const kdBeauty=()=>Math.min(KD_BCAP,kdBs().reduce((t,b)=>t+(b&&KD_B[b.t]&&(KD_B[b.t].be||0)*(KD_B[b.t].upg?b.l||1:1)||0),0));
-const kdCapH=()=>4+2*kdInit().c;
+const kdCapH=()=>4+2*kdInit().c,kdCapHb=b=>KD_B[b.t].k=='gem'?72:kdCapH();/* gem buildings make so little that they store 3 days of gems */
 const kdRate=b=>KD_B[b.t].b*(1+.8*(b.l-1))*(1+kdBeauty()/100);
 const kdFrozen=b=>{if(!kdIsProd(b))return false;const c=KD_B[b.t].k,k=S.kd;return(c=='gs'||c=='sil')&&!!(k&&k.fz&&k.fz[c])};
-const kdPend=b=>{if(!kdIsProd(b))return 0;const c=KD_B[b.t].k,k=S.kd,z=(c=='gs'||c=='sil')&&k&&k.fz&&k.fz[c]?k.fz[c]:Date.now();return Math.max(0,kdRate(b)*Math.min(kdCapH()*3600e3,z-b.s)/3600e3)};
+const kdPend=b=>{if(!kdIsProd(b))return 0;const c=KD_B[b.t].k,k=S.kd,z=(c=='gs'||c=='sil')&&k&&k.fz&&k.fz[c]?k.fz[c]:Date.now();return Math.max(0,kdRate(b)*Math.min(kdCapHb(b)*3600e3,z-b.s)/3600e3)};
 /* when your gold (or silver) is full, everything that makes it stops working until there is room again */
 function kdSync(){const k=S.kd;if(!k||!k.p||Array.isArray(k.p))return;k.fz=k.fz||{gs:0,sil:0};const now=Date.now();let ch=0;
  ['gs','sil'].forEach(c=>{const full=kdRoom(c)<=0;if(full&&!k.fz[c]){k.fz[c]=now;ch=1}else if(!full&&k.fz[c]){const d=now-k.fz[c];Object.values(k.p).forEach(b=>{if(b&&KD_B[b.t]&&KD_B[b.t].k==c&&kdIsProd(b))b.s=Math.min(now,b.s+d)});k.fz[c]=0;ch=1}});if(ch)save()}
-const kdCapAmt=b=>kdRate(b)*kdCapH();
+const kdCapAmt=b=>kdRate(b)*kdCapHb(b);
 const kdUpCost=b=>Math.max(10,Math.round(KD_B[b.t].u*Math.pow(b.l,1.7)/10)*10);
 const kdCount=t=>{const k=kdInit();return kdBs().filter(b=>b&&b.t==t).length+k.inv.filter(b=>b.t==t).length};
 const kdLim=t=>{const a=KD_LIM[t];return a?a[kdInit().c-1]:999},kdMaxL=()=>Math.min(KD_MAXL,2*kdInit().c);
 function kdReady(){return kdBs().some(b=>kdIsProd(b)&&kdPend(b)>=kdCapAmt(b)*.75)}
 function kdChips(){const bv=$('kbv');if(bv)bv.innerHTML=SILV+' '+(S.silver||0)+'/'+kdCapOf('sil');const bs=$('kbs'),bg=$('kbg');if(bs)bs.innerHTML=GSI+' '+S.gs+'/'+kdCapOf('gs');if(bg)bg.innerHTML=GEM+' '+S.gems;const a=document.querySelector('.chip.sup'),g=document.querySelector('.chip.gem');if(g)g.innerHTML=GEM+' '+S.gems+' <small>Gems</small>'}
 function kdCollect(i,quiet){kdSync();const k=kdInit(),b=k.p[i];if(!kdIsProd(b))return 0;const p=kdPend(b),kk0=KD_B[b.t].k,n=Math.min(Math.floor(p),kk0=='gs'?kdRoom('gs'):kk0=='sil'?kdRoom('sil'):1e9);if(n<1){if(Math.floor(p)>=1&&!quiet)KDFL.push({i,t:'Storage full',s:Date.now()});return 0}
- const full=n>=Math.floor(p)&&Date.now()-b.s>=kdCapH()*3600e3;b.s=full?Date.now():Date.now()-(p-n)/kdRate(b)*3600e3;
+ const full=n>=Math.floor(p)&&Date.now()-b.s>=kdCapHb(b)*3600e3;b.s=full?Date.now():Date.now()-(p-n)/kdRate(b)*3600e3;
  const kk=KD_B[b.t].k;if(kk=='gs')S.gs+=n;else if(kk=='exp')S.exp+=n;else if(kk=='sil')S.silver=(S.silver||0)+n;else S.gems+=n;kdSync();save();if(!quiet){kdChips();kdRender([[i,'+'+n]])}return n}
 function kdAll(){const k=kdInit(),fl=[];Object.keys(k.p).forEach(i=>{const n=kdCollect(i,1);if(n)fl.push([i,'+'+n])});if(fl.length)kdChips();kdRender(fl)}
 function kdFree(i,t){const n=kdSz(t||'wall'),a=kdAncFor(i,n);return kdFits(a[0],a[1],n)}
@@ -712,7 +823,7 @@ function kdPanel(){const k=kdInit(),i=KDSEL;
  let h='<b>'+d.e+' '+d.n+(kdIsProd(b)||d.upg?' &middot; Level '+b.l+'/'+kdMaxL():'')+'</b><br><small>'+d.d+'</small><br>'+(kdSz(b.t)>1?'<small>📐 Size '+kdSz(b.t)+' × '+kdSz(b.t)+' tiles</small><br>':'')+(b.t=='wall'?'<small>🧱 Walls: '+kdCount('wall')+' / '+kdLim('wall')+' allowed (a higher castle level allows more)</small><br>':'');if(b.t=='barracks'||b.t=='camp')h+=kdArmyHTML();
  if(d.hut)h+='<div style="margin:4px 0">'+(busy?'🔨 Busy upgrading '+b.job.n+' to Lv '+b.job.to+': <b id="kdup" data-end="'+b.job.end+'"></b>':'✅ The stonemason is free and ready for work.')+'</div><div class="row">';
  else if(kdIsProd(b)){const r=kdRate(b),fh=kdFreeHut(),c=kdUpCost(b);
-  h+='<div style="margin:4px 0">Makes <b>'+(r<10?r.toFixed(1):Math.round(r))+'</b> '+KU[d.k]+' per hour &middot; stored <b id="kdst"></b> of '+Math.floor(kdCapAmt(b))+'</div>'+(kdFrozen(b)?'<div style="margin:4px 0">💤 <b>Stopped:</b> your '+(d.k=='gs'?'gold scraps are':'silver is')+' full. Spend some or upgrade a '+(d.k=='gs'?'Gold':'Silver')+' Storage and this building starts working again.</div>':'')+'<div class="row">'
+  h+='<div style="margin:4px 0">Makes <b>'+(d.k=='gem'?(r*24).toFixed(1):r<10?r.toFixed(1):Math.round(r))+'</b> '+KU[d.k]+(d.k=='gem'?' per day':' per hour')+' &middot; stored <b id="kdst"></b> of '+Math.floor(kdCapAmt(b))+'</div>'+(kdFrozen(b)?'<div style="margin:4px 0">💤 <b>Stopped:</b> your '+(d.k=='gs'?'gold scraps are':'silver is')+' full. Spend some or upgrade a '+(d.k=='gs'?'Gold':'Silver')+' Storage and this building starts working again.</div>':'')+'<div class="row">'
    +'<button onclick="kdCollect('+Q+')" '+(kdPend(b)>=1?'':'disabled')+'>💰 Collect</button>'
    +(u?'<span class="chip">⏳ Upgrading to Lv '+u.job.to+': <b id="kdup" data-end="'+u.job.end+'"></b></span>':b.l<kdMaxL()?'<button onclick="kdUp('+Q+')" '+(S.gs>=c&&fh?'':'disabled')+'>⬆ Upgrade to Lv '+(b.l+1)+' ('+c+' '+GSI+', '+kdFmt(kdUpTime(b.l))+')</button>'+(fh?'':'<small>No free stonemason.</small>'):b.l<KD_MAXL?'<span class="chip">🔒 Needs Castle Lv '+Math.ceil((b.l+1)/2)+'</span>':'<span class="chip">⭐ Max level</span>')}
  else if(b.t=='wall'){h+='<div style="margin:4px 0">Gives <b>+'+(d.be*b.l)+' beauty</b> (+'+(d.be*b.l)+'% production everywhere). Walls upgrade instantly and do not need a stonemason.</div><div class="row">';
@@ -770,6 +881,16 @@ function kdRivalMap(r){if(r.map)return r.map;const m={},rl=r.rl,sd=r.sd*997+r.i,
  const dc=['tent','fountain','statue','lantern'];for(let i=0;i<1+Math.ceil(rl/2);i++){for(let a=0;a<30;a++){const th=rd(i,a,46)*6.2832,rr=4+rd(i,a,47)*(R0-7),x=Math.round(Math.cos(th)*rr),z=Math.round(Math.sin(th)*rr);if(put(x,z,dc[Math.floor(rd(i,a,48)*4)]))break}}
  return m}
 
+
+/* raid speed-ups: the grass is one patterned fill, the red zone is one cached path, trees/rocks are listed once */
+let KGRP=null;
+function kdGrass(rc){if(!KGRP){const c=document.createElement('canvas');c.width=64;c.height=32;const x=c.getContext('2d');x.fillStyle='#62b966';x.fillRect(0,0,64,32);x.fillStyle='#6cc36f';[[0,0],[64,0],[0,32],[64,32]].forEach(q=>{x.beginPath();x.moveTo(q[0],q[1]-16);x.lineTo(q[0]+32,q[1]);x.lineTo(q[0],q[1]+16);x.lineTo(q[0]-32,q[1]);x.fill()});KGRP=rc.createPattern(c,'repeat')}return KGRP}
+function kdRBObs(occ){const o=[];for(let a=-KWB;a<KWB;a++)for(let b=-KWB;b<KWB;b++){if(a==-1&&b>=2)continue;if(occ[a+','+b]||!k3ob(a,b))continue;const ob=k3kind(a,b);if(ob=='tree'){const x=a+(k3rnd(a,b,3)-.5)*.8,z=b+(k3rnd(a,b,5)-.5)*.8;o.push({a,b,x,z,k:'tree',s:k3spr('ft1',110,190,F=>k3ftree(F,1))})}else o.push({a,b,x:a,z:b,k:ob,s:k3spr('ob_'+ob,110,190,F=>k3obst(F,ob))})}return o}
+function kdDebris(n,v){return k3spr('dbr'+n+'v'+v,150,210,F=>{k3set(1);const r=i=>k3h(v+3.3,i*2.7,n),cl=['#8a8378','#6f695f','#7d7468','#a39a8a','#5b5249'],wd=['#5b4a38','#6b563e','#3a2a1c'];
+ for(let i=0;i<10+6*n;i++){const a=(r(i)-.5)*.86,b=(r(i+50)-.5)*.86,q=.07+r(i+90)*.12*(1+.2*n),h=.04+r(i+130)*.1;k3box(F,a,0,b,q*1.3,h,q,cl[i%5])}
+ for(let i=0;i<3+n;i++){const a=(r(i+170)-.5)*.7,b=(r(i+190)-.5)*.7,hz=i%2;k3box(F,a,.02,b,hz?.4:.05,.05,hz?.05:.4,wd[i%3])}
+ for(let i=0;i<2+n;i++)k3box(F,(r(i+210)-.5)*.5,0,(r(i+230)-.5)*.5,.16,.16+r(i+250)*.1,.14,'#4a423a');
+ k3set(0)},n)}
 function kdRBZone(){const d=RBT.S.reduce((t,s)=>t+(s.hp<=0?1:0),0);if(RBT.zc&&RBT.zd===d)return RBT.zc;const Z=new Set();
  RBT.S.forEach(s=>{if(s.hp<=0)return;for(let a=s.a-1;a<=s.a+s.n;a++)for(let b=s.b-1;b<=s.b+s.n;b++)Z.add(a+','+b)});
  RBT.zc=Z;RBT.zd=d;return Z}
@@ -793,7 +914,8 @@ function kdRBStructs(r,m){const rl=r.rl,ids=Object.keys(m),LT=['gold','smine','f
   S.push({id,a:q[0],b:q[1],n,x:q[0]+(n-1)/2,z:q[1]+(n-1)/2,t:b.t,q:k3tq({t:b.t,l:b.l,rd:1}),hp,mhp:hp,dps:tw?Math.round((b.t=='cannon'?30+14*rl:b.t=='spikes'?25+10*rl:15+8*rl)*(1+.12*(r.bl-1))):0,rng:b.t=='spikes'?1.8:4.2,loot:LT.includes(b.t),val:b.t=='gold'?Math.round(r.loot/gc):Math.round(r.sil/sv)})});return S}
 function kdRaidView(i,st,msg,rr){const k=kdInit(),r=rr||kdRival(i);if(!r)return;RBT={r,i,seed:r.sd*997+(r.i<0?7:r.i),phase:(k.raided||{})[r.id]?'done':'place',sel:null,U:[],sh:[],msg:msg||'',t:0,last:0,cam:{zm:1.25,px:0,py:0}};RBT.m=kdRivalMap(r);RBT.S=kdRBStructs(r,RBT.m);RBT.occ=kdRBOcc();
  /* spike traps are hidden: no sprite, no red zone and nobody targets them. A ground troop that steps on one takes a chunk of damage and the trap is gone for the rest of the round */
- RBT.TR=RBT.S.filter(x=>x.t=='spikes').map(x=>({x:x.x,z:x.z,l:RBT.m[x.id].l,dmg:Math.round((150+60*r.rl)*(1+.12*(r.bl-1)))}));RBT.S=RBT.S.filter(x=>x.t!='spikes');RBT.fx=[];
+ RBT.TR=RBT.S.filter(x=>x.t=='spikes').map(x=>({x:x.x,z:x.z,l:RBT.m[x.id].l,dmg:Math.round((150+60*r.rl)*(1+.12*(r.bl-1)))}));RBT.S=RBT.S.filter(x=>x.t!='spikes');RBT.fx=[];RBT.DC=RBT.S.filter(x=>kdIsDeco(x.t));RBT.S=RBT.S.filter(x=>!kdIsDeco(x.t));RBT.OB=null;
+
  if(RBT.phase=='done')RBT.S.forEach(s=>{if(s.t!='castle'&&KD_B[s.t].def)s.hp=0});
  const ro=$('kraid');ro.className='kr-full';ro.style.display='block';ro.innerHTML='<canvas id="krc"></canvas><div id="krtop"></div><div id="krbot"></div>';kdRBBind($('krc'));kdRBUI()}
 const kdRBAvail=t=>(kdInit().army[t]||0)-RBT.U.filter(u=>u.k==t).length;
@@ -832,30 +954,31 @@ function kdRBStart(){if(!RBT.U.length)return;RBT.phase='fight';RBT.t=0;RBT.msg='
 function kdRBPct(){if(!RBT)return 0;const B=RBT.S.filter(s=>s.t!='wall');if(!B.length)return 0;return Math.min(100,Math.floor(B.filter(s=>s.hp<=0).length/B.length*100))}
 function kdRBBar(){if(RBT.phase=='done')return '';const p=kdRBPct();return '<div style="margin:4px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><b>💥 Destroyed</b><b id="krpt">'+p+'%</b></div><div style="height:14px;border:2px solid #4a2c12;border-radius:8px;background:#e6d5bd;overflow:hidden"><div id="krpf" style="height:100%;width:'+p+'%;background:linear-gradient(180deg,#ff9a3c,#e8541e);transition:width .25s"></div></div></div>'}
 /* Mauler brain: goes for defenses, walks through gaps in the walls, only smashes a wall when there is no other way in */
-function kdRBPath(u,ST){const O=30,N=61,ix=(x,z)=>(x+O)*N+(z+O),cl=v=>Math.max(-O,Math.min(O,v)),wl=new Set(ST.filter(s=>s.t=='wall').map(s=>s.x+','+s.z));
- let C=ST.filter(s=>s.t!='wall'&&s.t!='castle'&&KD_B[s.t]&&KD_B[s.t].def);if(!C.length)C=ST.filter(s=>s.t!='wall');if(!C.length)return null;
- const st=ix(cl(Math.round(u.x)),cl(Math.round(u.z))),D=new Float64Array(N*N).fill(1e9),P=new Int32Array(N*N).fill(-1),H=[];
- const hp=(c,i)=>{H.push([c,i]);let k=H.length-1;while(k>0){const q=(k-1)>>1;if(H[q][0]<=H[k][0])break;const t=H[q];H[q]=H[k];H[k]=t;k=q}},
-  pop=()=>{const t=H[0],l=H.pop();if(H.length){H[0]=l;let k=0;for(;;){const a=2*k+1,b=a+1;let m=k;if(a<H.length&&H[a][0]<H[m][0])m=a;if(b<H.length&&H[b][0]<H[m][0])m=b;if(m==k)break;const w=H[m];H[m]=H[k];H[k]=w;k=m}}return t};
- D[st]=0;hp(0,st);
- while(H.length){const [bd,b]=pop();if(bd>D[b])continue;const x=Math.floor(b/N)-O,z=b%N-O;
+/* one shared path field per kind of troop instead of a search per troop: every tile knows the next step towards the nearest target and which target that is.
+   Walls cost so much to cross that troops walk around them, and only break one when a target is completely boxed in. */
+function kdRBField(list,ST){const O=30,N=61,M=N*N,ix=(x,z)=>(x+O)*N+(z+O),cl=v=>Math.max(-O,Math.min(O,v)),D=new Float64Array(M).fill(1e9),P=new Int32Array(M).fill(-1),R=new Int16Array(M).fill(-1),wl=new Uint8Array(M),hc=[],hn=[];
+ ST.forEach(s=>{if(s.t=='wall'&&s.hp>0)wl[ix(cl(Math.round(s.x)),cl(Math.round(s.z)))]=1});
+ const push=(c,n)=>{let k=hc.length;hc.push(c);hn.push(n);while(k>0){const q=(k-1)>>1;if(hc[q]<=c)break;hc[k]=hc[q];hn[k]=hn[q];k=q}hc[k]=c;hn[k]=n};
+ const pop=()=>{const c0=hc[0],n0=hn[0],c=hc.pop(),n=hn.pop(),L=hc.length;if(L){let k=0;for(;;){let m=2*k+1;if(m>=L)break;if(m+1<L&&hc[m+1]<hc[m])m++;if(hc[m]>=c)break;hc[k]=hc[m];hn[k]=hn[m];k=m}hc[k]=c;hn[k]=n}return[c0,n0]};
+ list.forEach((s,i)=>{const j=ix(cl(Math.floor(s.x)),cl(Math.floor(s.z)));D[j]=0;R[j]=i;push(0,j)});
+ while(hc.length){const [bd,b]=pop();if(bd>D[b])continue;const x=Math.floor(b/N)-O,z=b%N-O;
   for(let dx=-1;dx<=1;dx++)for(let dz=-1;dz<=1;dz++){if(!dx&&!dz)continue;const nx=x+dx,nz=z+dz;if(nx<-O||nx>O||nz<-O||nz>O)continue;
-   if(dx&&dz&&(wl.has((x+dx)+','+z)||wl.has(x+','+(z+dz))))continue;
-   const c=bd+(dx&&dz?1.41:1)+(wl.has(nx+','+nz)?12:0),j=ix(nx,nz);if(c<D[j]){D[j]=c;P[j]=b;hp(c,j)}}}
- let tg=null,bc=1e9;C.forEach(s=>{const c=D[ix(cl(Math.floor(s.x)),cl(Math.floor(s.z)))];if(c<bc){bc=c;tg=s}});if(!tg)return null;
- const path=[];let j=ix(cl(Math.floor(tg.x)),cl(Math.floor(tg.z)));while(j>=0&&j!=st){path.unshift([Math.floor(j/N)-O,j%N-O]);j=P[j]}
- return{tg,path}}
-function kdRBMauler(u,ST,dt){u.rp=(u.rp||0)-dt;if(!u.tg||u.tg.hp<=0||u.rp<=0){const r=kdRBPath(u,ST);u.tg=r?r.tg:null;u.path=r?r.path:[];u.rp=.4}
- const tg=u.tg;if(!tg){u.mv=0;return}u.pt=Math.max(0,u.pt-dt);const sx=(tg.x-tg.z)-(u.x-u.z);if(sx)u.fx=sx<0?-1:1;
- const hit=o=>{u.mv=0;u.cdT-=dt;if(u.cdT<=0){o.hp-=u.hit;u.cdT=u.cd;u.pt=.35}},go=(tx,tz)=>{const dx=tx-u.x,dz=tz-u.z,d=Math.hypot(dx,dz)||1,m=Math.min(d,u.spd*dt);u.x+=dx/d*m;u.z+=dz/d*m;u.mv=1;u.ph+=dt*7;return d-m};
+   if(dx&&dz&&(wl[ix(x+dx,z)]||wl[ix(x,z+dz)]))continue;
+   const j=ix(nx,nz),c=bd+(dx&&dz?1.41:1)+(wl[j]?400:0);if(c<D[j]){D[j]=c;P[j]=b;R[j]=R[b];push(c,j)}}}
+ return{list,P,R}}
+function kdRBFieldGet(kind,ST){const c=RBT.fd&&RBT.fd[kind];if(c&&c.v===ST.length&&RBT.t-c.t<1.2)return c.F;
+ let list=kind==1?ST.filter(s=>s.t!='wall'&&s.t!='castle'&&KD_B[s.t]&&KD_B[s.t].def):[];if(!list.length)list=ST.filter(s=>s.t!='wall');
+ const F=kdRBField(list,ST);(RBT.fd=RBT.fd||{})[kind]={F,v:ST.length,t:RBT.t};return F}
+function kdRBMauler(u,ST,dt){const O=30,N=61,F=kdRBFieldGet(u.k=='mauler'?1:0,ST),cl=v=>Math.max(-O,Math.min(O,v)),tile=(cl(Math.round(u.x))+O)*N+(cl(Math.round(u.z))+O),tg=F.list[F.R[tile]];
+ if(!tg||tg.hp<=0){u.mv=0;return}u.pt=Math.max(0,u.pt-dt);const sx=(tg.x-tg.z)-(u.x-u.z);if(sx)u.fx=sx<0?-1:1;
+ const hit=o=>{u.mv=0;u.cdT-=dt;if(u.cdT<=0){o.hp-=u.hit;u.cdT=u.cd;u.pt=.35;if(u.rng>1.2)RBT.sh.push({a:[u.x,u.z],b:[o.x,o.z],t:.2,c:'#2a7bd6'})}},go=(tx,tz)=>{const dx=tx-u.x,dz=tz-u.z,d=Math.hypot(dx,dz)||1,m=Math.min(d,u.spd*dt);u.x+=dx/d*m;u.z+=dz/d*m;u.mv=1;u.ph+=dt*7;return d-m};
  if(kdRBEd(u,tg)<=u.rng){hit(tg);return}
- while(u.path&&u.path.length&&Math.hypot(u.path[0][0]-u.x,u.path[0][1]-u.z)<.12)u.path.shift();
- const nx=u.path&&u.path[0];if(!nx){go(tg.x,tg.z);return}
- const wall=ST.find(s=>s.t=='wall'&&s.hp>0&&s.x==nx[0]&&s.z==nx[1]);
- if(wall){if(Math.hypot(wall.x-u.x,wall.z-u.z)<=1.8)hit(wall);else go(nx[0],nx[1]);return}
- go(nx[0],nx[1])}
+ const nb=F.P[tile];if(nb<0){go(tg.x,tg.z);return}
+ const nx=Math.floor(nb/N)-O,nz=nb%N-O,wall=ST.find(s=>s.t=='wall'&&s.hp>0&&Math.round(s.x)==nx&&Math.round(s.z)==nz);
+ if(wall){if(Math.hypot(wall.x-u.x,wall.z-u.z)<=1.8)hit(wall);else go(nx,nz);return}
+ go(nx,nz)}
 function kdRBStep(dt){const S=RBT.S.filter(s=>s.hp>0),U=RBT.U.filter(u=>u.hp>0);RBT.t+=dt;
- U.forEach(u=>{if(u.k=='mauler'){kdRBMauler(u,S,dt);return}let tg=null,bd=1e9;S.forEach(s=>{if(s.hp<=0)return;const d=kdRBEd(u,s);if(d<bd){bd=d;tg=s}});if(!tg)return;
+ U.forEach(u=>{if(!(CARDS[u.k]&&CARDS[u.k].air)){kdRBMauler(u,S,dt);return}let tg=null,bd=1e9;S.forEach(s=>{if(s.hp<=0||s.t=='wall')return;const d=kdRBEd(u,s);if(d<bd){bd=d;tg=s}});if(!tg)return;
   const sx=(tg.x-tg.z)-(u.x-u.z);if(sx)u.fx=sx<0?-1:1;u.pt=Math.max(0,u.pt-dt);
   if(bd>u.rng){const dc=Math.hypot(tg.x-u.x,tg.z-u.z)||1,dx=(tg.x-u.x)/dc,dz=(tg.z-u.z)/dc;u.x+=dx*u.spd*dt;u.z+=dz*u.spd*dt;u.mv=1;u.ph+=dt*7}
   else{u.mv=0;u.cdT-=dt;if(u.cdT<=0){tg.hp-=u.hit;u.cdT=u.cd;u.pt=.35;if(u.rng>1.2)RBT.sh.push({a:[u.x,u.z],b:[tg.x,tg.z],t:.2,c:'#2a7bd6'})}}});
@@ -893,17 +1016,18 @@ function kdRBDraw(cv){const r=RBT.r,rc=cv.getContext('2d'),cw=cv.width,ch=cv.hei
  const L2=[],dm=p=>{rc.beginPath();rc.moveTo(p[0],p[1]-16*sc);rc.lineTo(p[0]+32*sc,p[1]);rc.lineTo(p[0],p[1]+16*sc);rc.lineTo(p[0]-32*sc,p[1]);rc.fill()};
  /* same terrain as your own kingdom: grass plot with sparse trees, rocks and mushrooms, cached forest chunks all around */
  if(lod){rc.drawImage(k3ov(),ox-3900*sc,oy-1950*sc,7800*sc,3900*sc)}
- else{for(let a=Math.max(a0,-KWB);a<=Math.min(a1,KWB-1);a++)for(let b=Math.max(b0,-KWB);b<=Math.min(b1,KWB-1);b++){const id=a+','+b,p=T(a,0,b),path=a==-1&&b>=2;
-   rc.fillStyle=path?((a+b)&1?'#c9a66b':'#bf9c60'):((a+b)&1?'#62b966':'#6cc36f');dm(p);
-   if(!path&&!occ[id]&&k3ob(a,b)){const ob=k3kind(a,b);if(ob=='tree'){const x=a+(k3rnd(a,b,3)-.5)*.8,z=b+(k3rnd(a,b,5)-.5)*.8;L2.push({d:x+z,p:T(x,0,z),s:k3spr('ft1',110,190,F=>k3ftree(F,1)),f:.85})}else L2.push({d:a+b,p:T(a,0,b),s:k3spr('ob_'+ob,110,190,F=>k3obst(F,ob)),f:1})}}
+ else{const gp=kdGrass(rc);gp.setTransform(new DOMMatrix([sc,0,0,sc,ox,oy]));rc.fillStyle=gp;{const q=[[-KWB-.5,-KWB-.5],[KWB-.5,-KWB-.5],[KWB-.5,KWB-.5],[-KWB-.5,KWB-.5]].map(c=>T(c[0],0,c[1]));rc.beginPath();rc.moveTo(q[0][0],q[0][1]);for(let i=1;i<4;i++)rc.lineTo(q[i][0],q[i][1]);rc.closePath();rc.fill()}
+  if(-1>=a0&&-1<=a1)for(let b=Math.max(b0,2);b<=Math.min(b1,KWB-1);b++){rc.fillStyle=(b-1)&1?'#c9a66b':'#bf9c60';dm(T(-1,0,b))}
+  if(!RBT.OB)RBT.OB=kdRBObs(occ);
+  RBT.OB.forEach(o=>{if(o.a<a0||o.a>a1||o.b<b0||o.b>b1)return;if(o.k=='tree')L2.push({d:o.x+o.z,p:T(o.x,0,o.z),s:o.s,f:.85});else L2.push({d:o.a+o.b,p:T(o.a,0,o.b),s:o.s,f:1})});
   const fr=sc<.4?.25:sc<.8?.5:1;for(let ia=Math.floor(a0/6);ia<=Math.floor(a1/6);ia++)for(let ib=Math.floor(b0/6);ib<=Math.floor(b1/6);ib++){const A=ia*6,B=ib*6;if(A>=-KWB&&A+5<KWB&&B>=-KWB&&B+5<KWB)continue;if(A<-KWW||B<-KWW||A+5>=KWW||B+5>=KWW)continue;L2.push({d:A+B+5,p:T(A+2.5,0,B+2.5),fc:k3fc(A,B,fr)})}}
- {const Z=kdRBZone();rc.strokeStyle='rgba(230,30,30,.95)';rc.lineWidth=Math.max(1.5,2.2*sc);const ln=(u,v)=>{rc.beginPath();rc.moveTo(u[0],u[1]);rc.lineTo(v[0],v[1]);rc.stroke()};
-  Z.forEach(key=>{const q=key.split(',').map(Number),a=q[0],b=q[1];if(a<a0||a>a1||b<b0||b>b1)return;const p=T(a,0,b);rc.fillStyle='rgba(230,30,30,.16)';dm(p);
-   const N=[p[0],p[1]-16*sc],E=[p[0]+32*sc,p[1]],S2=[p[0],p[1]+16*sc],W=[p[0]-32*sc,p[1]];
-   if(!Z.has((a+1)+','+b))ln(E,S2);if(!Z.has((a-1)+','+b))ln(N,W);if(!Z.has(a+','+(b+1)))ln(S2,W);if(!Z.has(a+','+(b-1)))ln(N,E)})}
- RBT.S.forEach(s=>{if(s.hp<=0)return;const p0=T(s.x,0,s.z);if(p0[0]<-500||p0[0]>cw+500||p0[1]<-600||p0[1]>ch+600)return;const sp=s.t=='castle'?k3csp(r.rl):k3sp(fk.p[s.id],s.x,s.z,fk);L2.push({d:s.x+s.z,p:p0,s:sp,f:1,st:s,dy:(s.t=='watch'||s.t=='cannon')?{t:s.t,q:k3tq(fk.p[s.id]),st:s,sd:s.x*7+s.z,n:s.n}:null})});
+ {const Z=kdRBZone();if(RBT.zpS!==Z){const f=new Path2D(),e=new Path2D();Z.forEach(key=>{const q=key.split(',').map(Number),a=q[0],b=q[1],x=(a-b)*32,y=(a+b)*16;f.moveTo(x,y-16);f.lineTo(x+32,y);f.lineTo(x,y+16);f.lineTo(x-32,y);f.closePath();
+   if(!Z.has((a+1)+','+b)){e.moveTo(x+32,y);e.lineTo(x,y+16)}if(!Z.has((a-1)+','+b)){e.moveTo(x,y-16);e.lineTo(x-32,y)}if(!Z.has(a+','+(b+1))){e.moveTo(x,y+16);e.lineTo(x-32,y)}if(!Z.has(a+','+(b-1))){e.moveTo(x,y-16);e.lineTo(x+32,y)}});RBT.zpS=Z;RBT.zpF=f;RBT.zpE=e}
+  rc.save();rc.translate(ox,oy);rc.scale(sc,sc);rc.fillStyle='rgba(230,30,30,.16)';rc.fill(RBT.zpF);rc.strokeStyle='rgba(230,30,30,.95)';rc.lineWidth=Math.max(1.5,2.2*sc)/sc;rc.stroke(RBT.zpE);rc.restore()}
+ (RBT.DC||[]).forEach(s=>{const p0=T(s.x,0,s.z);if(p0[0]<-500||p0[0]>cw+500||p0[1]<-600||p0[1]>ch+600)return;L2.push({d:s.x+s.z,p:p0,s:k3sp({t:s.t,l:1,rd:1},s.x,s.z,fk),f:1})});
+ RBT.S.forEach(s=>{const p0=T(s.x,0,s.z);if(p0[0]<-500||p0[0]>cw+500||p0[1]<-600||p0[1]>ch+600)return;if(s.hp<=0){if(!s.dz)s.dz=Date.now();L2.push({d:s.x+s.z-.05,p:p0,s:kdDebris(s.n,((s.a*7+s.b*13)%3+3)%3),f:1});const ag=Date.now()-s.dz;if(ag<1100)L2.push({d:s.x+s.z+s.n*.5,p:p0,pf:{ag,n:s.n}});return}const sp=s.t=='castle'?k3csp(r.rl):k3sp(fk.p[s.id],s.x,s.z,fk);L2.push({d:s.x+s.z,p:p0,s:sp,f:1,st:s,dy:(s.t=='watch'||s.t=='cannon')?{t:s.t,q:k3tq(fk.p[s.id]),st:s,sd:s.x*7+s.z,n:s.n}:null})});
  RBT.U.forEach(u=>{if(u.hp>0)L2.push({d:u.x+u.z+.01,p:T(u.x,0,u.z),u})});(RBT.fx||[]).forEach(f=>{if(Date.now()-f.s<1000)L2.push({d:f.x+f.z+.05,p:T(f.x,0,f.z),fxs:f})});if(!lod&&RBT.V){const vn=Date.now();RBT.V.forEach(V=>{if(V.in&&vn-V.inT>350)return;L2.push({d:V.x+V.z+.3,p:T(V.x,0,V.z),vl:V})})}L2.sort((a,b)=>a.d-b.d);
- L2.forEach(o=>{if(o.fc){rc.drawImage(o.fc,o.p[0]-290*sc,o.p[1]-320*sc,580*sc,440*sc);return}if(o.fxs){const f=o.fxs,ag=(Date.now()-f.s)/1000,sp=k3sp({t:'spikes',l:f.l||1,rd:1},0,0,fk),q=sc*(1+.25*ag);rc.globalAlpha=Math.max(0,1-ag);rc.drawImage(sp.c,o.p[0]-sp.w/2*q,o.p[1]-sp.ay*q,sp.w*q,sp.h*q);rc.font='bold '+Math.max(12,sc*18)+'px sans-serif';rc.lineWidth=3;rc.strokeStyle='#fff';rc.fillStyle='#d32f2f';rc.strokeText('-'+f.d,o.p[0],o.p[1]-sc*(30+40*ag));rc.fillText('-'+f.d,o.p[0],o.p[1]-sc*(30+40*ag));rc.globalAlpha=1;return}if(o.vl){const V=o.vl,vn=Date.now();rc.globalAlpha=V.in?Math.max(0,1-(vn-V.inT)/350):1;kdVillAt(rc,o.p[0],o.p[1],sc*.9,kdVillFrame(V,vn),V.fx<0,kdVillLift(V,vn));rc.globalAlpha=1;return}if(o.u){const u=o.u,c=CARDS[u.k],e={k:u.k,team:0,x:0,y:0,hp:u.hp,mhp:u.mhp,mv:u.mv,ph:u.ph,fx:u.fx,pt:u.pt,pd:u.pd,sc:c.sc||1,r:12,rg:c.rg||0,l:u.l},g=cx;rc.save();rc.translate(o.p[0],o.p[1]-6*sc);rc.scale(Math.max(sc,.45)*1.05,Math.max(sc,.45)*1.05);cx=rc;try{fig(e)}catch(_){rc.fillStyle='#00a2e8';rc.beginPath();rc.arc(0,0,10,0,7);rc.fill()}cx=g;rc.restore();return}
+ L2.forEach(o=>{if(o.fc){rc.drawImage(o.fc,o.p[0]-290*sc,o.p[1]-320*sc,580*sc,440*sc);return}if(o.pf){const ag=o.pf.ag/1100,n=o.pf.n;rc.save();for(let i=0;i<5;i++){const an=i*1.3+n,rr=(10+28*ag)*sc*n*.6;rc.globalAlpha=.45*(1-ag);rc.fillStyle=i%2?'#bdb5a6':'#8f887b';rc.beginPath();rc.arc(o.p[0]+Math.cos(an)*rr*.7,o.p[1]-6*sc-ag*30*sc*n*.7+Math.sin(an)*rr*.25,rr*.55,0,6.3);rc.fill()}rc.restore();return}if(o.fxs){const f=o.fxs,ag=(Date.now()-f.s)/1000,sp=k3sp({t:'spikes',l:f.l||1,rd:1},0,0,fk),q=sc*(1+.25*ag);rc.globalAlpha=Math.max(0,1-ag);rc.drawImage(sp.c,o.p[0]-sp.w/2*q,o.p[1]-sp.ay*q,sp.w*q,sp.h*q);rc.font='bold '+Math.max(12,sc*18)+'px sans-serif';rc.lineWidth=3;rc.strokeStyle='#fff';rc.fillStyle='#d32f2f';rc.strokeText('-'+f.d,o.p[0],o.p[1]-sc*(30+40*ag));rc.fillText('-'+f.d,o.p[0],o.p[1]-sc*(30+40*ag));rc.globalAlpha=1;return}if(o.vl){const V=o.vl,vn=Date.now();rc.globalAlpha=V.in?Math.max(0,1-(vn-V.inT)/350):1;kdVillAt(rc,o.p[0],o.p[1],sc*.9,kdVillFrame(V,vn),V.fx<0,kdVillLift(V,vn));rc.globalAlpha=1;return}if(o.u){const u=o.u,c=CARDS[u.k],e={k:u.k,team:0,x:0,y:0,hp:u.hp,mhp:u.mhp,mv:u.mv,ph:u.ph,fx:u.fx,pt:u.pt,pd:u.pd,sc:c.sc||1,r:12,rg:c.rg||0,l:u.l},g=cx;rc.save();rc.translate(o.p[0],o.p[1]-6*sc);rc.scale(Math.max(sc,.45)*1.05,Math.max(sc,.45)*1.05);cx=rc;try{fig(e)}catch(_){rc.fillStyle='#00a2e8';rc.beginPath();rc.arc(0,0,10,0,7);rc.fill()}cx=g;rc.restore();return}
   const f=o.f*sc;if(o.dy)kdDyn(rc,o,sc,Date.now(),0);rc.drawImage(o.s.c,o.p[0]-o.s.w/2*f,o.p[1]-o.s.ay*f,o.s.w*f,o.s.h*f);if(o.dy)kdDyn(rc,o,sc,Date.now(),1);const s=o.st;
   if(s&&s.hp<s.mhp){const w=40*sc,p=T(s.x,s.t=='castle'?5.2:1.1*s.n+.5,s.z);rc.fillStyle='#000';rc.fillRect(p[0]-w/2-1,p[1]-3,w+2,8);rc.fillStyle='#e53935';rc.fillRect(p[0]-w/2,p[1]-2,w*Math.max(0,s.hp/s.mhp),6)}});
  RBT.sh.forEach(q=>{const a=T(q.a[0],q.ha||.9,q.a[1]),b=T(q.b[0],.9,q.b[1]);rc.strokeStyle=q.c;rc.lineWidth=Math.max(2,(q.w||3)*sc);rc.beginPath();rc.moveTo(a[0],a[1]);rc.lineTo(b[0],b[1]);rc.stroke()});
@@ -944,7 +1068,7 @@ const KDT=[
 ['🔘 The top bar','Along the top of the map: ⬅ Back returns to the main menu, ⭐ is your beauty bonus, ⚒️ shows how many stonemasons are free, 💰 Collect all gathers everything that is ready, ⚔️ Raid finds a rival kingdom, ✏️ Name renames your kingdom, and ❓ opens this guide again. Your gold scraps, silver and gems are in the bar above the map.',null],
 ['⛏️ Your starter buildings','You begin with a Gold Mine that digs up gold scraps and a Stonemason Hut that carries out your upgrades. Farms, Barracks, Army Camps (extra room for your army) and more unlock as your castle levels up. Tap any building to see what it does and what you can do with it.','gold'],
 ['💰 Your resources','Gold scraps come from Gold Mines and pay for upgrades and for clearing land. Silver comes from Farms, Lumber Mills and Markets and buys new buildings. Gems are rare, come from Gem Mines and Crystal Caves, and pay for things like extra Stonemason Huts. The chips at the top show what you hold out of your maximum.',null],
-[()=>'🧺 Collecting','Buildings keep working while you are away and show a +number bubble when goods are ready. Tap a building to collect, or press 💰 Collect all. Each building only stores about '+kdCapH()+' hours of goods at your castle level, so check back often and upgrade your castle to store more.','gold'],
+[()=>'🧺 Collecting','Buildings keep working while you are away and show a +number bubble when goods are ready. Tap a building to collect, or press 💰 Collect all. Each building only stores about '+kdCapH()+' hours of goods at your castle level (gem buildings store 3 days), so check back often and upgrade your castle to store more.','gold'],
 ['🏦 Storage and full stockpiles','Your gold scraps and silver are capped by your Gold and Silver Storages, and every storage you build and upgrade raises the cap. When your gold or silver is completely FULL, every building that makes it stops working (you will see 💤 Full above it) until you spend some or build more storage. So spend your goods often!','gstore'],
 ['🏗️ Placing buildings','Tap an empty tile to open your 📦 inventory, then tap a building there to place it for free. New buildings come from the Kingdom Shop in the Shop tab, and the 🛒 button on that panel takes you right there. A red box means you cannot place something on that spot. Drag any building (or the castle) to move it, or select it and press 📦 Store to put it back in your inventory. It keeps its level.',null],
 ['🌲 Clearing land','Trees, rocks and mushrooms are in the way, so you can not build on them. Tap one and pay a little gold scraps to start clearing it: trees cost 10 and take 15s, rocks cost 20 and take 10s, mushrooms cost 5 and take 5s. Each one gives you 1 to 5 gems when it is gone. Buildings can not be demolished, only decorations can.',null],
@@ -992,7 +1116,7 @@ let KM=false;
 function kingdomTab(){return '<div class="box" style="text-align:center;margin-top:10px"><div style="font-size:44px">🏰</div><b>Your Kingdom</b><br><small>Enter your kingdom to build, upgrade and collect.</small><div class="row" style="justify-content:center"><button onclick="kdEnter()">Enter kingdom</button></div></div>'}
 function kdBar(){return '<div id="kbar"><button onclick="kdExit()">⬅ Back</button><b id="kbn">🏰 '+esc(kdInit().name||'Kingdom')+'</b><span class="chip"><span id="kbs">'+GSI+' '+S.gs+'/'+kdCapOf('gs')+'</span></span><span class="chip"><span id="kbv">'+SILV+' '+(S.silver||0)+'/'+kdCapOf('sil')+'</span></span><span class="chip"><span id="kbg">'+GEM+' '+S.gems+'</span></span></div>'}
 function kdEnter(){mtEnd();KM=true;KDSEL=null;KDDEL=null;KDG=null;let o=$('kfull');if(!o){o=document.createElement('div');o.id='kfull';document.body.appendChild(o)}
- o.style.display='flex';o.innerHTML=kdBar()+'<div id="kd">'+kdHTML()+'</div>';document.body.style.overflow='hidden';kdHome();if(!S.kt)kdTutOpen(0);else if(!kdInit().name)kdNameOpen()}
+ o.style.display='flex';o.innerHTML=kdBar()+'<div id="kd">'+kdHTML()+'</div>'+navHTML('kingdom');document.body.style.overflow='hidden';kdHome();if(!S.kt)kdTutOpen(0);else if(!kdInit().name)kdNameOpen()}
 function kdExit(){KM=false;KDG=null;const o=$('kfull');if(o)o.remove();document.body.style.overflow='';menu()}
 /* ---- tiny built-in 3D engine: flat-shaded polygons, perspective camera, painter's sort ---- */
 const k3c=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
@@ -1298,8 +1422,8 @@ function buySil(i){const p=KSIL[i];if(!p||S.gems<p[1]||p[0]>kdRoom('sil'))return
 function buySup(i){const p=KSUP[i];if(!p||S.gems<p[1]||p[0]>kdRoom('gs'))return;S.gems-=p[1];S.gs+=p[0];save();menu()}
 function kdBuyOk(t){const d=KD_B[t],k=kdInit();return k.c>=d.cl&&kdHave(kdPrice(t).cur)>=kdPrice(t).amt&&kdCount(t)<kdLim(t)}
 function kdBuy(t){if(!kdBuyOk(t))return;kdPay(kdPrice(t).cur,kdPrice(t).amt);kdInit().inv.push({t,l:1});save();menu()}
-function kshopHTML(){const k=kdInit(),card=t=>{const d=KD_B[t],lk=k.c<d.cl,mx=!lk&&kdCount(t)>=kdLim(t),ef=d.store?'Holds '+kdStoreCap({l:1})+' '+(d.store=='gs'?'gold scraps':'silver'):d.hut?'1 stonemason, does upgrades':d.cap?'Houses 10 troop space':d.k=='deco'?'+'+d.be+' beauty':d.b+' '+KN[d.k]+'/hr';
- return `<div class='box' style='text-align:center'><div style='font-size:38px'>${d.e}</div><b>${d.n}</b><br><small>${mx?'Limit '+kdLim(t)+' (upgrade castle)':ef+(KD_LIM[t]?' &middot; '+kdCount(t)+'/'+kdLim(t):'')}</small><br><small>${d.d}</small><div class='row' style='justify-content:center'><button ${kdBuyOk(t)?'':'disabled'} onclick="kdBuy('${t}')">Buy for ${kdPrice(t).amt?kdPrice(t).amt+' '+KDCI[kdPrice(t).cur]:'free'}</button></div></div>`};
+function kshopHTML(){const k=kdInit(),card=t=>{const d=KD_B[t],lk=k.c<d.cl,mx=!lk&&kdCount(t)>=kdLim(t),ef=d.store?'Holds '+kdStoreCap({l:1})+' '+(d.store=='gs'?'gold scraps':'silver'):d.hut?'1 stonemason, does upgrades':d.cap?'Houses 10 troop space':d.k=='deco'?'+'+d.be+' beauty':(d.k=='gem'?Math.round(d.b*240)/10+' '+KN[d.k]+'/day':d.b+' '+KN[d.k]+'/hr');
+ return `<div class='box' style='text-align:center'><div style='font-size:38px'>${d.e}</div><b>${d.n}</b><br><small>${mx?(kdLim(t)==0?'Unlocks at castle Lv '+(KD_LIM[t].findIndex(x=>x>0)+1):'Limit '+kdLim(t)+' (upgrade castle)'):ef+(KD_LIM[t]?' &middot; '+kdCount(t)+'/'+kdLim(t):'')}</small><br><small>${d.d}</small><div class='row' style='justify-content:center'><button ${kdBuyOk(t)?'':'disabled'} onclick="kdBuy('${t}')">Buy for ${kdPrice(t).amt?kdPrice(t).amt+' '+KDCI[kdPrice(t).cur]:'free'}</button></div></div>`};
  return `<h2 style='margin:6px 0'>Kingdom Shop</h2><div>${GEM} Gems <b>${S.gems}</b> &nbsp; ${GSI} Gold scraps <b>${S.gs}</b> &nbsp; ${SILV} Silver <b>${S.silver||0}</b></div><small>Bought buildings go to your kingdom inventory. Place them for free from any empty plot.</small>
  <h2 style='margin:12px 0 2px'>Gold scraps</h2><div class='grid'>`+KSUP.map((p,i)=>`<div class='box' style='text-align:center'><div style='font-size:38px'>${GSI}</div><b>${p[0]} Gold scraps</b><div class='row' style='justify-content:center'><button ${S.gems>=p[1]&&p[0]<=kdRoom('gs')?'':'disabled'} onclick='buySup(${i})'>${p[0]<=kdRoom('gs')?'Buy for '+p[1]+' '+GEM:'Storage full'}</button></div></div>`).join('')+`</div>
  <h2 style='margin:12px 0 2px'>Silver</h2><div class='grid'>`+KSIL.map((p,i)=>`<div class='box' style='text-align:center'><div style='font-size:38px'>${SILV}</div><b>${p[0]} Silver</b><div class='row' style='justify-content:center'><button ${S.gems>=p[1]&&p[0]<=kdRoom('sil')?'':'disabled'} onclick='buySil(${i})'>${p[0]<=kdRoom('sil')?'Buy for '+p[1]+' '+GEM:'Storage full'}</button></div></div>`).join('')+`</div><h2 style='margin:12px 0 2px'>Producers</h2><div class='grid'>`+KSP.map(card).join('')+`</div><h2 style='margin:12px 0 2px'>Defenses</h2><div class='grid'>`+KSD.map(card).join('')+`</div>`}
@@ -1913,10 +2037,10 @@ const WSR={join:n=>wsRoom(n)};
 try{if(RELAY)fetch(RELAY.replace(/^ws/,'http'),{mode:'no-cors'}).catch(()=>{})}catch(e){}
 const RMREADY=(async()=>{try{RM=await claude.use('room')}catch(e){RM=null}if(!RM)RM=RELAY?WSR:PJ;mpRender()})();
 function mpRender(){qmRender();const el=$('mpb');if(!el)return;const ok=S.deck.length==Math.min(8,S.un)&&(S.tut||0)>=3;
- let h='<div class="box" style="margin:6px 0;border-color:#00a2e8"><b>Play with friends</b> &middot; friendly battle, no rewards<br>';
+ let h='<div class="fb"><b class="fbt">Friendly Battle</b>';
  if(!RM)h+='<small>Not available here. Open the shared page while signed in; friends must be invited with edit or contributor access.</small>';
- else if(MP)h+=`<span style="font-size:22px">${MP.role=='host'&&!MP.qm?'Room code <b>'+MP.code.toUpperCase()+'</b>. ':''}${esc(MP.st||'')}</span>${MP.err=='not_permitted'?'<br><small style="color:#c0392b">This page is not allowing you to send game messages. The owner must share it with Contributor access or higher.</small>':''}<div class="row"><button onclick="mpEnd();mpRender()">Cancel</button></div>`;
- else h+=`<small>Create a room and share the code, or enter a friend's code. Each player fights with their own deck and card levels.</small><div class="row"><button ${ok?'':'disabled'} onclick="mpHost()">Create room</button><input id="mpc" maxlength="5" placeholder="CODE" style="font:inherit;width:90px;padding:4px 8px;border:2px solid var(--ln);border-radius:8px;background:var(--pn);color:var(--fg);text-transform:uppercase"><button ${ok?'':'disabled'} onclick="mpJoin($('mpc').value)">Join</button></div>${ok?'':'<small>Finish the tutorial and fill your deck first.</small>'}`;
+ else if(MP)h+=`<span class="fbs">${MP.role=='host'&&!MP.qm?'Room code <b>'+MP.code.toUpperCase()+'</b>. ':''}${esc(MP.st||'')}${MP.err=='not_permitted'?'<br><small style="color:#c0392b">This page is not allowing you to send game messages. The owner must share it with Contributor access or higher.</small>':''}</span><div class="row"><button onclick="mpEnd();mpRender()">Cancel</button></div>`;
+ else h+=`<button ${ok?'':'disabled'} onclick="mpHost()">create room</button><div class="jn"><input id="mpc" maxlength="5" placeholder="CODE" aria-label="Room code"><button ${ok?'':'disabled'} onclick="mpJoin($('mpc').value)">join</button></div>${ok?'':'<small>Finish the tutorial and fill your deck first.</small>'}`;
  el.innerHTML=h+'</div>'}
 const mpOK=()=>S.deck.length==Math.min(8,S.un)&&(S.tut||0)>=3;
 let QM=null;
@@ -1954,7 +2078,7 @@ function qmWait(){return QM?(Date.now()-QM.t0)/1000:0}
 function qmRender(){const q=$('qmb');if(!q)return;let t='';
  if((S.tut||0)>=3){
   if(QM||(MP&&MP.qm))t=`<div class='box' style='margin:6px 0'><b>${MP?'Match found! Connecting...':'Searching for an opponent... '+Math.round(qmWait())+'s'}</b><br><small>Looking for a real player in your arena with similar trophies and card levels. If nobody is found in ${QWAIT} seconds, you will play a bot with normal rewards.</small>${QM?qmInfo():''}${QM?`<div class='row'><button onclick='qmCancel()'>Cancel</button></div>`:''}</div>`;
-  else t=`<div class='row'><button id='go' ${mpOK()?'':'disabled'} onclick='mpQuick()'>⚔️ BATTLE!</button></div><small>Fights a real player near your level, or a bot if nobody is around.</small>`}
+  else t=`<div class='row'><button id='go' ${mpOK()?'':'disabled'} onclick='mpQuick()'>Battle</button></div><small>Fights a real player near your level, or a bot if nobody is around.</small>`}
  q.innerHTML=t}
 function qmCancel(){if(QM){clearInterval(QM.iv);clearTimeout(QM.bt);try{QM.room&&QM.room.leave()}catch(e){}QM=null}mpRender()}
 async function mpQuick(){if(MP||QM||!RM||!mpOK())return;const A=arenaOf(S.tr||0),M=QM={id:Math.random().toString(36).slice(2,8),t0:Date.now(),state:'seek',lv:avgL(),tr:S.tr||0,seen:{}};mpRender();const bt=()=>{if(QM!==M||M.state=='done')return;if(M.state=='offer')return void(M.bt=setTimeout(bt,4500));qmBot(M)};M.bt=setTimeout(bt,(QWAIT+10)*1000);
