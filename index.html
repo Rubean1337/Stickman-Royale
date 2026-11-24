@@ -460,7 +460,7 @@ warrior:{n:'Warrior',wt:2,c:3,hp:700,dmg:50,sp:38,rg:0,cnt:1,sc:1.35,t:'One tank
 triplets:{n:'Triplets',c:1,hp:20,dmg:20,sp:70,rg:0,cnt:3,sc:.7,cd:.7,t:'3 fast kids, one-shot by anything'},
 distraction:{n:'Distraction Tower',c:3,hp:500,dmg:0,bld:1,rg:0,t:'Decoy: lures enemies but never attacks. Crumbles in 40s'},
 archer:{n:'Archer',c:2,hp:250,dmg:30,sp:42,rg:125,cnt:1,sc:1,ha:1,t:'Shoots from range'},
-mauler:{n:'Mauler',wt:4,c:5,hp:1500,dmg:80,sp:30,rg:0,cnt:1,sc:2.2,bo:1,t:'Heavy bruiser: only attacks towers and buildings, with splash damage'},
+mauler:{n:'Mauler',wt:4,c:5,hp:1500,dmg:80,sp:30,rg:0,cnt:1,sc:2.2,bo:1,t:'Heavy bruiser: only attacks towers and buildings'},
 bees:{n:'Bees',c:3,dmg:200,ctd:85,spell:'b',rad:60,t:'Spell: the swarm buzzes for 1.1 seconds, hurting troops and Distraction Towers a little at a time. Reduced damage to princess and king towers'},
 meteor:{n:'Meteor',c:4,dmg:400,ctd:185,spell:'m',rad:70,t:'Spell: huge blast that shoves troops back, harder near the centre. The farther it lands from your king, the longer it takes to arrive. Reduced damage to princess and king towers'},
 smith:{n:'Blacksmith',wt:3,c:4,hp:400,dmg:600,sp:34,rg:0,cnt:1,sc:1.5,cd:2.5,t:'Slow heavy hammer: 600 damage every 2.5 seconds'},
@@ -789,7 +789,7 @@ function menu(msg){dropSave();if(MP&&MP.started)mpEnd();{const r=trCheck();if(r)
 /* ================= Kingdom tab: a huge 100x100 kingdom, build anywhere ================= */
 const KD_XY=(()=>{const a=[];for(let x=-3;x<=3;x++)for(let z=-3;z<=3;z++)if(Math.abs(x)>1||Math.abs(z)>1)a.push([x,z]);
  const an=p=>Math.round((Math.atan2(p[1],p[0])+7)*1e3);return a.sort((p,q)=>(p[0]*p[0]+p[1]*p[1])-(q[0]*q[0]+q[1]*q[1])||an(p)-an(q))})();
-const KD_CC=[150,500,1500,4000,10000,20000,40000,80000,150000],KD_MAXC=10,KD_MAXL=15,KD_LVCAP=[2,4,6,8,9,10,12,13,14,15],KD_BCAP=50,KD_LIM={farm:[0,0,0,0,0,8,9,10,11,12],gold:[1,2,3,4,6,8,8,9,10,10],smine:[1,1,2,2,3,4,4,5,5,6],barracks:[0,1,1,2,2,3,3,4,4,5],camp:[0,1,1,2,3,4,4,5,5,6],mine:[0,1,1,2,2,3,3,4,4,5],hut:[1,1,2,2,3,3,3,3,3,3],wall:[15,30,50,80,120,200,250,300,350,400],gstore:[1,1,2,2,3,3,4,4,5,5],sstore:[1,1,2,2,3,3,4,4,5,5],watch:[1,2,3,4,6,8,9,10,11,12],cannon:[1,1,2,3,4,6,7,8,9,10],spikes:[0,4,8,12,20,30,36,42,48,54]};
+const KD_CC=[150,500,1500,4000,10000,20000,40000,80000,150000],KD_MAXC=10,KD_MAXL=15,KD_LVCAP=[2,4,6,8,9,10,12,13,14,15],KD_BCAP=50,KD_LIM={farm:[0,0,0,0,0,8,9,10,11,12],gold:[1,2,3,4,6,8,8,9,10,10],smine:[1,1,2,2,3,4,4,5,5,6],barracks:[0,1,1,2,2,3,3,4,4,5],camp:[0,1,1,2,3,4,4,5,5,6],mine:[0,0,0,0,0,0,1,1,2,2],hut:[1,1,2,2,3,3,3,3,3,3],wall:[15,30,50,80,120,200,250,300,350,400],gstore:[1,1,2,2,3,3,4,4,5,5],sstore:[1,1,2,2,3,3,4,4,5,5],watch:[1,2,3,4,6,8,9,10,11,12],cannon:[1,1,2,3,4,6,7,8,9,10],spikes:[0,4,8,12,20,30,36,42,48,54]};
 const KD_B={
  farm:{n:'Farm',e:'🌾',k:'sil',cur:'sil',b:20/24,c:30,u:25,cl:1,d:'Grows supplies.'},
  gold:{n:'Gold Mine',e:'⛏️',k:'gs',cur:'sil',b:90,c:300,u:150,cl:1,d:'Digs up gold scraps (supplies).'},
@@ -801,8 +801,8 @@ const KD_B={
  watch:{n:'Watchtower',e:'🗼',k:'deco',be:2,c:60,cl:1,def:1,g:1,upg:1,u:90,d:'A tall lookout that guards your kingdom.'},
  cannon:{n:'Cannon Tower',e:'💣',k:'deco',be:3,c:100,cl:1,def:1,g:1,upg:1,u:150,d:'A stout tower with a big cannon.'},
  spikes:{n:'Spike Trap',e:'🪤',k:'deco',be:1,c:30,cl:1,def:1,g:1,upg:1,u:45,d:'A hidden trap, only 1 tile big. Raiders cannot see it. The first ground troop to step on it takes a big hit, then the trap is used up until the battle is over.'},
- gstore:{n:'Gold Storage',e:'🏦',k:'deco',be:0,c:150,u:120,cl:1,upg:1,store:'gs',d:'Holds your gold scraps. Level 1 holds 1000.'},
- sstore:{n:'Silver Storage',e:'🪙',k:'deco',be:0,c:150,u:120,cl:1,upg:1,store:'sil',d:'Holds your silver. Level 1 holds 1000.'},
+ gstore:{n:'Gold Storage',e:'🏦',k:'deco',be:0,cur:'sil',c:150,u:120,cl:1,upg:1,store:'gs',d:'Holds your gold scraps. Level 1 holds 1000.'},
+ sstore:{n:'Silver Storage',e:'🪙',k:'deco',be:0,cur:'sil',c:150,u:120,cl:1,upg:1,store:'sil',d:'Holds your silver. Level 1 holds 1000.'},
  hut:{n:'Stonemason Hut',e:'⚒️',k:'deco',be:0,c:200,cl:1,hut:1,d:'Holds one stonemason who carries out upgrades. Can not be upgraded. You can have 3.'},
  tree:{n:'Tree',e:'🌳',k:'deco',be:1,c:15,cl:1,d:'Just a nice tree.'},
  flower:{n:'Flower Bed',e:'🌷',k:'deco',be:1,c:15,cl:1,d:'Smells lovely.'},
@@ -814,7 +814,7 @@ const KD_B={
 const SILV='<img class="supi" alt="silver" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFkAAAAvCAYAAACIcGZzAAADIUlEQVR4nO1by23jMBAdL7YLG77opgakGnQV4BJ8dDF73BIW0FU1KA3klkuQ1KE9bCbhX/zMkIxWDzAC2A5JPT6++UgGOHBgDzjlmKRpu1V97+X5KcvcNYD9Qpu2W6d50d4fhx4A/g+yf5SaGIlv2m7FV6m1cINVRTYV27BXdbMpOUaZIRvyncBqF3slLRQsJIfaxN5RLPC5sLcg+JNyMCTnULEMMpKbtlt//f4D58uVbLzQ/3l5fjo1bbfWlp2QKpkKsZs1Dv06zQuMQ78C1JMKkpP8/vZKpuZQoE3hXyTbhJwbUKWSAWg2yxYbsOjJBdLs4nG/AcA/gt7fXimHJsE49DAOfXYbIVGyGKSQaIB4b+VECZ+OIlmN/K5jmUJ0SX+nhHNXbWlUaNPHl2j8rggqkkvYBMKqZOrCYi+qjIGRZOrCIgV72Bwtu0CCD9CBvUE0zYuU2pVAST8GUEhWA10tuW7qOqZ5KdrZ05TMbRW1bFxOFOknl6oIS6k5G8liJYgIIfs7n4CsDSIT0QBf5fdHm9JqWSnpHI5dAlLENaVvlBUXgOz5NtIRPvEhZH2hWQbVk0+bSqYqBkQlnS9X6fjbyMRNcJGt2gh14aJWvKYe9RbxRW+kInnny1V7iZ9vKV4E+rzq96FWYSvKpnmRXj7QlPy439jTOABdzabPAXSiQ9dWQ8CUSMYbkRwTuQKaC1uq9hkz5CSooLBLiWROghGxC1bJRrgUrt5A8CU7lIetO+SaXZgWS7GbVBaE60AbQPJc6WEqXNev3rQ1kc2eJ4s2QRn5xbGoU70Y2xTJVolmJRnz0sf9xvpkUY5+s+9pxuc+RKI/U7itnUvpN+CEtjSqVCXGBbXrJynZ59jF+rNAtKRqnBOJplK7aeNSe8qx1x5lF6ho24SuJ+ZVspFklWyEi3TXCeBq0m+dZgzA4vxJnmzaWd/+AH4H/RqhnqZx6I1El7jb4ZMCsmQXW6regriopu1WNbcF4Dn6LqgltYnckPmlC7QN7JtrPu430ovH4JFbsdS/O9RanaZBbZmHqdSt5XHVmpBEiG1TDhw4sEf8BW6w/C2tNXzHAAAAAElFTkSuQmCC">';
 const GSI='<img class="supi" alt="gold scraps" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFkAAAAvCAYAAACIcGZzAAADBElEQVR4nO1bO3LjMAwFd7ZI5XXlW+QKupDP4wv5CrmFKsfVdkxhQQYp/gkSjEZvxjMZy+LnEXz4kAE4cGAPUJ360YJ9i6PHRLW+n7YdT8+eYxDFH6mOCfGafHaJ1lbktGIf9mrdLS052zJzFuQ3oalc7JW0XLQiOUsm9g4xxxfBrpzgX+b2NMAhEzY4SdaP2wX+ff5na6/gHbW8N1R0wm3JLChdLDU9tb6fQE1PXKAhyGbX5O+vD+4mk4Eype8n/FsHPt0wpCUDvBarVnp8voEkPV3Aasnn6wwAL4IkLdoHNT2R4K4ywmXJ6/ZDogHKtbUxuut0KcmGpvm35VxFNIdkjIDYqjodRG7RJ5Vo/C0FF8kSMoEIWTJrYrEXqyyBz/Hpx+0yROY2ogPNhYtkbW/ZA3VoXiDS95MR2klAUo8BtiQbjm6UrVo7DpL9iWBjya2lYpSF6wmRerJgRihizd1IppkgIofs37wDbGewiSw4YttYQYYmK66EhGs8Ug6wC8kAb6Jp+y7rpkjxDznjKyCZ5eZTtHbBlaktxXQAeBFDt7+PTFyEENm2jHBnlXZCRg4EjK9DbYjWkx+3C5yvs5OY76+P9fn5OidHPT7SC2rIy642x+YgPdrQhuScCdXAtmbXc4C3FadYtQvvPvoW6ilskvEgkh0xh+aDj2xESpsx7Q+BQy5tkpsRjCgdsE02ImTh9gFCBtm5PARPyDdy4Rosx2pySRCOA2WA6narfkPzR40OnZA3d3xUJjg9P22LO9SDAtm0yDaIbkoyxqXn69z0ZlGPw4DU3UzufaxE07Q6uHKV9QYF4A93eh/Rt4Zd9TMsOWXbVegzEm1YNfapppkOsBqehatKqUvnTjvNPhHxdZh4Y14D+KOF9UcB0iM7oLZGUXRCRMa/9l+lya6VzagPqGVQhkzZE1PT7CRaotiTGALyRxeo0xXOx9hNdmwL0GbrR6ATClnJ/XvlwjXZGJZ3OCcvdTuT9f8ON6VOzzNn5OFJdYe4rjoSqp0DY1sHDhwYGj/cr4BIrVmO5gAAAABJRU5ErkJggg==">';
 const KU={gs:GSI,gem:GEM,exp:EXPI,sil:SILV},KDCI={gs:GSI,gem:GEM,sil:SILV},KN={gs:'gold scraps',gem:'gems',exp:'EXP',sil:'silver'},KBC={gs:'#ffe9b8',gem:'#d6efff',exp:'#e6dcff',sil:'#e3e9ee'};
-const kdStoreCap=b=>Math.round(1000*Math.pow(1.8,(b.l||1)-1)*([.5,.65,.8,.9][(b.l||1)-1]||1)/10)*10;
+const kdStoreCap=b=>Math.round(2000*Math.pow(1.8,(b.l||1)-1)*([.5,.65,.8,.9][(b.l||1)-1]||1)/10)*10;
 const kdCapOf=c=>300+kdBs().filter(b=>b&&b.t==(c=='gs'?'gstore':'sstore')).reduce((t,b)=>t+kdStoreCap(b),0);
 const kdRoom=c=>Math.max(0,kdCapOf(c)-(c=='gs'?S.gs:(S.silver||0)));
 const kdPrice=t=>{const d=KD_B[t];if(t=='hut')return{cur:'gem',amt:[0,100,250][Math.min(kdCount('hut'),2)]};return{cur:d.cur||'gs',amt:d.c}};
@@ -957,18 +957,18 @@ function kdPanel(){const k=kdInit(),i=KDSEL;
  else if(d.upg){const fh=kdFreeHut(),c=kdUpCost(b);h+='<div style="margin:4px 0">'+(d.store?'Stores up to <b>'+kdStoreCap(b)+'</b> '+(d.store=='gs'?GSI:SILV)+' (you hold '+(d.store=='gs'?S.gs:(S.silver||0))+')':d.cap?'Houses <b>'+kdHouse(b)+'</b> troop space.':'Gives <b>+'+(d.be*b.l)+' beauty</b> (+'+(d.be*b.l)+'% production everywhere).')+'</div><div class="row">'+(u?'<span class="chip">⏳ Upgrading to Lv '+u.job.to+': <b id="kdup" data-end="'+u.job.end+'"></b></span>':b.l<kdMaxL()?'<button onclick="kdUp('+Q+')" '+(S.gs>=c&&fh?'':'disabled')+'>⬆ Upgrade to Lv '+(b.l+1)+' ('+c+' '+GSI+', '+kdFmt(kdUpTime(b.l))+')</button>'+(fh?'':'<small>No free stonemason.</small>'):b.l>=KD_MAXL?'<span class="chip">⭐ Max level</span>':'<span class="chip">🔒 Max for Castle Lv '+k.c+': upgrade your castle</span>')}
  else h+='<div style="margin:4px 0">Gives <b>+'+d.be+' beauty</b> (+'+d.be+'% production everywhere).</div><div class="row">';
  return h+'<button '+(lock?'disabled':'')+' onclick="kdStore('+Q+')">📦 Store</button>'+(kdIsDeco(b.t)?'<button class="b-rem" '+(lock?'disabled':'')+' onclick="kdDemo('+Q+')">'+(KDDEL==i?'Tap again to demolish'+(kdRefund(b.t).amt?' (+'+kdRefund(b.t).amt+' '+KDCI[kdRefund(b.t).cur]+')':''):'🗑 Demolish')+'</button>':'')+'</div>'+(kdIsDeco(b.t)?'':'<small>Buildings can not be demolished, only stored. Decorations can be.</small>')}
-const KD_TUN={recruits:1,archer:2,warrior:3,mauler:4,triplets:5,dartboy:5,nomad:6,smith:6,macero:7,viking:7,priest:8,crusader:8},kdTU=t=>KD_TUN[t]||5,kdBarLv=()=>kdBs().filter(b=>b&&b.t=='barracks').reduce((m,b)=>Math.max(m,b.l||1),0),kdTroopOk=t=>kdBarLv()>=kdTU(t);
+const KD_TUN={recruits:1,archer:2,warrior:3,mauler:4,triplets:5,dartboy:5,nomad:6,smith:6,macero:7,viking:7,priest:8,crusader:8},kdTU=t=>KD_TUN[t]||5,KD_HS={recruits:2,archer:2},kdHs=t=>KD_HS[t]!=null?KD_HS[t]:(CARDS[t]?CARDS[t].c:0),kdBarLv=()=>kdBs().filter(b=>b&&b.t=='barracks').reduce((m,b)=>Math.max(m,b.l||1),0),kdTroopOk=t=>kdBarLv()>=kdTU(t);
 const kdTroops=()=>owned().filter(k=>{const c=CARDS[k];return c&&c.hp&&!c.bld&&!c.spell&&c.cnt});
 const kdPow=k=>{const c=CARDS[k];return(c.cnt||1)*((c.hp||0)/50+(c.dmg||0)*(c.cd?1/c.cd:1)/10)*(1+.1*(L(k)-1))};
 const kdHouse=b=>b.t=='camp'?20+10*(b.l-1):10+6*(b.l-1);
 const kdCap=()=>kdBs().filter(b=>b&&(b.t=='barracks'||b.t=='camp')).reduce((t,b)=>t+kdHouse(b),0);
-const kdUsed=()=>{const a=kdInit().army||{};return Object.keys(a).reduce((t,k)=>t+(CARDS[k]?a[k]*CARDS[k].c:0),0)};
+const kdUsed=()=>{const a=kdInit().army||{};return Object.keys(a).reduce((t,k)=>t+(CARDS[k]?a[k]*kdHs(k):0),0)};
 const kdArmyPow=()=>{const a=kdInit().army||{};return Object.keys(a).reduce((t,k)=>t+(CARDS[k]?a[k]*kdPow(k):0),0)};
 const kdBLock=b=>(b.t=='barracks'||b.t=='camp')&&kdUsed()>kdCap()-kdHouse(b);
 function kdArmyHTML(){const k=kdInit(),a=k.army||{},cap=kdCap(),u=kdUsed();let h='<div style="margin:4px 0"><b>⚔️ Troops housed: '+u+'/'+cap+' space</b> <small>(all barracks &middot; army power '+Math.round(kdArmyPow())+')</small></div><div class="kdbuild">';
- kdTroops().sort((x,y)=>kdTU(x)-kdTU(y)).forEach(t=>{const c=CARDS[t],n=a[t]||0,cost=c.c*20;if(!kdTroopOk(t)&&!n){h+='<button disabled><b>'+c.n+' 🔒</b><small>Unlocks at Barracks Lv '+kdTU(t)+'</small></button>';return}h+='<button '+(u+c.c<=cap&&S.gs>=cost&&kdTroopOk(t)?'':'disabled')+' onclick="kdTrain(\''+t+'\',1)"><b>'+c.n+' x'+n+'</b><small>Train 1: '+c.c+' space, '+cost+' '+GSI+'</small></button>'+(n?'<button onclick="kdTrain(\''+t+'\',-1)"><small>Release 1 '+c.n+'</small></button>':'')});
+ kdTroops().sort((x,y)=>kdTU(x)-kdTU(y)).forEach(t=>{const c=CARDS[t],n=a[t]||0,cost=c.c*20;if(!kdTroopOk(t)&&!n){h+='<button disabled><b>'+c.n+' 🔒</b><small>Unlocks at Barracks Lv '+kdTU(t)+'</small></button>';return}h+='<button '+(u+kdHs(t)<=cap&&S.gs>=cost&&kdTroopOk(t)?'':'disabled')+' onclick="kdTrain(\''+t+'\',1)"><b>'+c.n+' x'+n+'</b><small>Train 1: '+kdHs(t)+' space, '+cost+' '+GSI+'</small></button>'+(n?'<button onclick="kdTrain(\''+t+'\',-1)"><small>Release 1 '+c.n+'</small></button>':'')});
  return h+'</div><small>Housed troops can raid other kingdoms. Upgrade your Barracks to unlock stronger troops (Archer Lv 2, Warrior Lv 3, Mauler Lv 4) and to hold more.</small><br>'}
-function kdTrain(t,d){const k=kdInit(),c=CARDS[t];if(!c)return;if(d>0&&!kdTroopOk(t))return;k.army=k.army||{};if(d>0){if(kdUsed()+c.c>kdCap()||S.gs<c.c*20)return;S.gs-=c.c*20;k.army[t]=(k.army[t]||0)+1}else if(k.army[t]>0)k.army[t]--;save();kdChips();kdRender()}
+function kdTrain(t,d){const k=kdInit(),c=CARDS[t];if(!c)return;if(d>0&&!kdTroopOk(t))return;k.army=k.army||{};if(d>0){if(kdUsed()+kdHs(t)>kdCap()||S.gs<c.c*20)return;S.gs-=c.c*20;k.army[t]=(k.army[t]||0)+1}else if(k.army[t]>0)k.army[t]--;save();kdChips();kdRender()}
 function kdRival(i){const k=kdInit(),pr=kdBs().filter(b=>kdIsProd(b)),av=pr.length?pr.reduce((t,b)=>t+b.l,0)/pr.length:1,sd=Math.floor(Date.now()/3600e3),o=(x=>x<.7?0:x<.85?-1:1)(k3rnd(sd,i*7+3,70)),rl=Math.max(1,Math.min(KD_MAXC,k.c+o)),bl=Math.max(1,Math.min(KD_MAXL,2*rl,Math.round(av)+o)),r=k3rnd(sd,i,50),
  HH=n=>{let x=Math.imul(sd^0x9e3779b9,0x85ebca6b)^Math.imul(i+1,0xc2b2ae35)^Math.imul(n+1,0x27d4eb2f);x^=x>>>15;x=Math.imul(x,0x2c1b3c6d);x^=x>>>12;x=Math.imul(x,0x297a2d39);x^=x>>>15;return(x>>>0)/4294967296},
  pk=(L,n)=>L[Math.floor(HH(n)*L.length)],
@@ -1427,7 +1427,7 @@ function kdVillStep(V,occ,C,now,ff){if(V.in)return;const free=ff||((x,z)=>{const
  else if(V.st=='jump'&&now-V.jt>7*110){V.st='idle';V.until=now+900+Math.random()*1500}}
 function kdVillFrame(V,now){return V.st=='walk'?Math.floor(now/(V.run?65:130)+V.id*3)%7:V.st=='jump'?7+Math.min(6,Math.floor((now-V.jt)/110)):0}
 function kdCampTroops(k){const camps=Object.keys(k.p).filter(id=>k.p[id]&&k.p[id].t=='camp').sort(),list=[];Object.keys(k.army||{}).forEach(t=>{if(CARDS[t])for(let i=0;i<k.army[t];i++)list.push(t)});let li=0;
- return camps.map(id=>{const house=kdHouse(k.p[id]),arr=[];let used=0;while(li<list.length&&arr.length<25){const c=CARDS[list[li]].c;if(used+c>house)break;used+=c;arr.push(list[li]);li++}return{id,arr}})}
+ return camps.map(id=>{const house=kdHouse(k.p[id]),arr=[];let used=0;while(li<list.length&&arr.length<25){const c=kdHs(list[li]);if(used+c>house)break;used+=c;arr.push(list[li]);li++}return{id,arr}})}
 const KDBSPD=2.5;/* builder walking speed in tiles per second, the same for every trip */
 function kdWalkVia(a,b){const dx=b[0]-a[0],dz=b[1]-a[1],d=Math.hypot(dx,dz)||1,sg=(Math.round(a[0]*7+b[1]*3)&1)?1:-1,off=Math.max(2.5,Math.min(5,d*.45)),w=[(a[0]+b[0])/2-dz/d*off*sg,(a[1]+b[1])/2+dx/d*off*sg],l1=Math.hypot(w[0]-a[0],w[1]-a[1]),l2=Math.hypot(b[0]-w[0],b[1]-w[1]);return{a,w,b,l1,l2,len:l1+l2}}
 function kdWalkAt(p,u){const d=Math.min(1,Math.max(0,u))*p.len;if(d<p.l1){const t=d/(p.l1||1);return{x:p.a[0]+(p.w[0]-p.a[0])*t,z:p.a[1]+(p.w[1]-p.a[1])*t,vx:p.w[0]-p.a[0],vz:p.w[1]-p.a[1]}}const t=(d-p.l1)/(p.l2||1);return{x:p.w[0]+(p.b[0]-p.w[0])*t,z:p.w[1]+(p.b[1]-p.w[1])*t,vx:p.b[0]-p.w[0],vz:p.b[1]-p.w[1]}}
@@ -1696,7 +1696,7 @@ function crossStep(p,dt){const st=p.sp*dt,nx=p.x+Math.cos(p.a)*st,ny=p.y+Math.si
  p.x=nx;p.y=ny;p.dist+=st;if(p.dist>=p.lim)p.done=1}
 function meleeHit(a,t){const crash=a.helm>0&&t.bld,big=crash&&a.chg;dmgTo(t,big?CARDS.viking.chg*M(a.lv||1):a.dmg);if(crash){smokePuff(a.x+(t.x-a.x)*.55,a.y+(t.y-a.y)*.55-6,big?11:4,big?18:10);if(big)G.fx.push({ring:1,x:t.x,y:t.y,rr:38,l:.3,l0:.3,c:'255,214,120',w:4});popHelm(a)}
  if(a.k=='macero'){for(const e of G.E)if(e!==t&&e.team!=a.team&&e.hp>0&&!e.air&&Math.hypot(e.x-a.x,e.y-a.y)-e.r<=MRING)dmgTo(e,a.dmg);G.fx.push({ring:1,x:a.x,y:a.y,rr:MRING,l:.3,l0:.3,c:a.team?'237,28,36':'0,162,232',w:4})}
- if(a.k=='mauler'){for(const e of G.E)if(e!==t&&e.team!=a.team&&e.hp>0&&!e.bld&&Math.hypot(e.x-t.x,e.y-t.y)<50)dmgTo(e,a.dmg*.5);
+ if(a.k=='mauler'){
   G.fx.push({x1:a.x,y1:a.y-10,x2:t.x,y2:t.y-10,l:.12,c:a.team?'#ed1c24':'#00a2e8',w:5})}}
 const rnd=(a,b)=>a+Math.random()*(b-a);
 function botEmote(B){const a=G.E.filter(e=>e.kind=='p'&&e.hp>0),mine=a.filter(e=>e.team==1).length,theirs=a.filter(e=>e.team==0).length;
@@ -2359,16 +2359,16 @@ const CD_SC={
  triplets:[['A fast swarm takes down a lone Viking without losing a fighter',1,['triplets'],['viking']],['One-shot by splash: Bees erase all three',0,['triplets'],['bees']]],
  distraction:[['Lures enemies in while your Nomad spears them',1,['distraction','nomad'],['warrior']],['Never attacks and crumbles, so it only buys time',0,['distraction'],['warrior']]],
  archer:[['With a Warrior in front, he shoots flying Dart Boys out of the sky',1,['warrior','archer'],['dartboy']],['Fragile: one Blacksmith hammer swing flattens him',0,['archer'],['smith']]],
- mauler:[['Smashes towers and buildings with splash damage',1,['mauler'],['tower']],['Ignores troops, so Triplets chew him up',0,['mauler'],['triplets','tower']]],
+ mauler:[['Smashes towers and buildings',1,['mauler'],['tower']],['A Distraction Tower wastes his swings while a Triplet Fort spawns Triplets to chew him up',0,['mauler'],['distraction','fort']],['Ignores troops, so a Blacksmith hammers him down',0,['mauler'],['smith']]],
  bees:[['Zaps a clump of Recruits while your Warrior holds them in place',1,['bees','warrior'],['recruits']],['Barely scratches a tower',0,['bees'],['tower']]],
- meteor:[['Huge blast crushes and shoves back groups',1,['meteor'],['warrior','recruits']],['Slow to land: fast troops run out of the blast',0,['meteor'],['triplets','triplets']]],
- smith:[['600 damage hammer breaks tanks',1,['smith'],['warrior']],['Slow swings: Triplets swarm him',0,['smith'],['triplets','triplets']]],
- fort:[['Keeps spawning Triplets to overwhelm',1,['fort'],['warrior']],['Made of wood: a Meteor destroys it',0,['fort'],['meteor']]],
- macero:[['Every swing hits the whole ring around him',1,['macero'],['recruits','recruits']],['Cannot hit flying troops',0,['macero'],['dartboy']]],
- dartboy:[['Flying: Warriors cannot touch him',1,['dartboy'],['warrior']],['A pair of Archers shoot him out of the sky',0,['dartboy'],['archer','archer']]],
+ meteor:[['Huge blast crushes and shoves back groups',1,['meteor'],['recruits','archer']],['Slow to land: fast troops run out of the blast',0,['meteor'],['triplets']]],
+ smith:[['600 damage hammer breaks tanks',1,['smith'],['warrior']],['Slow swings: Triplets and Recruits swarm him',0,['smith'],['triplets','recruits']]],
+ fort:[['Keeps spawning Triplets to overwhelm a lone Viking',1,['fort'],['viking']],['Made of wood: a Meteor destroys it',0,['fort'],['meteor']]],
+ macero:[['Every swing hits the whole ring around him',1,['macero'],['recruits']],['Cannot hit flying troops',0,['macero'],['dartboy']]],
+ dartboy:[['Flying: Warriors cannot touch him',1,['dartboy'],['warrior']],['Archers shoot him out of the sky while a Warrior holds the ground',0,['dartboy'],['archer','warrior']]],
  nomad:[['Three spears from range take down a Warrior',1,['nomad'],['warrior']],['Low health: a Meteor wipes out the whole trio',0,['nomad'],['meteor']]],
- viking:[['His charge smashes a tower for 200 damage',1,['viking'],['tower']],['Fragile once the helmet is gone: Triplets nibble him',0,['viking'],['triplets','triplets']]],
- priest:[['His crucifix pierces a whole line of troops',1,['priest'],['recruits','recruits']],['A Blacksmith hammer ends him before he can throw much',0,['priest'],['smith']]],
+ viking:[['His charge smashes a tower for 200 damage',1,['viking'],['tower']],['Lured by a Distraction Tower while a Triplet Fort spawns Triplets',0,['viking'],['distraction','fort']],['Fragile once the helmet is gone: Triplets nibble him',0,['viking'],['triplets']]],
+ priest:[['His crucifix pierces a whole line of troops',1,['priest'],['recruits','archer']],['A Blacksmith hammer ends him before he can throw much',0,['priest'],['smith']]],
  crusader:[['The shield soaks arrows: an Archer cannot hurt him',1,['crusader'],['archer']],['A Blacksmith pops the shield in one hit',0,['crusader'],['smith']]]};
 let CDS=null,CDT=0,CDL=0;
 /* The demo runs the game's OWN battle engine (spawn/update) on a private battle state and draws it with the game's own arena and sprite sheets,
@@ -2378,19 +2378,20 @@ function cdSpec(sp){return(sp||[]).filter(x=>x!='tower')}
 function cdStart(k,pi,man){const L2=CD_SC[k];if(!L2)return;pi=((pi%L2.length)+L2.length)%L2.length;const sc=L2[pi],l=L(k),pt=S.pt||1;
  const D={E:[],hand:[],q:[],bh:[],bq:[],el:[10,10],t:999,arena:arenaOf(S.tr||0),mode:0,ban:0,em:[],ecd:0,pl:l,bl:l,fx:[],sp:[],pr:[],ruins:[],bot:1e9,done:0};
  const tw=sc[2].includes('tower')||sc[3].includes('tower');
- CDS={k,pi,sc,G:D,t:0,hold:0,over:0,man:!!man,cam:null,late:[],tw,l};
+ CDS={k,pi,sc,G:D,t:0,hold:0,over:0,man:!!man,cam:null,late:[],tw,l,placed:[],spd:tw?2.5:1,cap:tw?26:16};
  cdWith(()=>{D.E.push(tower(0,'p',240,BR[0],pt),tower(0,'p',240,BR[1],pt),tower(0,'king',140,260,pt),tower(1,'p',1280,BR[0],pt),tower(1,'p',1280,BR[1],pt),tower(1,'king',1380,260,pt));
-    const place=(team,list)=>{let n=0;cdSpec(list).forEach(s=>{const c=CARDS[s];if(c.spell){CDS.late.push({team,k:s,t:team==0?(sc[1]?.8:1.2):1});return}
-    const x=tw?(team?1180:1090):(team?900:540);spawn(team,s,x+(team?1:-1)*n*46,BR[0],l);n++})};
+    /* real rules: troops and buildings go only on your own half (canPlace), and each card appears once per side */
+    const at=(team,s,n)=>{const x=team?(tw?880:820)+80*n:700-80*n;for(const dy of[0,40,-40,80,-80,120]){const q=canPlace(team,s,x,BR[0]+dy);if(q)return q}return null},
+    place=(team,list)=>{let n=0;[...new Set(cdSpec(list))].forEach(s=>{const c=CARDS[s];if(c.spell){CDS.late.push({team,k:s,t:team==0?(sc[1]?.8:1.2):1});return}const q=at(team,s,n);if(!q)return;CDS.placed.push({team,k:s,x:q.x,y:q.y});spawn(team,s,q.x,q.y,l);n++})};
   place(0,sc[2]);place(1,sc[3])});
  const cp=$('cdcap');if(cp){cp.className='cdcap '+(sc[1]?'good':'bad');cp.textContent=(sc[1]?'👍 Strength: ':'👎 Weakness: ')+sc[0]}
  document.querySelectorAll('.cdtab').forEach(b=>b.classList.toggle('on',+b.dataset.i==pi))}
 const cdMobile=e=>!e.kind||e.kind=='f'||e.kind=='d';
 function cdSideDone(t){const D=CDS.G;return !D.E.some(e=>e.team==t&&e.hp>0&&cdMobile(e))&&!D.sp.some(s=>s.team==t)&&!CDS.late.some(s=>s.team==t)}
 function cdStep(dt){const S=CDS,D=S.G;S.t+=dt;
- S.late=S.late.filter(q=>{if(S.t<q.t)return true;const en=D.E.filter(e=>e.team!=q.team&&e.hp>0&&cdMobile(e)),n=en.length||1,x=en.length?en.reduce((a,e)=>a+e.x,0)/n:(q.team?500:1000),y=en.length?en.reduce((a,e)=>a+e.y,0)/n:BR[0];cdWith(()=>spawn(q.team,q.k,x,y,S.l));return false});
+ S.late=S.late.filter(q=>{if(S.t<q.t)return true;const en=D.E.filter(e=>e.team!=q.team&&e.hp>0&&cdMobile(e)),n=en.length||1,fb=S.tw?(q.team?[240,BR[0]]:[1280,BR[0]]):(q.team?[500,BR[0]]:[1000,BR[0]]),x=en.length?en.reduce((a,e)=>a+e.x,0)/n:fb[0],y=en.length?en.reduce((a,e)=>a+e.y,0)/n:fb[1];cdWith(()=>spawn(q.team,q.k,x,y,S.l));return false});
  cdWith(()=>{D.E.forEach(e=>{if((e.kind=='p'||e.kind=='king')&&e.hp<e.mhp*.3)e.hp=e.mhp*.3});D.t=999;update(dt)});
- if(!S.over&&S.t>1.2&&(S.tw?(S.t>14||(S.t>3&&cdSideDone(0))):(cdSideDone(0)||cdSideDone(1)||S.t>16))){S.over=1;S.hold=0}}
+ if(!S.over&&S.t>1.2&&(S.tw?(S.t>S.cap||(S.t>3&&cdSideDone(0))):(cdSideDone(0)||cdSideDone(1)||S.t>S.cap))){S.over=1;S.hold=0}}
 function cdDraw(cv){const S=CDS,D=S.G,c=cv.getContext('2d'),w=cv.width,h=cv.height,VW=S.tw?400:440,sc=w/VW,VH=h/sc;
  const act=D.E.filter(e=>e.hp>0&&cdMobile(e)),tg=act.length?{x:act.reduce((a,e)=>a+e.x,0)/act.length,y:act.reduce((a,e)=>a+e.y,0)/act.length}:(S.cam||{x:720,y:150});
  if(!S.cam)S.cam={x:tg.x,y:tg.y};S.cam.x+=(tg.x-S.cam.x)*.08;S.cam.y+=(tg.y-S.cam.y)*.08;
@@ -2399,10 +2400,10 @@ function cdDraw(cv){const S=CDS,D=S.G,c=cv.getContext('2d'),w=cv.width,h=cv.heig
   c.drawImage(arena().g,0,0);ripples(performance.now()/1000);c.drawImage(arena().b,0,0);drawWorld();
   const gr={};D.E.forEach(e=>{if(e.hp<=0)return;const kk=e.k||(e.kind=='f'?'fort':e.kind=='d'?'distraction':e.kind=='king'?'~King':'~Tower'),id=e.team+kk;(gr[id]=gr[id]||{team:e.team,kk,n:0,x:0,y:0,top:1e9}).n++;const g=gr[id];g.x+=e.x;g.y+=e.y;g.top=Math.min(g.top,e.y-(e.bld?(e.r||30)+22:30*(e.sc||1)+16))});
   const fs=Math.round(24/sc);c.font='bold '+fs+'px "Patrick Hand",sans-serif';c.textAlign='center';c.textBaseline='middle';c.lineWidth=Math.max(2,fs/4);c.lineJoin='round';
-  Object.values(gr).forEach(g=>{const nm=g.kk[0]=='~'?g.kk.slice(1):CARDS[g.kk].n,tx=g.x/g.n,ty=g.top-fs*.4;c.strokeStyle='#000';c.fillStyle=g.team?'#ff8f8f':'#8fd8ff';c.strokeText(nm,tx,ty);c.fillText(nm,tx,ty)});
-  c.restore()})}
+  const used=[];Object.values(gr).sort((u,v)=>u.x/u.n-v.x/v.n).forEach(g=>{const nm=g.kk[0]=='~'?g.kk.slice(1):CARDS[g.kk].n,tx=g.x/g.n,tw=c.measureText(nm).width;let ty=g.top-fs*.4;for(let t=0;t<4&&used.some(u=>Math.abs(u.x-tx)<(u.w+tw)/2+4&&Math.abs(u.y-ty)<fs*1.05);t++)ty-=fs*1.05;used.push({x:tx,y:ty,w:tw});c.strokeStyle='#000';c.fillStyle=g.team?'#ff8f8f':'#8fd8ff';c.strokeText(nm,tx,ty);c.fillText(nm,tx,ty)});
+  c.restore();if(S.spd>1){c.save();c.font='bold 24px "Patrick Hand",sans-serif';c.textAlign='right';c.lineWidth=4;c.strokeStyle='#000';c.fillStyle='#fff';c.strokeText('⏩ x'+S.spd,w-10,26);c.fillText('⏩ x'+S.spd,w-10,26);c.restore()}})}
 function cdLoop(ts){const cv=$('cdc');if(!cv||!CDS){CDL=0;return}const dt=Math.min(.1,(ts-(CDT||ts))/1000);CDT=ts;
- if(CDS.over){CDS.hold+=dt;if(CDS.hold>1.6)cdStart(CDS.k,CDS.man?CDS.pi:CDS.pi+1,CDS.man)}else{let r=dt;while(r>0&&!CDS.over){const d=Math.min(.025,r);cdStep(d);r-=d}}
+ if(CDS.over){CDS.hold+=dt;if(CDS.hold>1.6)cdStart(CDS.k,CDS.man?CDS.pi:CDS.pi+1,CDS.man)}else{let r=dt*CDS.spd;while(r>0&&!CDS.over){const d=Math.min(.025,r);cdStep(d);r-=d}}
  cdDraw(cv);requestAnimationFrame(cdLoop)}
 function cdRel(k){const sc=CD_SC[k]||[],f=w=>[...new Set(sc.filter(x=>!!x[1]==w).flatMap(x=>cdSpec(x[3])))].filter(x=>CARDS[x]&&x!=k),
  tw=w=>sc.some(x=>!!x[1]==w&&x[3].includes('tower'))?'<span class="chip">🏰 Towers</span>':'',
@@ -2415,7 +2416,7 @@ function cardInfo(k){const c=CARDS[k];if(!c)return;cardInfoClose();const lk=ORDE
  if(c.spell)chip('⭕ Radius',c.rad);if(spd)chip('👟 Speed',spd);if(!c.spell&&!c.bld)chip('🎯 Range',c.rg?'Ranged':'Melee');if(c.cnt>1)chip('👥 Troops',c.cnt);
  if(!c.spell&&!c.bld)chip('🎯 Hits',c.bo?'Buildings only':c.ha?'Ground and air':'Ground only');if(c.air)chip('🕊️ Type','Flying');
  const o=document.createElement('div');o.id='cinfo';o.onclick=e=>{if(e.target===o)cardInfoClose()};
- o.innerHTML=`<div class="box cibox rar-${rarOf(k)}"><button class="cix" onclick="cardInfoClose()" aria-label="Close">✕</button><div class="cih">${ci(k)}<div><b class="cin">${c.n}</b> ${rbadge(k)}<div class="chips2"><span class="chip lv">Lv ${l}</span><span class="chip cc">🪙 ${c.c}</span></div></div></div>${lk?'<div class="cdcap bad">🔒 You have not found this card yet. These are its Level 1 stats.</div>':''}<p class="cid">${c.t}.</p><div class="cist">${ch.join('')}</div>${sc.length?`<h2>How it works</h2><canvas id="cdc" width="720" height="400"></canvas><div id="cdcap" class="cdcap"></div><div class="row cdtabs">${sc.map((x,i)=>`<button class="cdtab" data-i="${i}" onclick="cdStart('${k}',${i},1)">${x[1]?'👍 Strength':'👎 Weakness'}</button>`).join('')}</div>${cdRel(k)}<div class="cisw"><div><b>👍 Strengths</b><ul>${sc.filter(x=>x[1]).map(x=>'<li>'+x[0]+'</li>').join('')}</ul></div><div><b>👎 Weaknesses</b><ul>${sc.filter(x=>!x[1]).map(x=>'<li>'+x[0]+'</li>').join('')}</ul></div></div>`:''}</div>`;
+ o.innerHTML=`<div class="box cibox rar-${rarOf(k)}"><button class="cix" onclick="cardInfoClose()" aria-label="Close">✕</button><div class="cih">${ci(k)}<div><b class="cin">${c.n}</b> ${rbadge(k)}<div class="chips2"><span class="chip lv">Lv ${l}</span><span class="chip cc">🪙 ${c.c}</span></div></div></div>${lk?'<div class="cdcap bad">🔒 You have not found this card yet. These are its Level 1 stats.</div>':''}<p class="cid">${c.t}.</p><div class="cist">${ch.join('')}</div>${sc.length?`<h2>How it works</h2><canvas id="cdc" width="720" height="400"></canvas><div id="cdcap" class="cdcap"></div><div class="row cdtabs">${sc.map((x,i)=>`<button class="cdtab" data-i="${i}" onclick="cdStart('${k}',${i},1)">${x[1]?'👍 Strength':'👎 Weakness'+(sc.filter(y=>!y[1]).length>1?' '+sc.slice(0,i+1).filter(y=>!y[1]).length:'')}</button>`).join('')}</div>${cdRel(k)}<div class="cisw"><div><b>👍 Strengths</b><ul>${sc.filter(x=>x[1]).map(x=>'<li>'+x[0]+'</li>').join('')}</ul></div><div><b>👎 Weaknesses</b><ul>${sc.filter(x=>!x[1]).map(x=>'<li>'+x[0]+'</li>').join('')}</ul></div></div>`:''}</div>`;
  document.body.appendChild(o);document.body.style.overflow='hidden';if(sc.length){cdStart(k,0);CDT=0;if(!CDL){CDL=1;requestAnimationFrame(cdLoop)}}}
 document.addEventListener('keydown',e=>{if(e.key=='Escape')cardInfoClose()});
 /* tapping anywhere on a card tile (not its buttons) opens the card info */
