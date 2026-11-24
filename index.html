@@ -789,17 +789,14 @@ function menu(msg){dropSave();if(MP&&MP.started)mpEnd();{const r=trCheck();if(r)
 /* ================= Kingdom tab: a huge 100x100 kingdom, build anywhere ================= */
 const KD_XY=(()=>{const a=[];for(let x=-3;x<=3;x++)for(let z=-3;z<=3;z++)if(Math.abs(x)>1||Math.abs(z)>1)a.push([x,z]);
  const an=p=>Math.round((Math.atan2(p[1],p[0])+7)*1e3);return a.sort((p,q)=>(p[0]*p[0]+p[1]*p[1])-(q[0]*q[0]+q[1]*q[1])||an(p)-an(q))})();
-const KD_CC=[150,500,1500,4000,10000,20000,40000,80000,150000],KD_MAXC=10,KD_MAXL=15,KD_LVCAP=[2,4,6,8,9,10,12,13,14,15],KD_BCAP=50,KD_LIM={farm:[0,0,0,0,0,8,9,10,11,12],mill:[0,1,2,3,4,5,5,6,6,7],market:[0,0,1,2,3,4,4,5,5,6],gold:[1,2,3,4,6,8,8,9,10,10],smine:[1,1,2,2,3,4,4,5,5,6],barracks:[0,1,1,2,2,3,3,4,4,5],camp:[0,1,1,2,3,4,4,5,5,6],mine:[0,1,1,2,2,3,3,4,4,5],cave:[0,0,1,1,2,3,3,4,4,5],hut:[1,1,2,2,3,3,3,3,3,3],wall:[15,30,50,80,120,200,250,300,350,400],gstore:[1,1,2,2,3,3,4,4,5,5],sstore:[1,1,2,2,3,3,4,4,5,5],watch:[1,2,3,4,6,8,9,10,11,12],cannon:[1,1,2,3,4,6,7,8,9,10],spikes:[0,4,8,12,20,30,36,42,48,54]};
+const KD_CC=[150,500,1500,4000,10000,20000,40000,80000,150000],KD_MAXC=10,KD_MAXL=15,KD_LVCAP=[2,4,6,8,9,10,12,13,14,15],KD_BCAP=50,KD_LIM={farm:[0,0,0,0,0,8,9,10,11,12],gold:[1,2,3,4,6,8,8,9,10,10],smine:[1,1,2,2,3,4,4,5,5,6],barracks:[0,1,1,2,2,3,3,4,4,5],camp:[0,1,1,2,3,4,4,5,5,6],mine:[0,1,1,2,2,3,3,4,4,5],hut:[1,1,2,2,3,3,3,3,3,3],wall:[15,30,50,80,120,200,250,300,350,400],gstore:[1,1,2,2,3,3,4,4,5,5],sstore:[1,1,2,2,3,3,4,4,5,5],watch:[1,2,3,4,6,8,9,10,11,12],cannon:[1,1,2,3,4,6,7,8,9,10],spikes:[0,4,8,12,20,30,36,42,48,54]};
 const KD_B={
- farm:{n:'Farm',e:'🌾',k:'sil',cur:'sil',b:45,c:30,u:25,cl:1,d:'Grows supplies.'},
- mill:{n:'Lumber Mill',e:'🪵',k:'sil',cur:'sil',b:75,c:100,u:60,cl:1,d:'Chops lots of supplies.'},
- market:{n:'Market',e:'🏪',k:'sil',b:140,c:350,u:160,cl:1,d:'Trades for tons of supplies.'},
+ farm:{n:'Farm',e:'🌾',k:'sil',cur:'sil',b:20/24,c:30,u:25,cl:1,d:'Grows supplies.'},
  gold:{n:'Gold Mine',e:'⛏️',k:'gs',cur:'sil',b:90,c:300,u:150,cl:1,d:'Digs up gold scraps (supplies).'},
  smine:{n:'Silver Mine',e:'🪙',k:'sil',b:100,c:350,u:170,cl:1,d:'Digs up silver. Costs gold scraps to build.'},
  barracks:{n:'Barracks',e:'🛡️',k:'deco',be:0,upg:1,cap:1,cur:'sil',c:400,u:260,cl:1,d:'Houses and trains your troops for raids. Higher levels hold more.'},
  camp:{n:'Army Camp',e:'⛺',k:'deco',be:0,upg:1,cap:1,cur:'sil',c:500,u:300,cl:1,d:'A campfire surrounded by tents with lots of extra room for your army. Higher levels add more tents and hold more.'},
  mine:{n:'Gem Mine',e:'💎',k:'gem',b:2/24,c:250,u:250,cl:1,d:'Digs up gems.'},
- cave:{n:'Crystal Cave',e:'🔮',k:'gem',b:5/24,c:1200,u:700,cl:1,d:'Glowing crystals full of gems.'},
  wall:{n:'Wall',e:'🧱',k:'deco',be:1,c:20,cl:1,def:1,upg:1,u:30,d:'Sturdy stone wall. Neighbouring walls link up.'},
  watch:{n:'Watchtower',e:'🗼',k:'deco',be:2,c:60,cl:1,def:1,g:1,upg:1,u:90,d:'A tall lookout that guards your kingdom.'},
  cannon:{n:'Cannon Tower',e:'💣',k:'deco',be:3,c:100,cl:1,def:1,g:1,upg:1,u:150,d:'A stout tower with a big cannon.'},
@@ -826,7 +823,7 @@ const kdPay=(c,a)=>{if(c=='sil')S.silver=(S.silver||0)-a;else if(c=='gem')S.gems
 const kdRefund=t=>t=='hut'?{cur:'gem',amt:0}:{cur:KD_B[t].cur||'gs',amt:Math.floor(KD_B[t].c*.75)};
 const KWB=30,KWW=60,CSC=.5;let KDG=null,KDSEL=null,KDDEL=null,KDFL=[],KDFX=[],KC={px:0,py:0,zm:.4},K3T=0,KTF=null;
 /* every building covers an n x n block of tiles; its id is the block's top corner tile. The castle is 4 x 4. */
-const KD_N={cannon:2,camp:3,barracks:2,watch:2,gstore:3,sstore:3,farm:3,mill:2,market:2,mine:2,cave:2,gold:2,smine:2,hut:2,fountain:2,tent:2},kdSz=t=>t=='castle'?4:(KD_N[t]||1);
+const KD_N={cannon:2,camp:3,barracks:2,watch:2,gstore:3,sstore:3,farm:3,mine:2,gold:2,smine:2,hut:2,fountain:2,tent:2},kdSz=t=>t=='castle'?4:(KD_N[t]||1);
 const kdCs=()=>(S.kd&&S.kd.cs)||[0,0],kdCsId=()=>kdCs().join(','),kdAnc=id=>id.split(',').map(Number),
  kdXZ=id=>{if(id=='castle'){const c=kdCs();return[c[0]+1.5,c[1]+1.5]}const q=kdAnc(id),k=S.kd,b=k&&k.p&&k.p[id],n=b?kdSz(b.t):1;return[q[0]+(n-1)/2,q[1]+(n-1)/2]},kdBs=()=>Object.values(kdInit().p);
 function kdOccOf(k){const o={},C=k.cs||[0,0];for(let i=0;i<4;i++)for(let j=0;j<4;j++)o[(C[0]+i)+','+(C[1]+j)]='castle';for(const id in k.p){const b=k.p[id];if(!b)continue;const q=id.split(',').map(Number),n=kdSz(b.t);for(let i=0;i<n;i++)for(let j=0;j<n;j++)o[(q[0]+i)+','+(q[1]+j)]=id}return o}
@@ -849,6 +846,7 @@ function kdInit(){let k=S.kd;if(!k||typeof k.p!='object'||!k.p){k=S.kd={c:1,p:{}
  if(!k.pl2){k.pl2=1;const sp=[[2,0],[-2,0],[0,2],[0,-2],[2,2],[-2,-2],[2,-2],[-2,2]];['gold','barracks'].forEach((t,n)=>{if(Object.values(k.p).some(b=>b&&b.t==t))return;const j=k.inv.findIndex(b=>b.t==t),b=j>=0?k.inv.splice(j,1)[0]:{t,l:1};b.s=Date.now();kdAutoPlace(k,t,b)});save()}
  if(!k.pl3){k.pl3=1;if(!kdHutsOf(k)&&!k.inv.some(b=>b.t=='hut')){kdAutoPlace(k,'hut',{t:'hut',l:1})}save()}
  if(!k.g0){k.g0=1;S.gs=(S.gs||0)+100;save()}
+ if(!k.rm1){k.rm1=1;const RF={mill:['sil',100],market:['gs',350],cave:['gs',1200]};Object.keys(k.p).forEach(id=>{const r=k.p[id]&&RF[k.p[id].t];if(r){kdPay(r[0],-r[1]);delete k.p[id]}});k.inv=k.inv.filter(b=>{const r=RF[b.t];if(r){kdPay(r[0],-r[1]);return false}return true});save()}
  if(!k.sv){k.sv=1;S.silver=(S.silver||0)+150;save()}
  if(!k.pl4){k.pl4=1;const sp={gold:[[2,0],[-2,0],[0,2],[0,-2],[2,2],[-2,-2]],barracks:[[-2,0],[2,0],[0,-2],[0,2],[-2,2],[2,-2]],hut:[[0,-2],[0,2],[2,2],[-2,-2],[2,-2],[-2,2]]};
   ['gold','hut'].forEach(t=>{if(Object.values(k.p).some(b=>b&&b.t==t)||k.inv.some(b=>b.t==t))return;kdAutoPlace(k,t,{t,l:1,s:Date.now()})});save()}
@@ -892,7 +890,11 @@ function kdDone(){const k=S.kd;if(!k||!k.p||Array.isArray(k.p))return;const now=
   if(j.u=='C'){k.c=Math.min(KD_MAXC,j.to);fl.push(['castle','Lv '+k.c])}else{const tid=Object.keys(k.p).find(x=>k.p[x]&&k.p[x].u==j.u);if(tid){kdCollect(tid,1);k.p[tid].l=j.to;fl.push([tid,'Lv '+j.to])}}});
  if(ch){save();kdChips();kdRender(fl)}}
 function kdMove(f,t){const k=kdInit();if(!t)return;if(f=='castle'){const a=kdAncFor(t,4);if(!kdFits(a[0],a[1],4,'castle'))return;k.cs=[a[0],a[1]];KDSEL=null}else{const b=k.p[f];if(!b)return;const n=kdSz(b.t),a=kdAncFor(t,n),id=a[0]+','+a[1];if(id==f)return;if(!kdFits(a[0],a[1],n,f))return;k.p[id]=b;delete k.p[f];KDSEL=id}save()}
-function kdTap(i){const k=kdInit(),b=k.p[i];KDDEL=null;if(kdIsProd(b)&&kdPend(b)>=1){KDSEL=i;kdCollect(i);return}KDSEL=i;kdRender()}
+const KD_MINES=['gold','smine','mine'];
+function kdCollectType(t){const k=kdInit(),fl=[];Object.keys(k.p).forEach(i=>{const b=k.p[i];if(b&&b.t==t){const n=kdCollect(i,1);if(n)fl.push([i,'+'+n])}});if(fl.length)kdChips();kdRender(fl);return fl.length}
+function kdTap(i){const k=kdInit(),b=k.p[i];KDDEL=null;
+ if(b&&KD_MINES.includes(b.t)&&Object.values(k.p).some(x=>x&&x.t==b.t&&kdPend(x)>=1)){KDSEL=i;if(!kdCollectType(b.t)){KDFL.push({i,t:'Storage full',s:Date.now()});kdRender()}return}
+ if(kdIsProd(b)&&kdPend(b)>=1){KDSEL=i;kdCollect(i);return}KDSEL=i;kdRender()}
 function kdBuild(i,t){const k=kdInit(),d=KD_B[t];KDDEL=null;if(!d||!kdFree(i,t)||kdCount(t)>=kdLim(t)||kdHave(kdPrice(t).cur)<kdPrice(t).amt)return;kdPay(kdPrice(t).cur,kdPrice(t).amt);{const a=kdAncFor(i,kdSz(t));k.p[a.join(',')]={t,l:1,s:Date.now(),u:++k.uid}};save();kdChips();kdRender()}
 function kdGoShop(){sview='k';kdExit();setTimeout(()=>slide(2),50)}
 function kdPlace(i,t,l){const k=kdInit(),j=k.inv.findIndex(b=>b.t==t&&(l==null||(b.l||1)==l));KDDEL=null;if(j<0||!kdFree(i,t))return;const b=k.inv.splice(j,1)[0],a=kdAncFor(i,kdSz(t)),id=a.join(',');b.s=Date.now();b.u=++k.uid;k.p[id]=b;KDSEL=id;save();kdRender();kdTutCheck()}
@@ -1000,7 +1002,7 @@ function kdRivalMap(r){if(r.map)return r.map;const m={},rl=r.rl,sd=r.sd*997+r.i,
   cells.sort((p,q)=>Math.atan2(p[1],p[0])-Math.atan2(q[1],q[0]));const f=Math.min(1,W/cells.length);
   cells.forEach((c,i)=>{if(Math.abs(c[0])<=1&&c[1]>0)return;if(f<1&&((i/cells.length*4)%1)>=f)return;if(rd(c[0],c[1],41)<.05)return;put(c[0],c[1],'wall')})}
  let seq=0;
- ['gold','smine','farm','mill','market','barracks','camp','mine','cave','gstore','sstore'].forEach(t=>{const nn=lim(t);for(let i=0;i<nn;i++){for(let a=0;a<60;a++){const th=rd(seq,a,42)*6.2832,rr=4+rd(seq,a,43)*(R0-7),x=Math.round(Math.cos(th)*rr),z=Math.round(Math.sin(th)*rr);if(put(x,z,t))break}seq++}});
+ ['gold','smine','farm','barracks','camp','mine','gstore','sstore'].forEach(t=>{const nn=lim(t);for(let i=0;i<nn;i++){for(let a=0;a<60;a++){const th=rd(seq,a,42)*6.2832,rr=4+rd(seq,a,43)*(R0-7),x=Math.round(Math.cos(th)*rr),z=Math.round(Math.sin(th)*rr);if(put(x,z,t))break}seq++}});
  ['watch','cannon','spikes'].forEach((t,ti)=>{const nn=lim(t);for(let i=0;i<nn;i++){for(let a=0;a<40;a++){const th=(i/nn+rd(seq,a,44)*.06)*6.2832+ti*.5,rr=R0-3+rd(seq,a,45)*(t=='spikes'?5:2),x=Math.round(Math.cos(th)*rr),z=Math.round(Math.sin(th)*rr);if(put(x,z,t))break}seq++}});
  const dc=['tent','fountain','statue','lantern'];for(let i=0;i<1+Math.ceil(rl/2);i++){for(let a=0;a<30;a++){const th=rd(i,a,46)*6.2832,rr=4+rd(i,a,47)*(R0-7),x=Math.round(Math.cos(th)*rr),z=Math.round(Math.sin(th)*rr);if(put(x,z,dc[Math.floor(rd(i,a,48)*4)]))break}}
  return m}
@@ -1025,14 +1027,14 @@ function kdMissTxt(){return kdMiss().map(x=>x.n+' more '+KD_B[x.t].e+' '+KD_B[x.
 function kdRaidDraw(cv,r,st){const m=kdRivalMap(r),cx=cv.getContext('2d'),cw=cv.width,ch=cv.height,sc=cw/440,T=(x,y,z)=>[cw/2+(x-z)*32*sc,ch*.5+((x+z)*16-y*36)*sc],fk={p:m},dead=st=='win'||st=='done';
  cx.fillStyle='#2c6a38';cx.fillRect(0,0,cw,ch);cx.textAlign='center';cx.textBaseline='middle';
  for(let a=-5;a<=5;a++)for(let b=-5;b<=5;b++){const p=T(a,0,b);cx.fillStyle=(a+b)&1?'#62b966':'#6cc36f';cx.beginPath();cx.moveTo(p[0],p[1]-16*sc);cx.lineTo(p[0]+32*sc,p[1]);cx.lineTo(p[0],p[1]+16*sc);cx.lineTo(p[0]-32*sc,p[1]);cx.fill()}
- const L=[{d:0,p:T(0,0,0),s:k3csp(r.rl),f:CSC}],sv=Object.keys(m).filter(id=>['farm','mill','market'].includes(m[id].t)).length||1,pills=[];
+ const L=[{d:0,p:T(0,0,0),s:k3csp(r.rl),f:CSC}],sv=Object.keys(m).filter(id=>['farm'].includes(m[id].t)).length||1,pills=[];
  Object.keys(m).forEach(id=>{const q=id.split(',').map(Number),b=m[id];if(b.t=='spikes')return;L.push({d:q[0]+q[1],p:T(q[0],0,q[1]),s:k3sp(b,q[0],q[1],fk),f:1,r:dead&&KD_B[b.t].def});
-  if(b.t=='gold')pills.push([T(q[0],1.5,q[1]),'+'+r.loot,KBC.gs]);else if(['farm','mill','market'].includes(b.t))pills.push([T(q[0],1.5,q[1]),'+'+Math.round(r.sil/sv),KBC.sil])});
+  if(b.t=='gold')pills.push([T(q[0],1.5,q[1]),'+'+r.loot,KBC.gs]);else if(['farm'].includes(b.t))pills.push([T(q[0],1.5,q[1]),'+'+Math.round(r.sil/sv),KBC.sil])});
  L.sort((a,b)=>a.d-b.d);L.forEach(o=>{const f=o.f*sc;cx.drawImage(o.r?k3red(o.s):o.s.c,o.p[0]-o.s.w/2*f,o.p[1]-o.s.ay*f,o.s.w*f,o.s.h*f)});
  cx.font='bold '+sc*15+'px sans-serif';pills.forEach(q=>{const tx=(st=='win'||st=='done'?'✔ ':'')+q[1],w2=cx.measureText(tx).width+sc*16;cx.fillStyle=q[2];cx.beginPath();cx.roundRect(q[0][0]-w2/2,q[0][1]-sc*11,w2,sc*22,sc*11);cx.fill();cx.strokeStyle='#333';cx.lineWidth=2;cx.stroke();cx.fillStyle='#222';cx.fillText(tx,q[0][0],q[0][1])});
  const pn=T(0,3.3,0);cx.font='bold '+sc*15+'px sans-serif';const w3=cx.measureText(r.n).width+sc*18;cx.fillStyle='rgba(255,255,255,.92)';cx.beginPath();cx.roundRect(pn[0]-w3/2,pn[1]-sc*13,w3,sc*26,sc*10);cx.fill();cx.strokeStyle='#4a2c12';cx.stroke();cx.fillStyle='#000';cx.fillText(r.n,pn[0],pn[1])}
 let RBT=null;
-function kdRBStructs(r,m){const rl=r.rl,ids=Object.keys(m),LT=['gold','smine','farm','mill','market'],gc=ids.filter(id=>m[id].t=='gold').length||1,sv=ids.filter(id=>['smine','farm','mill','market'].includes(m[id].t)).length||1,
+function kdRBStructs(r,m){const rl=r.rl,ids=Object.keys(m),LT=['gold','smine','farm'],gc=ids.filter(id=>m[id].t=='gold').length||1,sv=ids.filter(id=>['smine','farm'].includes(m[id].t)).length||1,
  S=[{id:'castle',a:-2,b:-2,n:4,x:-.5,z:-.5,t:'castle',hp:1500+900*rl,mhp:1500+900*rl,dps:10+6*rl,rng:4.5}];
  ids.forEach(id=>{const q=id.split(',').map(Number),b=m[id],d=KD_B[b.t],n=kdSz(b.t),tw=d.def&&b.t!='wall',hp0=b.t=='wall'?Math.round(200*(1+.35*(r.bl-1))):Math.round((tw?600:400)*(1+.25*(r.bl-1))*(1+.2*(rl-1))),hp=b.t=='wall'?hp0:Math.round(hp0*(1+.4*(n-1)));
   S.push({id,a:q[0],b:q[1],n,x:q[0]+(n-1)/2,z:q[1]+(n-1)/2,t:b.t,q:k3tq({t:b.t,l:b.l,rd:1}),hp,mhp:hp,dps:tw?Math.round((b.t=='cannon'?30+14*rl:b.t=='spikes'?25+10*rl:15+8*rl)*(1+.12*(r.bl-1))):0,rng:b.t=='spikes'?1.8:4.2,loot:LT.includes(b.t),val:b.t=='gold'?Math.round(r.loot/gc):Math.round(r.sil/sv)})});return S}
@@ -1113,7 +1115,7 @@ function kdRBStep(dt){const S=RBT.S.filter(s=>s.hp>0),U=RBT.U.filter(u=>u.hp>0);
  RBT.sh.forEach(q=>q.t-=dt);RBT.sh=RBT.sh.filter(q=>q.t>0);
  const alive=RBT.U.some(u=>u.hp>0);if(RBT.S.every(s=>s.t=='wall'||s.hp<=0))kdRBEnd(true);else if((!alive&&!kdRBLeft())||RBT.t>120)kdRBEnd(false)}
 const kdRBLeft=()=>Object.keys(kdInit().army||{}).some(t=>CARDS[t]&&kdRBAvail(t)>0);
-function kdRBEnd(win){const k=kdInit(),r=RBT.r;RBT.phase='end';let gs=0,sl=0;const sv=RBT.S.filter(s=>['farm','mill','market'].includes(s.t)).length||1;
+function kdRBEnd(win){const k=kdInit(),r=RBT.r;RBT.phase='end';let gs=0,sl=0;const sv=RBT.S.filter(s=>['farm'].includes(s.t)).length||1;
  RBT.S.forEach(s=>{if(!s.loot||(!win&&s.hp>0))return;if(s.t=='gold')gs+=s.val;else sl+=s.val});if(win){gs=r.loot;sl=r.sil}
  const lost=[];
  k.raided=k.raided||{};k.raided[r.id]=1;const g2=Math.min(gs,kdRoom('gs'));S.gs+=g2;const s2=Math.min(sl,kdRoom('sil'));S.silver=(S.silver||0)+s2;const ov=g2<gs||s2<sl;gs=g2;sl=s2;save();kdChips();kdRender();
@@ -1191,8 +1193,8 @@ const KDT=[
 ['🧭 Getting around','Drag the map to look around. Pinch (or scroll the mouse wheel) to zoom. In your castle menu (tap the castle name, top left), 🗺 Fit shows your whole kingdom, 🏰 Center jumps back to your castle, and ➕ ➖ zoom in and out. Trees, rocks and mushrooms grow in clumps, and the open meadows between them are where you can build.','castle'],
 ['🔘 The top bar','The castle banner (top left) opens your castle menu: upgrades, ✏️ Rename, ❓ Guide, beauty ⭐ and free stonemasons ⚒️. The two bars (top right) show your silver and gold scraps against the most you can store. 💰 Collect all pops up under the banner when goods are ready, ⚔️ Raid is bottom left, and the brown << tab on the right opens your building inventory.',null],
 ['⛏️ Your starter buildings','You begin with a Gold Mine that digs up gold scraps, a Silver Mine that digs up silver, and a Stonemason Hut that carries out your upgrades. Farms, Barracks, Army Camps (extra room for your army) and more unlock as your castle levels up. Tap any building to see what it does and what you can do with it.','gold'],
-['💰 Your resources','Gold scraps come from Gold Mines and pay for upgrades and for clearing land. Silver comes from Farms, Lumber Mills and Markets and buys new buildings. Gems are rare, come from Gem Mines and Crystal Caves, and pay for things like extra Stonemason Huts. The chips at the top show what you hold out of your maximum.',null],
-[()=>'🧺 Collecting','Buildings keep working while you are away and show a +number bubble when goods are ready. Tap a building to collect, or press 💰 Collect all. Each building only stores about '+kdCapH()+' hours of goods at your castle level (gem buildings store 3 days), so check back often and upgrade your castle to store more.','gold'],
+['💰 Your resources','Gold scraps come from Gold Mines and pay for upgrades and for clearing land. Silver comes from Farms and Silver Mines and buys new buildings. Gems are rare, come from Gem Mines, and pay for things like extra Stonemason Huts. The chips at the top show what you hold out of your maximum.',null],
+[()=>'🧺 Collecting','Buildings keep working while you are away and show a +number bubble when goods are ready. Tap a building to collect. Tapping a mine collects from every mine of that kind at once. Or press 💰 Collect all. Each building only stores about '+kdCapH()+' hours of goods at your castle level (gem buildings store 3 days), so check back often and upgrade your castle to store more.','gold'],
 ['🏦 Storage and full stockpiles','Your gold scraps and silver are capped by your Gold and Silver Storages, and every storage you build and upgrade raises the cap. When your gold or silver is completely FULL, every building that makes it stops working (you will see 💤 Full above it) until you spend some or build more storage. So spend your goods often!','gstore'],
 ['🏗️ Placing buildings','Tap an empty tile to open your 📦 inventory, then tap a building there to place it for free. New buildings come from the Kingdom Shop in the Shop tab, and the 🛒 button on that panel takes you right there. A red box means you cannot place something on that spot. Drag any building (or the castle) to move it, or select it and press 📦 Store to put it back in your inventory. It keeps its level.',null],
 ['🌲 Clearing land','Trees, rocks and mushrooms are in the way, so you can not build on them. Tap one and pay a little gold scraps to start clearing it: trees cost 10 and take 15s, rocks cost 20 and take 10s, mushrooms cost 5 and take 5s. Each one gives you 1 to 5 gems when it is gone. Buildings can not be demolished, only decorations can.',null],
@@ -1210,11 +1212,11 @@ let KTI=-1,KDTA=null;const KTB='🏗️ Time to build!';
 const kdTutN=d=>d[3]?kdBs().filter(b=>b&&b.t==d[3].t).length:0,kdTutMet=d=>!d[3]||kdTutN(d)>=d[3].n;
 /* the first time through, the king hands you one of everything your level 1 castle allows and will not carry on until you have placed it all */
 function kdTutSteps(){const a=KDT.slice(),k=kdInit();if(S.kt||k.c!=1)return a;
- const ord=['hut','gold','smine','farm','mill','market','mine','cave','gstore','sstore','barracks','camp','watch','cannon','spikes'],ins=[],allow=[];
+ const ord=['hut','gold','smine','farm','mine','gstore','sstore','barracks','camp','watch','cannon','spikes'],ins=[],allow=[];
  ord.forEach(t=>{const d=KD_B[t],lim=(KD_LIM[t]||[0])[k.c-1];if(!d||!(lim>0))return;allow.push(d.e+' '+d.n);if(kdBs().some(b=>b&&b.t==t))return;if(kdCount(t)<1)k.inv.push({t,l:1});
   ins.push(['🧰 Place your '+d.n,'I have put a free '+d.e+' <b>'+d.n+'</b> in your inventory. '+d.d+' Your castle allows '+lim+' of these. Tap an empty meadow tile (the arrow shows a good spot), then tap '+d.e+' '+d.n+' in the inventory to place it.',null,{t,n:1}])});
  const wl=(KD_LIM.wall||[0])[k.c-1],wn=Math.min(4,wl);if(wl>0){allow.push('🧱 up to '+wl+' Walls');if(kdBs().filter(b=>b&&b.t=='wall').length<wn){while(kdCount('wall')<wn)k.inv.push({t:'wall',l:1});ins.push(['🧱 Place 4 walls','Walls link up with their neighbours, add beauty and slow down raiders. Your castle allows '+wl+'. Place '+wn+' walls from your inventory now, ideally next to each other so they join up.',null,{t:'wall',n:wn}])}}
- if(ins.length){save();ins.unshift([KTB,'Your castle is Level 1, so it allows: '+allow.join(', ')+'. I will give you one of each, free. Place them all to carry on. Farms, Lumber Mills, Markets, Gem Mines and more only unlock as your castle levels up, so upgrade your castle later!','castle']);const at=a.findIndex(d=>/Placing buildings/.test(d[0]));a.splice(at<0?a.length:at+1,0,...ins)}return a}
+ if(ins.length){save();ins.unshift([KTB,'Your castle is Level 1, so it allows: '+allow.join(', ')+'. I will give you one of each, free. Place them all to carry on. Farms, Gem Mines and more only unlock as your castle levels up, so upgrade your castle later!','castle']);const at=a.findIndex(d=>/Placing buildings/.test(d[0]));a.splice(at<0?a.length:at+1,0,...ins)}return a}
 function kdTutSpot(t,cam){const n=kdSz(t),C=kdCs(),a0=Math.round(C[0]+1.5)+6,b0=Math.round(C[1]+1.5)-1;
  for(let r=0;r<26;r++)for(let x=-r;x<=r;x++)for(let z=-r;z<=r;z++){if(Math.max(Math.abs(x),Math.abs(z))!=r)continue;const ax=a0+x,az=b0+z;if(kdFits(ax,az,n)){KTF=[ax+(n-1)/2,az+(n-1)/2,n];if(cam){KC.px=(KTF[0]-KTF[1])*32;KC.py=(KTF[0]+KTF[1])*16;KC.zm=1.2;KDSEL=null}return}}KTF=null}
 function kdTutOpen(i,keep){const o=$('kfull');if(!o)return;let t=$('ktut');if(!t){t=document.createElement('div');t.id='ktut';o.appendChild(t)}
@@ -1342,20 +1344,7 @@ function k3b(F,t,x,z,at){const Q=K3Q,pk=(...a)=>a[Math.min(a.length,Q)-1],nb=(a,
   if(Q>=2)[[-1,-1],[1,-1],[-1,1],[1,1]].forEach(q=>B(q[0]*.44,.08,q[1]*.44,.05,.2,.05,'#6a4a2a'));
   if(Q>=3){B(0,.2,.44,.88,.03,.03,'#8a6a42');B(.44,.2,0,.03,.03,.88,'#8a6a42');B(-.3,.08,-.3,.04,.36,.04,'#6a4a2a');B(-.3,.3,-.3,.22,.03,.03,'#6a4a2a');P(-.3,.44,-.3,.06,.08,'#e6c27a',6);P(-.3,.52,-.3,.1,.04,'#7a5a36',6,.05)}
   if(Q>=4)P(.32,.08,.3,.1,.13,'#e0b84a',8);if(Q>=5){B(.44,.08,-.44,.03,.6,.03,'#6b4a2b');B(.5,.5,-.44,.14,.1,.02,'#ffd23f')}break}
- case'mill':{const wl=pk('#6e5030','#7a5a36','#8a6a42','#9a7048','#a98055'),rf=pk('#b89a4a','#8a5a30','#b5483c','#3b6fd0','#2f55b0'),wy=Q>=3?.1:0,wh=Q>=3?.32:.4;
-  if(Q>=3)B(0,0,-.05,.76,.1,.6,'#8d8d96');B(0,wy,-.05,.7,wh,.55,wl);P(0,wy+wh,-.05,.62,pk(.28,.3,.32,.36,.4),rf,4,Q>=2?.1:.2);B(-.15,0,.235,.2,.28,.03,'#3a2418');
-  if(Q>=3){wF(.2,.2,.235);wR(.355,.2,-.05);B(.22,.42,-.2,.12,.34,.12,'#7d7d86')}
-  if(Q>=2){B(.3,0,.36,.3,.12,.2,'#b0845a');P(.3,.12,.36,.11,.02,'#c9ced4',10)}
-  const lg=pk(2,3,6,6,8);for(let i=0;i<lg;i++){const r=Math.floor(i/3),c=i%3;B(-.32,r*.09,.3+c*.1-r*.04,.3,.09,.1,i%2?'#7a4a21':'#8a5a2b')}
-  if(Q>=5){B(0,wy+wh+.28,-.05,.5,.03,.05,'#ffd23f');B(.34,.4,-.28,.03,.5,.03,'#6b4a2b');B(.4,.78,-.28,.14,.1,.02,'#ffd23f')}break}
- case'market':{B(0,0,.05,.7,.3,.4,pk('#8a6a42','#9a7a50','#e8d4a0','#efe0b8','#f4ecd8'));
-  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(q=>{if(Q==1&&q[1]<0)return;B(q[0]*.4,0,q[1]*.3,.05,.64,.05,pk('#6a4a2a','#7a5a36','#8a6a42','#7a5a36','#c9a24a'))});
-  const n=pk(1,4,5,5,6),cl=[['#b9a37a'],['#a65a4a','#e8e0cc'],['#d9534f','#fafafa'],['#d9534f','#fafafa'],['#3b6fd0','#fff4d0']][Q-1];
-  for(let i=0;i<n;i++)B(-.42+(i+.5)*(.84/n),.62-(Q==1?(i%2)*.04:0),0,.84/n,.06,.86,cl[i%cl.length]);
-  if(Q>=4)for(let i=0;i<n;i++)B(-.42+(i+.5)*(.84/n),.54,.44,.84/n*.9,.08,.04,cl[i%cl.length]);
-  const gc=['#e53935','#ffd54f','#7cb342','#ff8a65','#ba68c8'];for(let i=0;i<pk(2,3,4,5,5);i++)B(-.26+i*.13,.3,.05+(i%2)*.1,.1,.08,.1,gc[i%5]);
-  B(.44,0,.36,.2,.18,.2,'#8a6a42');if(Q>=3)B(.2,0,.4,.18,.14,.18,'#9a7a50');if(Q>=5){P(0,.7,0,.1,.03,'#ffd23f',8);B(-.4,.64,-.3,.03,.3,.03,'#6b4a2b');B(-.33,.84,-.3,.14,.1,.02,'#ffd23f')}break}
- case'mine':case'cave':case'gold':case'smine':{const sv=t=='smine',gd=t=='gold'||sv,cv=t=='cave',GC=sv?'#dbe2e9':'#ffd23f',GC2=sv?'#eef3f7':'#ffe066',hc=sv?pk('#6a7078','#707781','#79818c','#818a96','#8a94a2'):gd?pk('#7a6a50','#82704f','#8b7355','#96795a','#a08060'):cv?pk('#5e4a80','#664f90','#6b4fa0','#7452b0','#7c58c0'):pk('#6f7680','#757d88','#7d8590','#858e9a','#8e98a6'),wd=pk('#6a4a2a','#7a5a36','#8a6a42','#7a7a84','#c9a24a');
+ case'mine':case'gold':case'smine':{const sv=t=='smine',gd=t=='gold'||sv,cv=false,GC=sv?'#dbe2e9':'#ffd23f',GC2=sv?'#eef3f7':'#ffe066',hc=sv?pk('#6a7078','#707781','#79818c','#818a96','#8a94a2'):gd?pk('#7a6a50','#82704f','#8b7355','#96795a','#a08060'):cv?pk('#5e4a80','#664f90','#6b4fa0','#7452b0','#7c58c0'):pk('#6f7680','#757d88','#7d8590','#858e9a','#8e98a6'),wd=pk('#6a4a2a','#7a5a36','#8a6a42','#7a7a84','#c9a24a');
   P(0,0,0,.5,.52,hc,7,.22);B(0,0,.36,.34,.3,.12,'#1b1612');B(-.2,0,.4,.07,.34,.07,wd);B(.2,0,.4,.07,.34,.07,wd);B(0,.3,.4,.48,.07,.09,wd);
   if(Q>=3){B(-.08,0,.55,.04,.02,.3,'#6e6e76');B(.08,0,.55,.04,.02,.3,'#6e6e76');B(0,.03,.6,.2,.12,.16,'#6b6b74');B(0,.15,.6,.16,.04,.12,gd?GC:cv?'#c084fc':'#4fc3f7')}
   if(Q>=4)B(.26,.36,.44,.06,.09,.06,'#ffd54f');
@@ -1457,7 +1446,7 @@ function k3glow(s,t){s.gl=s.gl||{};if(s.gl[t])return s.gl[t];const nn=s.n||1,m=M
 function kdBadge(cx,x,y,l,sc){const t=kdTier(l),tx='★'+l;cx.font='bold '+Math.max(10,sc*13)+'px sans-serif';const w=cx.measureText(tx).width+sc*12,h=sc*17;cx.fillStyle=KDTC[t];cx.beginPath();cx.roundRect(x-w/2,y-h/2,w,h,h/2);cx.fill();cx.strokeStyle=t>=2?'#222':'rgba(0,0,0,.45)';cx.lineWidth=2;cx.stroke();cx.fillStyle='#111';cx.fillText(tx,x,y+1)}
 
 /* every upgrade level looks different: level 1 is a crooked, grimy ruin with rubble and weeds, and each level after that is straighter, cleaner and fancier until level 10 is gold and gleaming */
-const KDE={farm:.44,mill:.36,market:.42,mine:.3,cave:.3,gold:.3,smine:.3,barracks:.46,camp:.46,gstore:.4,sstore:.4,watch:.3,cannon:.36,spikes:.44,wall:.2},KDTP={farm:.45,mill:.85,market:.8,mine:.6,cave:.6,gold:.6,smine:.6,barracks:.95,camp:.75,gstore:.65,sstore:.65,spikes:.4,wall:.8};
+const KDE={farm:.44,mine:.3,gold:.3,smine:.3,barracks:.46,camp:.46,gstore:.4,sstore:.4,watch:.3,cannon:.36,spikes:.44,wall:.2},KDTP={farm:.45,mine:.6,gold:.6,smine:.6,barracks:.95,camp:.75,gstore:.65,sstore:.65,spikes:.4,wall:.8};
 function kdLvSet(L,t,sd){const w=Math.max(0,(10-L)/9);K3W=w;K3HI=L>=6?(L-5)/5:0;K3J=.11*w;K3V=.42*w;K3OA=Math.min(.45,K3OA+.1*w);K3LEAN=t=='wall'?0:L<=5?(sd?1:-1)*.13*Math.pow((6-L)/5,1.4):0}
 function kdLvx(F,t,L,sd){if(t=='camp')return;const E=KDE[t]||.38,TP=KDTP[t],wl=t=='wall',B=(x,y,z,w,h,d,c)=>k3box(F,x,y,z,w,h,d,c),P=(x,y,z,r,h,c,n,r2)=>k3pri(F,x,y,z,r,h,c,n,r2),r=i=>k3h(sd+1.7,i*3.1,L*.7),gold='#ffd23f',tcl=KDTC[kdTier(L)]||'#cbd5e1',cone=['mine','cave','gold','smine','spikes'].includes(t);
  if(L>=9)P(0,0,0,E+(wl?.1:.17),.03,L>=10?gold:'#e8e4da',wl?8:16);
@@ -1581,7 +1570,7 @@ function shopDaily(){shopDay();const nm={sup:'supplies',exp:'Common EXP',rexp:'R
  else{h+=`<div class='grid' style='margin-top:6px'>`;ks.forEach(k=>{const u=unlockInfo(k),okA=(S.tr||0)>=u[2];h+=`<div class='box tile rar-${rarOf(k)}'>${ci(k)}<b>${CARDS[k].n}</b> ${rbadge(k)}<br><small>${CARDS[k].t}</small><br><small>${okA?'Reached '+u[2]+' '+TRO:'Reach '+u[2]+' '+TRO}</small><div class='row'><button ${okA||S.gems>=u[1]?'':'disabled'} onclick="buyCard('${k}')">${okA?'Unlock (free)':'Unlock early: '+u[1]+' '+GEM}</button></div></div>`});h+=`</div>`}
  return h}
 var sview='main';
-const KSUP=[[100,8],[500,35],[2000,120]],KSP=['hut','gstore','sstore','gold','smine','camp','barracks','mill','farm','market','mine','cave'],KSD=['wall','watch','cannon','spikes'];
+const KSUP=[[100,8],[500,35],[2000,120]],KSP=['hut','gstore','sstore','gold','smine','camp','barracks','farm','mine'],KSD=['wall','watch','cannon','spikes'];
 const KSIL=[[200,8],[1000,35]];
 function buySil(i){const p=KSIL[i];if(!p||S.gems<p[1]||p[0]>kdRoom('sil'))return;S.gems-=p[1];S.silver=(S.silver||0)+p[0];save();menu()}
 function buySup(i){const p=KSUP[i];if(!p||S.gems<p[1]||p[0]>kdRoom('gs'))return;S.gems-=p[1];S.gs+=p[0];save();menu()}
